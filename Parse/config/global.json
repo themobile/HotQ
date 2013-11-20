@@ -1,0 +1,14 @@
+{
+    "applications": {
+        "_default": {
+            "link": "hotq"
+        }, 
+        "hotq": {
+            "applicationId": "oYvsd9hx0NoIlgEadXJsqCtU1PgjcPshRqy18kmP", 
+            "masterKey": "RlVVTkb0bQq4WUNdXtI7msDwSCyUGJrvCutpe3d9"
+        }
+    }, 
+    "global": {
+        "parseVersion": "1.2.13"
+    }
+}
