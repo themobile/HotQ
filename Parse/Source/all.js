@@ -1,5 +1,10 @@
 //TODO: atentie la toate Query-urile: limit este default 100 si maxim 1000 - la un moment dat trebe tinut cont de asta
 
+//todo: table de quotes
+//todo: functie de intors aleator un quotes
+
+
+
 var moment = require('moment')
     , _ = require('underscore')
     ;
