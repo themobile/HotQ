@@ -1,7 +1,7 @@
 <div class="question container">
-    <h4>Week.Sunteți sau nu de acord cu... </h4>
+    <h4>{{questions.questionOfWeek.text1}} </h4>
 
-    <h1 ng-cloack>{{q_week}}</h1>
+    <h1 ng-cloack>{{questions.questionOfWeek.text2}}</h1>
 
     <div class="answers" ng-show="hasVoted('q_week')">
         <a ng-click="voteNow('q_week',1)" class="btn-answer btn-yes btn" role="button">DA</a>

@@ -46,17 +46,25 @@ angular.module('hotq.services', []).
     })
 
 
-   .factory("NotificationService", function () {
+    .factory('questions', function ($http) {
         return {
-            alert: function (message, title, buttonText, buttonAction) {
-                navigator.notification.alert(message,
-                    buttonAction,
-                    title,
-                    buttonText);
+            getAll: function (installationId) {
+
+                    return $http.post('https://api.parse.com/1/functions/GetQuestions',
+                        installationId,
+                        {
+                            headers: {
+                                "X-Parse-Application-Id": "oYvsd9hx0NoIlgEadXJsqCtU1PgjcPshRqy18kmP",
+                                "X-Parse-REST-API-Key": "gX3SUxGPeSnAefjtFmF9MeWpbTIa9YhC8q1n7hLk",
+                                "Content-Type": "application/json"
+                            },
+                            cache: false,
+                            withCredentials: false
+                        }
+                    );
             }
         }
     })
-
 
 
 
