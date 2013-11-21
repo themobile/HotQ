@@ -43,6 +43,7 @@ Parse.Cloud.define("GetQuestions", function (request, response) {
     }).then(function () {
             return _GetVote(installationId, result.questionOfDay.id);
         }).then(function (rez) {
+            console.log("* * *");
             console.log(rez);
             if (rez) {
                 result.questionOfDay.hasVote = !!rez.date;

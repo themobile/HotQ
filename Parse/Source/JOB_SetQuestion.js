@@ -1,5 +1,5 @@
 Parse.Cloud.job("SetQuestion", function (request, status) {
-    var jobName = "ExtendManualBills"
+    var jobName = "SetQuestion"
         , jobParam = request.params
         , jobRunId
         , theDate = parseDate(moment().format("YYYY-MM-DD") + "T00:00:00.000Z")
@@ -18,17 +18,17 @@ Parse.Cloud.job("SetQuestion", function (request, status) {
             return _GetCurentQs(theDate, "day");
         }).then(function (retD) {
             if (retD) {
-                dayId = parsePointer("Question",retD.id);
+                dayId = parsePointer("Question", retD.id);
             }
             return _GetCurentQs(theDate, "week");
         }).then(function (retW) {
             if (retW) {
-                weekId = parsePointer("Question",retW.id);
+                weekId = parsePointer("Question", retW.id);
             }
             return _GetCurentQs(theDate, "month");
         }).then(function (retM) {
             if (retM) {
-                monthId = parsePointer("Question",retM.id);
+                monthId = parsePointer("Question", retM.id);
             }
             var qS = new Parse.Query("QuestionSelect");
             qS.equalTo("date", theDate);
@@ -36,7 +36,7 @@ Parse.Cloud.job("SetQuestion", function (request, status) {
             return qS.first();
         }).then(function (qT) {
             if (qT) {
-                qt.increment("updates");
+                qT.increment("updates");
                 qT.set("questionOfDay", dayId);
                 qT.set("questionOfWeek", weekId);
                 qT.set("questionOfMonth", monthId);
@@ -62,9 +62,23 @@ Parse.Cloud.job("SetQuestion", function (request, status) {
             }).then(function () {
                     status.success("ok");
                 }, function (error) {
-                    status.error(error);
+                    status.error(JSON.stringify(error));
                 });
-        })
+        }, function (error) {
+            return AddJobRunHistory({
+                name: jobName,
+                jobId: parsePointer("AppJob", jobRunId.jobId),
+                jobIdText: jobRunId.jobId,
+                runCounter: jobRunId.jobRunCounter,
+                parameters: jobParam,
+                status: "error",
+                statusObject: error
+            }).then(function () {
+                    status.error(JSON.stringify(error));
+                }, function (error) {
+                    status.error(JSON.stringify(error));
+                });
+        });
 });
 
 var _GetCurentQs;
@@ -75,9 +89,6 @@ _GetCurentQs = function (date, type) {
     qType.notEqualTo("isDeleted", true);
     qType.equalTo("name", type);
 
-//    console.log(date);
-//    console.log(type);
-//
     var qQ1 = new Parse.Query("Question")
         , qQ2 = new Parse.Query("Question")
         , qQ

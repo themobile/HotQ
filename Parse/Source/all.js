@@ -4,7 +4,6 @@
 //todo: functie de intors aleator un quotes
 
 
-
 var moment = require('moment')
     , _ = require('underscore')
     ;
@@ -382,6 +381,15 @@ Parse.Cloud.define("test1", function (req, res) {
         dt1: dd.date(1).format(),
         dt10: dd.date(20).format()
     });
-})
-;
+});
 
+
+Parse.Cloud.define("test2", function (request, response) {
+    Parse.Cloud.useMasterKey();
+    var x = new Parse.Query("_Installation");
+    x.find().then(function (rez) {
+        response.success(rez);
+    }, function (error) {
+        response.error(error);
+    });
+});
