@@ -1,7 +1,7 @@
 <div class="question container">
-    <h4>Month.Sunteți sau nu de acord cu... </h4>
+    <h4>{{questions.questionOfMonth.text1}} </h4>
 
-    <h1 ng-cloack>{{q_month}}</h1>
+    <h1 ng-cloack>{{questions.questionOfMonth.text2}}</h1>
 
     <div class="answers" ng-show="hasVoted('q_month')">
         <a ng-click="voteNow('q_month',1)" class="btn-answer btn-yes btn" role="button">DA</a>

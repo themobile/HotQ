@@ -1,12 +1,13 @@
 <div class="question container">
-    <h4>Today. Sunteți sau nu de acord cu... </h4>
+    <h4>{{questions.questionOfDay.text1}} </h4>
 
-    <h1 ng-cloack>{{q_today}}</h1>
+    <h1 ng-cloack>{{questions.questionOfDay.text2}}</h1>
 
     <div class="answers" ng-show="hasVoted('q_today')">
         <a ng-click="voteNow('q_today',1)" class="btn-answer btn-yes btn" role="button">DA</a>
         <a ng-click="voteNow('q_today',2)" class="btn-answer btn-no btn" role="button">NU</a>
     </div>
+
 
 
     <div class="answers" ng-hide="hasVoted('q_today')">

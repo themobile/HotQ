@@ -1,4 +1,4 @@
-#bowlG{
+#bowlG, #bowlG2{
     position: absolute;
     width: 50px;
     height: 50px;
@@ -21,7 +21,7 @@
     text-align: center;
 }
 
-#bowl_ringG{
+#bowl_ringG, #bowl_ringG2{
     position:absolute;
     width:50px;
     height:50px;
