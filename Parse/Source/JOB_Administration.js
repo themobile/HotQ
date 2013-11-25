@@ -1,9 +1,11 @@
 Parse.Cloud.beforeSave("AppJob", function (request, response) {
+    Parse.Cloud.useMasterKey();
     request.object.increment("runCounter");
     response.success();
 });
 
 Parse.Cloud.define("JobHistory", function (request, response) {
+    Parse.Cloud.useMasterKey();
     var results = [];
     var qJob = new Parse.Query("AppJob");
     var pageRows = request.params.pageRows
@@ -25,7 +27,7 @@ Parse.Cloud.define("JobHistory", function (request, response) {
                 jobId: job.id
             }
         } else {
-            return Parse.Promise.as();
+            return Parse.Promise.error("There is no such job.");
         }
     }).then(function (objJob) {
             if (objJob.jobId) {
@@ -99,7 +101,7 @@ Parse.Cloud.define("JobHistory", function (request, response) {
 
 
 Parse.Cloud.define("JobStatus", function (request, response) {
-//    Parse.Cloud.useMasterKey();
+    Parse.Cloud.useMasterKey();
     var job = request.params
         , results = []
         ;
@@ -258,45 +260,3 @@ AddJobRunCounter = function (request) {
         });
     return promise;
 };
-
-Parse.Cloud.job("TestingJob", function (request, status) {
-    Parse.Cloud.useMasterKey();
-    var promise
-        , jobName = "TestingJob"
-        , jobParam = request.params
-        ;
-    promise = AddJobRunCounter({
-        name: jobName,
-        parameters: jobParam
-    });
-    promise.then(function (jobRun) {
-        AddJobRunHistory({
-            name: jobName,
-            jobId: parsePointer("AppJob", jobRun.jobId),
-            jobIdText: jobRun.jobId,
-            runCounter: jobRun.jobRunCounter,
-            parameters: jobParam,
-            status: "success",
-            statusObject: {text: "gata"}
-        }).then(function () {
-                status.success("gata");
-            });
-    }, function (error) {
-
-        console.log("a ajuns in eroare");
-
-        AddJobRunHistory({
-            name: jobName,
-            jobId: parsePointer("AppJob", jobRun.jobId),
-            jobIdText: jobRun.jobId,
-            runCounter: jobRun.jobRunCounter,
-            parameters: jobParam,
-            status: "error",
-            statusObject: {object: error}
-        }).then(function (err) {
-                status.error("eroare");
-            });
-    });
-});
-
-

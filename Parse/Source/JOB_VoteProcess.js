@@ -89,15 +89,26 @@ _VoteSave = function (installationId, questionId, answer, voteDate) {
         , questionObject
         , installationObject
         , duplicate = false
+        , voteDateTest
         ;
-    voteDate = moment(voteDate).format("YYYY-MM-DD") + "T00:00:00.000Z";
+
+    voteDateTest = moment(voteDate).format("YYYY-MM-DD") + "T00:00:00.000Z";
+//
+//    console.log(" unu ");
+//    console.log(voteDateTest);
+//    console.log(moment(voteDateTest).format());
+//    console.log(" doi ");
+//    console.log(voteDate);
+//    console.log(moment(voteDate).format());
+//    console.log(" trei ");
+
     var qQ = new Parse.Query("Question");
     qQ.equalTo("objectId", questionId);
     qQ.first().then(function (question) {
         if (question) {
             // verific sa fie valabila
-            if (moment(voteDate).diff(moment(question.get("startDate")), 'milliseconds') >= 0 &&
-                moment(voteDate).diff(moment(question.get("endDate")), 'milliseconds') <= 0 && !question.get("isDeleted")
+            if (moment(voteDateTest).diff(moment(question.get("startDate")), 'milliseconds') >= 0 &&
+                moment(voteDateTest).diff(moment(question.get("endDate")), 'milliseconds') <= 0 && !question.get("isDeleted")
                 ) {
                 questionObject = question;
                 var qInstallation = new Parse.Query("_Installation");
@@ -131,6 +142,7 @@ _VoteSave = function (installationId, questionId, answer, voteDate) {
                 Vote = new Vote();
                 Vote.set("questionId", questionObject);
                 Vote.set("installationId", installationObject);
+                Vote.set("voteDate", voteDate);
                 Vote.set("answer", answer);
                 return Vote.save();
             }

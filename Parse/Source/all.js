@@ -1,8 +1,9 @@
 //TODO: atentie la toate Query-urile: limit este default 100 si maxim 1000 - la un moment dat trebe tinut cont de asta
 
 //todo: table de quotes
-//todo: functie de intors aleator un quotes
-
+//todo: functie de intors aleator un quotes - in clasa de quotes am o coloana de tip identity (se incarca dintr-o alta clasa dedicata secventelor);
+//todo: in cazul ca ultima intrebare nu este din data cutenta atunci o duplic
+//todo: de primit la salvarea votului un obiect de geolocatie
 
 var moment = require('moment')
     , _ = require('underscore')
@@ -393,3 +394,27 @@ Parse.Cloud.define("test2", function (request, response) {
         response.error(error);
     });
 });
+
+
+Parse.Cloud.define("test3", function (request, response) {
+    Parse.Cloud.useMasterKey();
+    var q = new Parse.Query("Vote");
+    q.equalTo("installationId", parsePointer("_Installation", "ezljyA7ITD"));
+    q.equalTo("questionId", parsePointer("Question", "OHnYCdQrI1"));
+    q.first().then(function (rez) {
+
+        response.success(rez);
+    });
+});
+
+Parse.Cloud.define("test4", function (request, response) {
+    Parse.Cloud.useMasterKey();
+    _GetVote("ezljyA7ITD", "OHnYCdQrI1").then(function (rez) {
+        response.success(rez);
+    }, function (error) {
+        response.error(error);
+    });
+});
+
+
+
