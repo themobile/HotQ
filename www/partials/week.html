@@ -1,16 +1,8 @@
-<div class="question container">
-    <h4>{{questions.questionOfWeek.text1}} </h4>
-
-    <h1 ng-cloack>{{questions.questionOfWeek.text2}}</h1>
-
-    <div class="answers" ng-show="hasVoted('q_week')">
-        <a ng-click="voteNow('q_week',1)" class="btn-answer btn-yes btn" role="button">DA</a>
-        <a ng-click="voteNow('q_week',2)" class="btn-answer btn-no btn" role="button">NU</a>
-    </div>
-
-
-    <div class="answers" ng-hide="hasVoted('q_week')">
-        <span>Mulțumim pentru opinia ta!<br/><a ng-click="next()">Răspunde la următoarea întrebare!</a></span>
-    </div>
-
+<div class="prequestion flex-item" ng-cloack>
+    <h4>{{questions.questionOfWeek.text1}}</h4>
 </div>
+<div class="fullquestion flex-item" ng-cloack>
+    <h1>{{questions.questionOfWeek.text2}}</h1>
+</div>
+
+

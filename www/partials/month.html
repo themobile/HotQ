@@ -1,15 +1,8 @@
-<div class="question container">
-    <h4>{{questions.questionOfMonth.text1}} </h4>
-
-    <h1 ng-cloack>{{questions.questionOfMonth.text2}}</h1>
-
-    <div class="answers" ng-show="hasVoted('q_month')">
-        <a ng-click="voteNow('q_month',1)" class="btn-answer btn-yes btn" role="button">DA</a>
-        <a ng-click="voteNow('q_month',2)" class="btn-answer btn-no btn" role="button">NU</a>
-    </div>
-
-
-    <div class="answers" ng-hide="hasVoted('q_month')">
-        <span>Mulțumim pentru opinia ta!<br/><a ng-click="next()">Răspunde la următoarea întrebare!</a></span>
-    </div>
+<div class="prequestion flex-item" ng-cloack>
+    <h4>{{questions.questionOfMonth.text1}}</h4>
 </div>
+<div class="fullquestion flex-item" ng-cloack>
+    <h1>{{questions.questionOfMonth.text2}}</h1>
+</div>
+
+
