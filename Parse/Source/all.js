@@ -2,8 +2,6 @@
 
 //todo: table de quotes
 //todo: functie de intors aleator un quotes - in clasa de quotes am o coloana de tip identity (se incarca dintr-o alta clasa dedicata secventelor);
-//todo: in cazul ca ultima intrebare nu este din data cutenta atunci o duplic
-//todo: de primit la salvarea votului un obiect de geolocatie
 
 var moment = require('moment')
     , _ = require('underscore')
@@ -367,6 +365,16 @@ iif = function (condition, trueExpression, falseExpression) {
     return !!condition ? trueExpression : falseExpression;
 };
 
+var replicate;
+replicate = function (pChar, pLen) {
+    return Array(pLen + 1).join(pChar);
+};
+
+var padRight;
+padRight = function (pString, pLen, pChar) {
+    return  (pString + replicate(iif(pChar, pChar, " "), pLen)).substring(0, pLen);
+};
+
 Parse.Cloud.define("test1", function (req, res) {
     var dd = moment()
         , d = moment(req.params.data)
@@ -384,7 +392,6 @@ Parse.Cloud.define("test1", function (req, res) {
     });
 });
 
-
 Parse.Cloud.define("test2", function (request, response) {
     Parse.Cloud.useMasterKey();
     var x = new Parse.Query("_Installation");
@@ -394,7 +401,6 @@ Parse.Cloud.define("test2", function (request, response) {
         response.error(error);
     });
 });
-
 
 Parse.Cloud.define("test3", function (request, response) {
     Parse.Cloud.useMasterKey();
@@ -408,13 +414,8 @@ Parse.Cloud.define("test3", function (request, response) {
 });
 
 Parse.Cloud.define("test4", function (request, response) {
-    Parse.Cloud.useMasterKey();
-    _GetVote("ezljyA7ITD", "OHnYCdQrI1").then(function (rez) {
-        response.success(rez);
-    }, function (error) {
-        response.error(error);
-    });
+    _GetRandomQuote().then(function (qId) {
+        response.success(qId);
+    })
 });
-
-
 

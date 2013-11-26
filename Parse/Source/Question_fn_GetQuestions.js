@@ -19,7 +19,7 @@ Parse.Cloud.define("GetQuestions", function (request, response) {
             var qQ = new Parse.Query("QuestionSelect");
             qQ.equalTo("date", parseDate(theDate));
             qQ.notEqualTo("isDeleted", true);
-            qQ.include("questionOfDay.categoryId,questionOfWeek.categoryId,questionOfMonth.categoryId");
+            qQ.include("questionOfDay.categoryId,questionOfWeek.categoryId,questionOfMonth.categoryId,quoteId");
             qQ.descending("createdAt");
             return  qQ.first();
         } else {
@@ -47,6 +47,12 @@ Parse.Cloud.define("GetQuestions", function (request, response) {
                 result.questionOfMonth.category = qT.get("questionOfMonth").get("categoryId").get("name");
                 result.questionOfMonth.text1 = qT.get("questionOfMonth").get("subject");
                 result.questionOfMonth.text2 = qT.get("questionOfMonth").get("body");
+
+                result.quote = {};
+                result.quote.id = qT.get("quoteId").id;
+                result.quote.author = qT.get("quoteId").get("author");
+                result.quote.body = qT.get("quoteId").get("body");
+                result.quote.link = qT.get("quoteId").get("link");
 
             }
             return Parse.Promise.as();

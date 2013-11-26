@@ -3,11 +3,10 @@ Parse.Cloud.job("SetQuestion", function (request, status) {
         , jobParam = request.params
         , jobRunId
         , theDate = parseDate(moment().format("YYYY-MM-DD") + "T00:00:00.000Z")
-        , dayId, weekId, monthId
+        , dayId, weekId, monthId, quoteId
         ;
 
     Parse.Cloud.useMasterKey();
-
 
     AddJobRunCounter({
         name: jobName,
@@ -15,20 +14,25 @@ Parse.Cloud.job("SetQuestion", function (request, status) {
     }).then(function (jobRun) {
             jobRunId = jobRun;
 
-            return _GetCurentQs(theDate, "day");
+            return _GetCurrentQs(theDate, "day");
         }).then(function (retD) {
             if (retD) {
                 dayId = parsePointer("Question", retD.id);
             }
-            return _GetCurentQs(theDate, "week");
+            return _GetCurrentQs(theDate, "week");
         }).then(function (retW) {
             if (retW) {
                 weekId = parsePointer("Question", retW.id);
             }
-            return _GetCurentQs(theDate, "month");
+            return _GetCurrentQs(theDate, "month");
         }).then(function (retM) {
             if (retM) {
                 monthId = parsePointer("Question", retM.id);
+            }
+            return _GetRandomQuote();
+        }).then(function (retQuote) {
+            if (retQuote) {
+                quoteId = parsePointer("Quote", retQuote.id);
             }
             var qS = new Parse.Query("QuestionSelect");
             qS.equalTo("date", theDate);
@@ -40,6 +44,7 @@ Parse.Cloud.job("SetQuestion", function (request, status) {
                 qT.set("questionOfDay", dayId);
                 qT.set("questionOfWeek", weekId);
                 qT.set("questionOfMonth", monthId);
+                qT.set("quoteId", quoteId);
                 return qT.save();
             } else {
                 var QT = Parse.Object.extend("QuestionSelect");
@@ -48,6 +53,7 @@ Parse.Cloud.job("SetQuestion", function (request, status) {
                 QT.set("questionOfDay", dayId);
                 QT.set("questionOfWeek", weekId);
                 QT.set("questionOfMonth", monthId);
+                QT.set("quoteId", quoteId);
                 return QT.save();
             }
         }).then(function (qTSaved) {
@@ -81,42 +87,80 @@ Parse.Cloud.job("SetQuestion", function (request, status) {
         });
 });
 
-var _GetCurentQs;
-_GetCurentQs = function (date, type) {
+var _GetCurrentQs;
+_GetCurrentQs = function (date, type) {
     var promise = new Parse.Promise()
         ;
     var qType = new Parse.Query("QuestionType");
     qType.notEqualTo("isDeleted", true);
     qType.equalTo("name", type);
-
-    var qQ1 = new Parse.Query("Question")
-        , qQ2 = new Parse.Query("Question")
-        , qQ
-        ;
-    qQ1.lessThanOrEqualTo("startDate", date);
-    qQ1.greaterThanOrEqualTo("endDate", date);
-    qQ2.lessThanOrEqualTo("endDate", date);
-    qQ = Parse.Query.or(qQ1, qQ2);
-    qQ.notEqualTo("isDeleted", true);
-    qQ.matchesQuery("typeId", qType);
-    qQ.descending("startDate");
-    qQ.descending("updatedAt");
-    qQ.first().then(function (q) {
-        if (q) {
-            promise.resolve(q)
+    var qQuestion = new Parse.Query("Question");
+    qQuestion.lessThanOrEqualTo("startDate", date);
+    qQuestion.greaterThanOrEqualTo("endDate", date);
+    qQuestion.notEqualTo("isDeleted", true);
+    qQuestion.matchesQuery("typeId", qType);
+    qQuestion.descending("startDate");
+    qQuestion.descending("updatedAt");
+    qQuestion.first().then(function (question) {
+        if (question) {
+            return question;
         } else {
+            return _DuplicateLastQuestion(date, type);
+        }
+    }).then(function (q) {
+            if (q) {
+                promise.resolve(q);
+            } else {
+                promise.reject({
+                    date: date,
+                    type: type
+                });
+            }
+        },
+        function (error) {
             promise.reject({
+                error: error,
                 date: date,
                 type: type
             })
         }
-    }, function (error) {
-        promise.reject({
-            error: error,
-            date: date,
-            type: type
-        })
-    });
+    );
 
     return promise;
 };
+
+var _DuplicateLastQuestion;
+_DuplicateLastQuestion = function (date, type) {
+    var promise = new Parse.Promise()
+        ;
+    var qType = new Parse.Query("QuestionType");
+    qType.notEqualTo("isDeleted", true);
+    qType.equalTo("name", type);
+    var qQuestion = new Parse.Query("Question");
+    qQuestion.lessThanOrEqualTo("endDate", date);
+    qQuestion.notEqualTo("isDeleted", true);
+    qQuestion.matchesQuery("typeId", qType);
+    qQuestion.descending("startDate");
+    qQuestion.descending("updatedAt");
+    qQuestion.first().then(function (question) {
+        if (question) {
+            var Question = Parse.Object.extend("Question");
+            Question = new Question();
+            Question.set("categoryId", question.get("categoryId"));
+            Question.set("typeId", question.get("typeId"));
+            Question.set("subject", question.get("subject"));
+            Question.set("body", question.get("body"));
+            Question.set("questionId", parsePointer("Question", question.id));
+            Question.set("startDate", parseDate(moment().format("YYYY-MM-DD") + "T00:00:00.000Z"));
+            return Question.save();
+        } else {
+            return Parse.Promise.error("error.question-not-found");
+        }
+    }).then(function (newQuestion) {
+            promise.resolve(newQuestion);
+        }, function (error) {
+            promise.reject(error);
+        });
+    return promise;
+};
+
