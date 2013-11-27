@@ -1,7 +1,10 @@
-<div class="question container">
-    <h4>{{questions.quote.author}}</h4>
+<div class="question-title-expl">îți mulțumim cu</div>
 
-    <h1  ng-cloack>{{questions.quote.body}}</h1>
+<div class="reward-title">idei</div>
 
-    <a class="more" ng-href="questions.quote.link">Descoperă mai multe...</a>
+<div ng-cloack class="reward-author">Autor: {{questions.quote.author}}</div>
+
+<div class="reward-quote" ng-cloack>
+    {{questions.quote.body}}
 </div>
+<div ng-click="goReward(questions.quote.link)" class="reward-link">Descoperă mai multe...</div>

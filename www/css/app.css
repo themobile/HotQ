@@ -8,12 +8,21 @@ html, body {
     color: #3F4C77;
     margin: 0;
     padding: 0;
+    overflow:hidden;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     font-weight: 400;
     font-family: 'Open Sans', sans-serif;
 }
+
 
 .btn-answer:active {
     -webkit-box-shadow: none;
@@ -39,9 +48,21 @@ a:hover, a:focus {
     color: #FE6700;
 }
 
+.footer-logo {
+    background-image: url(../img/footer_logo.svg);
+    background-size: 5em;
+    min-height:2em;
+    width:100%;
+    background-repeat: no-repeat;
+    background-position-y: 100%;
+    background-position-x: 50%;
+    z-index: 9999;
+}
+
 .footer {
     text-align: center;
-    color: rgba(63, 76, 119, 0.5);
+    color: rgba(255, 255, 255, 0.8);
+    background-color:#FE6700;
     flex: 0.7;
     min-height: 1.5em;
     max-height: 1.5em;
@@ -60,8 +81,7 @@ a:hover, a:focus {
     font-size: 0.6em;
     position: relative;
     width: 70%;
-    padding-top: 0.3em;
-    border-top: 1px solid rgba(63, 76, 119, 0.2);
+    padding-top: 0.4em;
     font-weight: 300;
 }
 
@@ -71,8 +91,10 @@ strong {
 
 #nav {
     min-height: 2em;
+    max-height: 2em;
     margin-bottom: 0;
     border: none;
+    width:100%;
     flex: 1;
     display: -webkit-flex;
     display: -moz-flex;
@@ -90,6 +112,7 @@ strong {
     padding: 0.2em;
     margin-left: 0.2em;
     flex: 1;
+    color:rgba(63, 76, 119, 1);
 }
 
 .menu-title {
@@ -103,6 +126,7 @@ strong {
 .arrows {
     padding: 0.2em;
     line-height: 2em !important;
+    color:rgba(63, 76, 119, 1);
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -125,7 +149,7 @@ strong {
 }
 
 .arrows.disabled {
-    color: lightgray;
+    color: rgba(63, 76, 119, 0.5);
 }
 
 
@@ -155,19 +179,28 @@ ul.menu li > a:before {
 ul.menu li > a {
     font-family: 'Open Sans', san-serif;
     font-size: 0.9em;
-    background-color: #3F4C77;
+    background-color: #313447;
     color: white;
     text-decoration: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 ul.menu li > a:hover {
     color: #FE6700;
 }
+ul.menu li > a:hover {
+outline:none;
+}
 
 .answers {
     /*flex: 2;*/
     position: absolute;
-    bottom: 8em;
+    bottom: 6em;
     width: 100%;
     text-align: center;
     height: 0;
@@ -185,6 +218,10 @@ ul.menu li > a:hover {
     display:block;
     float:left;
     width:50%;
+}
+
+.btn-yes {
+    -webkit-box-shadow: 3px 0px 0px -2px #FE6700;
 }
 
 .answer-buttons.ng-hide-add {
@@ -233,16 +270,16 @@ ul.menu li > a:hover {
 }
 
 #sp-page {
-    background: white;
+    position:absolute;
     display: -webkit-flex;
     display: -moz-flex;
     display: flex;
     -webkit-flex-flow: column wrap;
     -moz-flex-flow: column wrap;
     flex-flow: column wrap;
-    -webkit-justify-content: flex-end;
-    -moz-justify-content: flex-end;
-    justify-content: flex-end;
+    /*-webkit-justify-content: flex-end;*/
+    /*-moz-justify-content: flex-end;*/
+    /*justify-content: flex-end;*/
 }
 
 .home-paragraph {
@@ -256,7 +293,7 @@ ul.menu li > a:hover {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(63, 76, 119, 0.6);
+    background-color: rgba(63, 76, 119, 0.8);
     position: absolute;
     z-index: 99999;
 }
@@ -290,64 +327,77 @@ ul.menu li > a:hover {
     text-decoration: underline;
 }
 
+
+/*override for About screen which needs scroll*/
+.overStyleAboutTrue {
+    overflow:auto;
+}
+.overStyleAboutTrue {
+    /*overflow:auto;*/
+}
+
 .question {
-    flex: 10;
+    flex: 3;
     text-align: center;
     margin: 0.5em;
     position: relative;
-    overflow-y: scroll;
-
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    display: -webkit-flex;
-    display: -moz-flex;
-    display: flex;
-    -webkit-flex-flow: column wrap;
-    -moz-flex-flow: column wrap;
-    flex-flow: column wrap;
-    -webkit-justify-content: center;
-    -moz-justify-content: center;
-    justify-content: center;
-
 }
 
-.prequestion {
-    flex: 1;
-    color: #FE6700;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    display: -webkit-flex;
-    display: -moz-flex;
-    display: flex;
-    -webkit-flex-flow: column wrap;
-    -moz-flex-flow: column wrap;
-    flex-flow: column wrap;
-    -webkit-justify-content: center;
-    -moz-justify-content: center;
-    justify-content: flex-end;
+.question-title {
+    width: 100%;
+    font-size: 3em;
+    color: rgba(63, 76, 119, 0.5);
+    border-bottom: 1px solid rgba(63, 76, 119, 0.1);
+    position: relative;
+    line-height: 1em;
+    padding-bottom: 10px;
 }
 
-.prequestion > h4 {
-    font-size: 0.8em;
-    -webkit-flex: initial;
-    -moz-flex: initial;
-    flex: initial;
-    margin: 0;
+
+.question-title-expl  {
+    font-size:0.4em;
+    text-align: center;
+    letter-spacing: 0.5em;
 }
 
-.fullquestion {
-    font-size: 1.2em;
-    -webkit-flex: initial;
-    -moz-flex: initial;
-    flex: initial;
+.question-pre {
+    padding:1em;
+    font-size:0.6em;
+    color:rgba(63, 76, 119, 0.5);
+}
+.question-main {
+    font-size: 0.7em;
+    text-align: center;
+    padding: 0 1em;
+    line-height: 1.4em;
+    font-weight: 300;
+}
+
+.question-main:before {
+    /*content: "";*/
+    /*background-image: url('../img/quotes.png');*/
+    /*background-size: 100%;*/
+    /*background-repeat: no-repeat;*/
+    /*height: 40px;*/
+    /*width: 40px;*/
+    /*float: left;*/
+    /*margin-right: 0.2em;*/
+}
+
+
+
+.question-link {
+    -webkit-flex: 2em 1 auto;
+    -moz-flex: 2em 1 auto;
+    flex: 2em 1 auto;
+    font-size:0.6em;
+    color:rgba(255, 255, 255, 0.5);
 }
 
 
@@ -371,6 +421,8 @@ ul.menu li > a:hover {
 }
 .about > h1 {
     line-height: 1em;
+    font-size:1em;
+    color:#FE6700;
     margin: 0;
     margin-bottom: 0.5em;
     border-bottom: 1px solid rgba(63, 76, 119, 0.2);
@@ -385,17 +437,100 @@ ul.menu li > a:hover {
     bottom:0;
     left:0;
     right:0;
+}
+
+.reward {
+    flex: 10;
+    text-align: center;
+    margin: 0.5em;
+    position: relative;
+    /*overflow-y: scroll;*/
+    color:rgba(63, 76, 119, 1);
+}
+
+.reward-title {
+    width: 100%;
+    font-size: 3em;
+    color: rgba(63, 76, 119, 0.5);
+    border-bottom: 1px solid rgba(63, 76, 119, 0.1);
+    position: relative;
+    line-height: 1em;
+    padding-bottom: 10px;
+}
+
+
+
+.reward-quote {
+    -webkit-flex: 2em 1 auto;
+    -moz-flex: 2em 1 auto;
+    flex: 2em 1 auto;
+    font-size: 0.7em;
+    margin-bottom: 1em;
+    text-align: center;
+    padding: 0 1em;
+    line-height:1.4em;
+    color:rgba(63, 76, 119, 1);
+}
+
+
+
+.reward-author {
+    padding:1em;
+    font-size:0.6em;
+    color:rgba(63, 76, 119, 0.5);
 
 }
 
-@media only screen and (min-device-width: 320px) {
-    .fullquestion h1 {
-        font-size: 0.9em;
-    }
+.reward-link {
+    -webkit-flex: 2em 1 auto;
+    -moz-flex: 2em 1 auto;
+    flex: 2em 1 auto;
+    font-size:0.6em;
+    color:rgba(63, 76, 119, 0.5);
+}
 
-    .prequestion h4 {
-        font-size: 0.5em;
-    }
+
+.colorSlideDay {
+    background-color:#ffffff;
+}
+
+.colorSlideWeek {
+    background-color: #ffffff;
+
+}
+
+.colorSlideMonth {
+    background-color: #ffffff;
+
+}
+
+.colorSlideReward {
+    background-color: #ffffff;
+}
+.colorSlideAbout {
+    background-color: white;
+}
+
+
+
+
+.logo-hot {
+    font-weight: 600;
+    font-size:1em;
+    color:#FE6700;
+    display:inline;
+}
+
+.logo-q {
+    font-weight: 600;
+    color: #3F4C77;
+    display: inline-block;
+    margin-left: -0.3em;
+    text-transform: uppercase;
+    font-size:0.8em;
+}
+
+@media only screen and (min-device-width: 320px) {
 
     .btn-answer {
         font-size: 1.2em;
@@ -407,14 +542,7 @@ ul.menu li > a:hover {
 }
 
 @media only screen and (min-device-width: 400px) {
-    .fullquestion h1 {
-        font-size: 0.8em;
-        line-height: 1.3em;
-    }
 
-    .prequestion h4 {
-        font-size: 0.6em;
-    }
 
     .btn-answer {
         font-size: 1.4em;
@@ -424,22 +552,3 @@ ul.menu li > a:hover {
         font-size: 0.6em;
     }
 }
-
-/*@media only screen and (min-device-width: 480px) {*/
-/*.fullquestion h1 {*/
-/*font-size: 0.8em;*/
-/*line-height:1.3em;*/
-/*}*/
-
-/*.prequestion h4 {*/
-/*font-size: 0.6em;*/
-/*}*/
-
-/*.btn-answer {*/
-/*font-size: 1.4em;*/
-/*}*/
-
-/*.home-paragraph {*/
-/*font-size: 0.6em;*/
-/*}*/
-/*}*/

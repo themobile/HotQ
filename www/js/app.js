@@ -7,6 +7,10 @@ angular.module("hotq", [ "ngRoute", "ngAnimate", "ngTouch", "hotq.services", "ho
                 resolve: {
                     changeScreen: function($rootScope) {
                         $rootScope.currScreen='questionOfDay';
+                        //override for About screen which needs scroll
+                        $rootScope.overStyle='overStyleAboutFalse'
+                        //override for background color sp-page
+                        $rootScope.colorSlide='colorSlideDay';
                         $rootScope.isQuestionScreen=true;
                     }
                 }
@@ -16,6 +20,8 @@ angular.module("hotq", [ "ngRoute", "ngAnimate", "ngTouch", "hotq.services", "ho
                 controller: "HotqCtl",resolve: {
                     changeScreen: function($rootScope) {
                         $rootScope.currScreen='questionOfWeek';
+                        $rootScope.overStyle='overStyleAboutFalse'
+                        $rootScope.colorSlide='colorSlideWeek';
                         $rootScope.isQuestionScreen=true;
                     }
                 }
@@ -27,6 +33,8 @@ angular.module("hotq", [ "ngRoute", "ngAnimate", "ngTouch", "hotq.services", "ho
                 resolve: {
                     changeScreen: function($rootScope) {
                         $rootScope.currScreen='questionOfMonth';
+                        $rootScope.overStyle='overStyleAboutFalse';
+                        $rootScope.colorSlide='colorSlideMonth';
                         $rootScope.isQuestionScreen=true;
                     }
                 }
@@ -38,6 +46,8 @@ angular.module("hotq", [ "ngRoute", "ngAnimate", "ngTouch", "hotq.services", "ho
                 resolve: {
                     changeScreen: function($rootScope) {
                         $rootScope.currScreen='reward';
+                        $rootScope.overStyle='overStyleAboutFalse';
+                        $rootScope.colorSlide='colorSlideReward';
                         $rootScope.isQuestionScreen=false;
                     }
                 }
@@ -50,6 +60,8 @@ angular.module("hotq", [ "ngRoute", "ngAnimate", "ngTouch", "hotq.services", "ho
                 resolve: {
                     changeScreen: function($rootScope) {
                         $rootScope.currScreen='about';
+                        $rootScope.overStyle='overStyleAboutTrue';
+                        $rootScope.colorSlide='colorSlideAbout';
                         $rootScope.isQuestionScreen=false;
                     }
                 }

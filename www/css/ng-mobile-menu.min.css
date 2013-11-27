@@ -3,13 +3,13 @@
 }
 
 #sp-nav, #sp-nav.wide {
-    width: 80%;
+    width: 70%;
     overflow: hidden;
     position: absolute;
     top: 0;
     left: 0;
     height: 100%;
-    background-color: #3F4C77;
+    background-color: #313447;
 }
 
 #sp-nav nav, #sp-nav.wide nav {
@@ -53,8 +53,8 @@
 
 #sp-nav.show + #sp-page, #sp-nav.show.wide + #sp-page {
     position: absolute;
-    -webkit-transform: translateX(80%);
-    transform: translateX(80%);
+    -webkit-transform: translateX(70%);
+    transform: translateX(70%);
     -webkit-transition-duration: 0.3s;
     transition-duration: 0.3s;
     overflow-x: hidden;
