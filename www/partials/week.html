@@ -1,8 +1,14 @@
-<div class="prequestion flex-item" ng-cloack>
-    <h4>{{questions.questionOfWeek.text1}}</h4>
+<div class="question-title-expl">întrebare valabilă</div>
+
+<div class="question-title" >
+    7 zile
 </div>
-<div class="fullquestion flex-item" ng-cloack>
-    <h1>{{questions.questionOfWeek.text2}}</h1>
+
+<div ng-cloack class="question-pre">{{questions.questionOfWeek.text1}}</div>
+
+<div ng-cloack class="question-main"  ng-cloack>
+    {{questions.questionOfWeek.text2}}
 </div>
+<!--<div ng-click="goReward(questions.questionOfWeek.link)" class="question-link" >Descoperă mai multe...</div>-->
 
 

@@ -6,13 +6,16 @@ angular.module('hotq.controllers', [])
 
         var screenList = ["questionOfDay", "questionOfWeek", "questionOfMonth", "reward"];
 
+
+
+
         $scope.init = function () {
+
             var initQuestions = function (id) {
 
                 //loader
                 $scope.loaderMessage="hotQ încarcă întrebările...";
                 $rootScope.loader = true;
-
                 $rootScope.currScreen="questionOfDay";
                 questions.getAll(id)
                     .success(function (data) {
@@ -21,25 +24,25 @@ angular.module('hotq.controllers', [])
                         $scope.loaderMessage='Loadddddiniinig';
 
                         //padding for questions at 140 and 60 chars
-                        var spaceous = ' '
-                            , padQ = ''
-                            , padI = ''
-
-                        for (var i = 0; i < 141; i++) {
-                            padQ = padQ + spaceous;
-                        }
-
-                        for (var i = 0; i < 61; i++) {
-                            padI = padI + spaceous;
-                        }
-
-                        $scope.questions.questionOfDay.text1 = ($scope.questions.questionOfDay.text1 + padI).slice(0, 60);
-                        $scope.questions.questionOfWeek.text1 = ($scope.questions.questionOfWeek.text1 + padI).slice(0, 60);
-                        $scope.questions.questionOfMonth.text1 = ($scope.questions.questionOfMonth.text1 + padI).slice(0, 60);
-
-                        $scope.questions.questionOfDay.text2 = ($scope.questions.questionOfDay.text2 + padQ).slice(0, 140);
-                        $scope.questions.questionOfWeek.text2 = ($scope.questions.questionOfWeek.text2 + padQ).slice(0, 140);
-                        $scope.questions.questionOfMonth.text2 = ($scope.questions.questionOfMonth.text2 + padQ).slice(0, 140);
+//                        var spaceous = ' '
+//                            , padQ = ''
+//                            , padI = ''
+//
+//                        for (var i = 0; i < 141; i++) {
+//                            padQ = padQ + spaceous;
+//                        }
+//
+//                        for (var i = 0; i < 61; i++) {
+//                            padI = padI + spaceous;
+//                        }
+//
+//                        $scope.questions.questionOfDay.text1 = ($scope.questions.questionOfDay.text1 + padI).slice(0, 60);
+//                        $scope.questions.questionOfWeek.text1 = ($scope.questions.questionOfWeek.text1 + padI).slice(0, 60);
+//                        $scope.questions.questionOfMonth.text1 = ($scope.questions.questionOfMonth.text1 + padI).slice(0, 60);
+//
+//                        $scope.questions.questionOfDay.text2 = ($scope.questions.questionOfDay.text2 + padQ).slice(0, 140);
+//                        $scope.questions.questionOfWeek.text2 = ($scope.questions.questionOfWeek.text2 + padQ).slice(0, 140);
+//                        $scope.questions.questionOfMonth.text2 = ($scope.questions.questionOfMonth.text2 + padQ).slice(0, 140);
 
                     })
                     .error(function (error) {
@@ -55,11 +58,16 @@ angular.module('hotq.controllers', [])
             $scope.position = geolocation.getAll();
         };
 
-
+        //functie pentru rutare
         $scope.go=function(location) {
            $location.path(location);
         };
 
+
+        $scope.goReward=function(location) {
+            console.log(location);
+            window.open(location, '_blank', 'location=yes');
+        }
 
         //disable Forward arrow
         $scope.checkForwardArrowDisabled = function() {
@@ -87,6 +95,7 @@ angular.module('hotq.controllers', [])
 
         //step forward
         $scope.next = function () {
+
             var curr = screenList.indexOf($rootScope.currScreen);
             curr++;
             if (curr <= screenList.length - 1) {
@@ -98,6 +107,7 @@ angular.module('hotq.controllers', [])
 
         //step backward
         $scope.previous = function () {
+
             var curr = screenList.indexOf($rootScope.currScreen);
             curr--;
             if (curr >= 0) {
@@ -122,6 +132,8 @@ angular.module('hotq.controllers', [])
                     $rootScope.loader = false;
                 });
         };
+
+
     })
 
 

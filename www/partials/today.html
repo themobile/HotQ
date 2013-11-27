@@ -1,8 +1,12 @@
-<div class="prequestion flex-item" ng-cloack>
-    <h4>{{questions.questionOfDay.text1}}</h4>
-</div>
-<div class="fullquestion flex-item" ng-cloack>
-    <h1>{{questions.questionOfDay.text2}}</h1>
+<div class="question-title-expl">întrebare valabilă</div>
+
+<div class="question-title" >
+    astăzi
 </div>
 
+<div ng-cloack class="question-pre" >{{questions.questionOfDay.text1}}</div>
+<div ng-cloack class="question-main">
+    {{questions.questionOfDay.text2}}
+</div>
+<!--<div ng-click="goReward(questions.questionOfDay.link)" class="question-link" >Descoperă mai multe...</div>-->
 
