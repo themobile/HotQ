@@ -93,14 +93,6 @@ _VoteSave = function (installationId, questionId, answer, voteDate) {
         ;
 
     voteDateTest = moment(voteDate).format("YYYY-MM-DD") + "T00:00:00.000Z";
-//
-//    console.log(" unu ");
-//    console.log(voteDateTest);
-//    console.log(moment(voteDateTest).format());
-//    console.log(" doi ");
-//    console.log(voteDate);
-//    console.log(moment(voteDate).format());
-//    console.log(" trei ");
 
     var qQ = new Parse.Query("Question");
     qQ.equalTo("objectId", questionId);
