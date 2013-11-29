@@ -414,8 +414,8 @@ Parse.Cloud.define("test3", function (request, response) {
 });
 
 Parse.Cloud.define("test4", function (request, response) {
-    _GetRandomQuote().then(function (qId) {
-        response.success(qId);
+    _QuestionCategory("social").then(function (rez) {
+        response.success(rez);
     })
 });
 
