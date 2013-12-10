@@ -18,92 +18,120 @@
     under the License.
 -->
 
-        <!--is bootstrapped in index.js on deviceready-->
+<!--is bootstrapped in index.js on deviceready-->
 
-<html  lang="ro-RO">
+<html lang="ro-RO">
 <head>
     <meta charset="utf-8"/>
     <meta name="format-detection" content="telephone=no"/>
     <meta name="viewport"
           content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height"/>
     <!--<link rel="stylesheet" href="css/bootstrap.min.css">-->
-    <link rel="stylesheet" href="css/ng-mobile-menu.min.css">
     <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/ng-mobile-menu.min.css">
     <link rel="stylesheet" href="css/font.css">
     <link rel="stylesheet" href="css/loader.css">
     <link rel="stylesheet" href="css/animate-custom.css">
     <title>hotQ</title>
+
 </head>
-<body  ng-controller="HotqCtl" ng-cloak ng-init="init()">
+<body ng-controller="HotqCtl" ng-cloak ng-init="init()">
 
 
 //loader directive
-<div loader ng-show="loader" class="loader"> </div>
+<div loader ng-show="loader" class="loader"></div>
 
 <!--menu hotq-->
 <div id="sp-nav" ng-swipe-left="$spMenu.toggle()">
     <ul class="menu">
-        <li><a class="icon-heart" onclick="window.plugins.socialsharing.share('hotQ si adevărul pe care vrem să-l aflăm!', null, null, 'http://hotq.ro')"><strong>Share hotQ</strong><br/>cu prietenii tăi</a></li>
-        <li><a onclick="window.open('http://facebook.com', '_blank', 'location=yes')" class="icon-social-facebook"><strong>Ai sugestii?</strong><br/>hotQ pe
+        <li><a class="icon-heart"
+               onclick="window.plugins.socialsharing.share('hotQ si adevărul pe care vrem să-l aflăm!', null, null, 'http://hotq.ro')"><strong>Share
+            hotQ</strong><br/>cu prietenii tăi</a></li>
+        <li><a onclick="window.open('http://facebook.com', '_blank', 'location=yes')"
+               class="icon-social-facebook"><strong>Ai sugestii?</strong><br/>hotQ pe
             Facebook</a></li>
-        <li><a onclick="window.open('http://hotq.ro', '_blank', 'location=yes')" class="icon-chart-line"><strong>Răspunsurile</strong><br/>celorlalți</a>
+        <li><a onclick="window.open('http://hotq.ro', '_blank', 'location=yes')"
+               class="icon-group"><strong>Răspunsurile</strong><br/>celorlalți</a>
         </li>
-        <li><a ng-click="$spMenu.toggle();go('/about')" class="icon-info-large"><strong>Despre</strong><br/> hotQ</a></li>
+        <li><a ng-click="go('/about')" class="icon-info-large"><strong>Despre</strong><br/> hotQ</a>
+        </li>
     </ul>
-    <a class="themobile" onclick="window.open('http://themobile.ro', '_blank', 'location=yes')" target="_blank">themobile.ro</a>
+    <a class="themobile" ng-click="window.open('http://themobile.ro', '_blank', 'location=yes')" target="_blank">themobile.ro</a>
 </div>
 
 
 <!--pagina trebuie sa aiba sp-page pentru a functiona cu meniul-->
-<div id="sp-page" ng-class="colorSlide" ng-swipe-left="next()" ng-swipe-right="previous()">
+<div id="sp-page" ng-swipe-left="next()" ng-swipe-right="previous()">
     <div id="nav">
-        <div ng-click="$spMenu.toggle()" class="menu-button icon-th-menu col-xs-4 "></div>
-        <div class="menu-title"></div>
-        <div class=" arrow-container">
-            <!--schimba in disabled daca nr screen = 0-->
-            <div ng-class="{disabled:checkBackwardArrowDisabled() }" ng-click="previous()"
-                 class="arrows arrow-left icon-chevron-left col-xs-2 col-xs-offset-4"></div>
+        <div ng-click="$spMenu.toggle()" class="menu-button icon-th-small"></div>
+    </div>
 
-            <!--schimba in disabled daca nr screen = 3-->
-            <div ng-class="{disabled:checkForwardArrowDisabled()}" ng-click="next()"
-                 class="arrows arrow-right icon-chevron-right col-xs-2"></div>
+    <!--//arrows for navigation-->
 
+
+    <div ng-view class="question" ng-class="{'animate-forward': forward==true}"></div>
+
+
+
+    <div class="answers">
+
+        <!--progress bar-->
+        <ul ng-if="currScreen!='about'" class="progress-bar">
+            <li class="bar-today" ng-click="gother('/questionOfDay')"
+                ng-class="{voted:questions.questionOfDay.hasVote,active:currScreen=='questionOfDay'}">1
+            </li>
+            <li class="bar-week" ng-click="gother('/questionOfWeek')"
+                ng-class="{voted:questions.questionOfWeek.hasVote,active:currScreen=='questionOfWeek'}">2
+            </li>
+            <li class="bar-month" ng-click="gother('/questionOfMonth')"
+                ng-class="{voted:questions.questionOfMonth.hasVote,active:currScreen=='questionOfMonth'}">3
+            </li>
+            <li class="bar-reward" ng-click="gother('/reward')" ng-class="{active:currScreen=='reward'}">4</li>
+        </ul>
+
+
+        <!--//daca e screen de intrebare-->
+        <div ng-if="isQuestionScreen" class="simple-tampon">
+            <div class="answer-buttons">
+                <button
+                        ng-click="voteNow(getQuestionId(),1)"
+                        class="btn-answer btn-yes"
+                        role="button">
+                    DA
+                    <span class="yes-fill" ng-hide="answersVisible">
+
+                    </span>
+
+                </button>
+                <button ng-click="voteNow(getQuestionId(),2)"
+                        class="btn-answer btn-no"
+                        role="button">
+                    NU
+                </button>
+            </div>
         </div>
 
+        <!--//daca NU e screen de intrebare-->
+        <div ng-if="!isQuestionScreen">
+            <div ng-cloack class="answer-buttons" ng-show="answersVisible()">
+                <div ng-click="gother('/questionOfDay')" class="icon-arrow-back about-link-questions"></div>
+            </div>
+        </div>
     </div>
 
 
 
-    <div ng-view  class="question" ng-class="'question ' + overStyle"></div>
 
-
-    <div ng-if="isQuestionScreen" class="spacer"></div>
-
-    <div ng-if="isQuestionScreen" class="answers">
-        <!--div for yes/no answers        -->
-        <div ng-cloack class="answer-buttons" ng-show="answersVisible()">
-            <a ng-click="voteNow(getQuestionId(),1)" class="btn-answer btn-yes" role="button">DA</a>
-            <a ng-click="voteNow(getQuestionId(),2)" class="btn-answer btn-no" role="button">NU</a>
-        </div>
-
-
-
-
-        <!--div for answering to vote and inviting to vote next-->
-        <div  class="thanks answer-buttons" ng-hide="answersVisible()">
-            Am primit răspunsul tău.<br/><a ng-click="next()">Citește următoarea întrebare!</a>
-        </div>
-    </div>
     <div class="footer-logo"></div>
-    <div class="footer">
-        <h5>adevărul este anonim</h5>
-    </div>
+    <div class="footer-over"></div>
 </div>
 
 <script type="text/javascript" src="phonegap.js"></script>
 
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true"></script>
 <script type="text/javascript" src="js/index.js"></script>
-<script type="text/javascript" src="res/js/angular.min.js"></script>
+<script src="res/js/angular.min.js"></script>
+<!--<script type="text/javascript" src="res/js/angular.min.js"></script>-->
 <script type="text/javascript" src="res/js/angular-animate.min.js"></script>
 <script type="text/javascript" src="res/js/angular-cookies.min.js"></script>
 <script type="text/javascript" src="res/js/angular-resource.min.js"></script>
@@ -114,8 +142,11 @@
 <script type="text/javascript" src="js/controllers.js"></script>
 <script type="text/javascript" src="js/services.js"></script>
 
+
 <script type="text/javascript">
     app.initialize();
 </script>
 </body>
 </html>
+
+

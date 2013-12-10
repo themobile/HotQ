@@ -1,28 +1,22 @@
-angular.module("hotq", [ "ngRoute", "ngAnimate", "ngTouch", "hotq.services", "hotq.controllers", "shoppinpal.mobile-menu"])
+angular.module("hotq", [ "ngRoute", "ngAnimate","ngTouch", "hotq.services", "hotq.controllers", "shoppinpal.mobile-menu" ])
     .config(function ($routeProvider) {
         $routeProvider
             .when("/questionOfDay", {
                 templateUrl: "partials/today.html",
                 controller: "HotqCtl",
                 resolve: {
-                    changeScreen: function($rootScope) {
-                        $rootScope.currScreen='questionOfDay';
-                        //override for About screen which needs scroll
-                        $rootScope.overStyle='overStyleAboutFalse'
-                        //override for background color sp-page
-                        $rootScope.colorSlide='colorSlideDay';
-                        $rootScope.isQuestionScreen=true;
+                    changeScreen: function ($rootScope) {
+                        $rootScope.currScreen = 'questionOfDay';
+                        $rootScope.isQuestionScreen = true;
                     }
                 }
             })
             .when("/questionOfWeek", {
                 templateUrl: "partials/week.html",
-                controller: "HotqCtl",resolve: {
-                    changeScreen: function($rootScope) {
-                        $rootScope.currScreen='questionOfWeek';
-                        $rootScope.overStyle='overStyleAboutFalse'
-                        $rootScope.colorSlide='colorSlideWeek';
-                        $rootScope.isQuestionScreen=true;
+                controller: "HotqCtl", resolve: {
+                    changeScreen: function ($rootScope) {
+                        $rootScope.currScreen = 'questionOfWeek';
+                        $rootScope.isQuestionScreen = true;
                     }
                 }
 
@@ -31,11 +25,9 @@ angular.module("hotq", [ "ngRoute", "ngAnimate", "ngTouch", "hotq.services", "ho
                 templateUrl: "partials/month.html",
                 controller: "HotqCtl",
                 resolve: {
-                    changeScreen: function($rootScope) {
-                        $rootScope.currScreen='questionOfMonth';
-                        $rootScope.overStyle='overStyleAboutFalse';
-                        $rootScope.colorSlide='colorSlideMonth';
-                        $rootScope.isQuestionScreen=true;
+                    changeScreen: function ($rootScope) {
+                        $rootScope.currScreen = 'questionOfMonth';
+                        $rootScope.isQuestionScreen = true;
                     }
                 }
 
@@ -44,25 +36,20 @@ angular.module("hotq", [ "ngRoute", "ngAnimate", "ngTouch", "hotq.services", "ho
                 templateUrl: "partials/reward.html",
                 controller: "HotqCtl",
                 resolve: {
-                    changeScreen: function($rootScope) {
-                        $rootScope.currScreen='reward';
-                        $rootScope.overStyle='overStyleAboutFalse';
-                        $rootScope.colorSlide='colorSlideReward';
-                        $rootScope.isQuestionScreen=false;
+                    changeScreen: function ($rootScope) {
+                        $rootScope.currScreen = 'reward';
+                        $rootScope.isQuestionScreen = false;
                     }
                 }
 
             })
             .when("/about", {
                 templateUrl: "partials/about.html",
-                controller: "HotqCtl"
-                ,
+                controller: "HotqCtl",
                 resolve: {
-                    changeScreen: function($rootScope) {
-                        $rootScope.currScreen='about';
-                        $rootScope.overStyle='overStyleAboutTrue';
-                        $rootScope.colorSlide='colorSlideAbout';
-                        $rootScope.isQuestionScreen=false;
+                    changeScreen: function ($rootScope) {
+                        $rootScope.currScreen = 'about';
+                        $rootScope.isQuestionScreen = false;
                     }
                 }
 
@@ -73,28 +60,39 @@ angular.module("hotq", [ "ngRoute", "ngAnimate", "ngTouch", "hotq.services", "ho
     .run(function ($window, $rootScope) {
 
         //FIXME de pus hardware id intors de parse
-      $rootScope.installId='891e011e-77f3-4b23-8e0d-f7174da27379';
+        $rootScope.installId = '891e011e-77f3-4b23-8e0d-f7174da27379';
 //
-// parseGetInstallationId(function(id) {
-//            $rootScope.installId=id;
-//            console.log('IDDDD:'+id);
-//        }, function(e) {
-//            console.log('InstallID:' + e);
-//        });
+
+        if (typeof parseGetInstallationId == 'function')
+        parseGetInstallationId(function (id) {
+            $rootScope.installId = id;
+            console.log('IDDDD:' + id);
+        }, function (e) {
+            console.log('InstallID:' + e);
+        });
 
 //setup eventuri retea
-        $rootScope.online = true;
+        $rootScope.online = false;
 
         $window.addEventListener("offline", function () {
-            $rootScope.$apply(function () {
-                $rootScope.online = false;
-            });
+
+            $rootScope.$broadcast('onlineChanged', false);
+
+//            $rootScope.$apply(function () {
+//                $rootScope.loaderMessage = "hotQ e offline...";
+//                $rootScope.loader = true;
+//                $rootScope.online = false;
+//            });
         }, false);
 
         $window.addEventListener("online", function () {
-            $rootScope.$apply(function () {
-                $rootScope.online = true;
-            });
+
+            $rootScope.$broadcast('onlineChanged', true);
+//
+//            $rootScope.$apply(function () {
+//                $rootScope.loader = false;
+//                $rootScope.online = true;
+//            });
         }, false);
 
 

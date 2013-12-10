@@ -1,14 +1,20 @@
-<div class="question-title-expl">întrebare valabilă</div>
-
-<div class="question-title" >
-    7 zile
+<div class="question-image">
+    <img class="image-source"
+         src="http://farm1.staticflickr.com/30/51871645_79714deaa8_z.jpg?zz=1"/>
+    <div class="question-title">săptămână</div>
 </div>
 
-<div ng-cloack class="question-pre">{{questions.questionOfWeek.text1}}</div>
 
-<div ng-cloack class="question-main"  ng-cloack>
-    {{questions.questionOfWeek.text2}}
+<div class="question-body">
+    <div class="moreinfo">
+        <div class="info icon-info-large"></div>
+        <div class="credit">Sursa: Agerpres</div>
+    </div>
+
+    <div ng-cloack class="question-pre">{{questions.questionOfWeek.text1}}</div>
+    <div ng-cloack class="question-main">
+        {{questions.questionOfWeek.text2}}
+    </div>
 </div>
-<!--<div ng-click="goReward(questions.questionOfWeek.link)" class="question-link" >Descoperă mai multe...</div>-->
 
 

@@ -33,42 +33,77 @@ angular.module('hotq.services', []).
     })
 
 
-    .factory('questions', function ($http) {
+    .factory('questions', function ($http, $q) {
         return {
             getAll: function (installationId) {
-
-                return $http.post('https://api.parse.com/1/functions/GetQuestions',
-                    installationId,
+                var deferred = $q.defer();
+                $http(
                     {
+                        method: 'POST',
+                        url: 'https://api.parse.com/1/functions/GetQuestions',
                         headers: {
                             "X-Parse-Application-Id": "oYvsd9hx0NoIlgEadXJsqCtU1PgjcPshRqy18kmP",
                             "X-Parse-REST-API-Key": "gX3SUxGPeSnAefjtFmF9MeWpbTIa9YhC8q1n7hLk",
                             "Content-Type": "application/json"
                         },
+                        withCredentials: false,
                         cache: false,
-                        withCredentials: false
+                        data: installationId
                     }
-                );
+                )
+                    .success(function (data, status, headers, config) {
+                        deferred.resolve(data);
+                    })
+                    .error(function (data, status, headers, config) {
+                        deferred.reject(data);
+                    });
+                return deferred.promise;
             }
         }
     })
 
 
-    .factory('geolocation', function () {
+    .factory('geolocation', function ($q) {
         return {
             getAll: function () {
-                var me = this;
+                var deferred = $q.defer();
                 navigator.geolocation.getCurrentPosition(
                     function (position) {
-                        me.position = position;
+                        deferred.resolve(position);
                     },
                     function (error) {
-                        me.position = 'Error in geolocation';
-                    })
-                return me.position;
+                        deferred.reject(error);
+                    });
+                return deferred.promise;
             }
         }
     })
+
+
+    .factory('offlineswitch', function ($rootScope) {
+//        FIXME de facut load la date atunci cand devine online
+//        eventual de mutat getparseid si loadquestions in eventul de online, nu stiu...
+
+        var currentStorage;
+        var me = this;
+        $rootScope.$on('onlineChanged', function (evt, isOnline) {
+
+            var superScope = evt.currentScope;
+            superScope.$apply(function () {
+                superScope.online = isOnline;
+                superScope.loaderMessage = "hotq este offline!";
+                superScope.loader = !isOnline;
+            });
+
+            if (isOnline == true) {
+                //reincarcare date
+                console.log('reincarcare date');
+            }
+            console.log('isOnline: ' + isOnline);
+//            currentStorage = isOnline ? $http : LocalStorage
+        });
+    })
+
 
 
     .directive('loader', function () {
@@ -88,6 +123,11 @@ angular.module('hotq.services', []).
                 '</div>'
         }
     })
+
+
+
+
+
 
 
 

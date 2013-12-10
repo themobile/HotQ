@@ -1,10 +1,45 @@
-<div class="question-title-expl">îți mulțumim cu</div>
 
-<div class="reward-title">idei</div>
+<!--<div class="question-image">-->
+    <!--<img class="image-source"-->
+         <!--src="http://the-libertarian.co.uk/wp-content/uploads/oscarwilde460.jpg"/>-->
+    <!--<div class="question-title">idei</div>-->
+<!--</div>-->
 
-<div ng-cloack class="reward-author">Autor: {{questions.quote.author}}</div>
 
-<div class="reward-quote" ng-cloack>
-    {{questions.quote.body}}
+<!--<div class="question-body">-->
+    <!--<div class="moreinfo">-->
+        <!--<div ng-click="goReward(questions.quote.link)" class="info icon-info-large"></div>-->
+        <!--<div class="credit">Autor: {{questions.quote.author}}</div>-->
+    <!--</div>-->
+
+    <!--<div ng-cloack class="question-main">-->
+        <!--{{questions.quote.body}}-->
+    <!--</div>-->
+<!--</div>-->
+
+
+
+
+
+<div class="question-image">
+    <img class="image-source"
+         src="http://i.telegraph.co.uk/multimedia/archive/02123/OSCAR-WILDE_2123123b.jpg"/>
+    <div class="question-title">idei bune</div>
 </div>
-<div ng-click="goReward(questions.quote.link)" class="reward-link">Descoperă mai multe...</div>
+
+
+<div class="question-body">
+    <div class="moreinfo">
+        <div ng-click="goReward(questions.quote.link)" class="info icon-info-large"></div>
+        <div class="credit">Sursa: {{questions.quote.author}}</div>
+    </div>
+
+    <div class="spacer"></div>
+    <div ng-cloack class="question-main">
+        {{questions.quote.body}}
+    </div>
+</div>
+
+
+
+
