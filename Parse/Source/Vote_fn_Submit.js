@@ -3,6 +3,7 @@ Parse.Cloud.define("VoteSubmit", function (request, response) {
         , questionId = request.params.questionId
         , answer = request.params.answer
         , position = request.params.position
+        , demographics = request.params.demographics
         , type
         ;
     var qQuestion = new Parse.Query("Question");
@@ -17,6 +18,7 @@ Parse.Cloud.define("VoteSubmit", function (request, response) {
             VoteLog.set("installationId", installationId);
             VoteLog.set("answer", answer);
             VoteLog.set("position", position);
+            VoteLog.set("demographics",demographics);
             return VoteLog.save()
         } else {
             return Parse.Promise.error("error.question-not-found");
