@@ -32,7 +32,7 @@ Parse.Cloud.job("ResultProcess", function (request, status) {
                         cntError++;
                         return AddJobRunHistory({
                             name: jobName,
-                            jobId: parsePointer("AppJob", jobRunId.jobId),
+                            jobId: _parsePointer("AppJob", jobRunId.jobId),
                             jobIdText: jobRunId.jobId,
                             runCounter: jobRunId.jobRunCounter,
                             parameters: jobParam,
@@ -45,7 +45,7 @@ Parse.Cloud.job("ResultProcess", function (request, status) {
         }).then(function () {
             return AddJobRunHistory({
                 name: jobName,
-                jobId: parsePointer("AppJob", jobRunId.jobId),
+                jobId: _parsePointer("AppJob", jobRunId.jobId),
                 jobIdText: jobRunId.jobId,
                 runCounter: jobRunId.jobRunCounter,
                 parameters: jobParam,
@@ -59,8 +59,6 @@ Parse.Cloud.job("ResultProcess", function (request, status) {
         });
 });
 
-
-var _ResultProcess;
 _ResultProcess = function (vote) {
     var promise = new Parse.Promise();
     var cntYes = 0

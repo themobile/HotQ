@@ -1,7 +1,5 @@
+//TODO: dev, test, pro
 //TODO: atentie la toate Query-urile: limit este default 100 si maxim 1000 - la un moment dat trebe tinut cont de asta
-
-//todo: table de quotes
-//todo: functie de intors aleator un quotes - in clasa de quotes am o coloana de tip identity (se incarca dintr-o alta clasa dedicata secventelor);
 
 var moment = require('moment')
     , _ = require('underscore')
@@ -10,6 +8,9 @@ var moment = require('moment')
 
 var theBillSecretKey = 'v0]w?I)2~T~S[6n0(z0*';
 var crypto = require('crypto');
+var Buffer = require('buffer').Buffer;
+var isProduction = Parse.applicationId == "V1geU0nKmidZiMLVU0bUpFCDYdnbLqTRUXTrTzWV";
+var HotQVersion = '0.0.1';
 var StringBuffer = function () {
     this.buffer = [];
 };
@@ -39,22 +40,51 @@ var escapeHtml = function (text) {
     return text
 };
 
-var parsePointer;
-parsePointer = function (className, objectId) {
+_getAdminACL = function () {
+    var pACL = new Parse.ACL();
+    pACL.setRoleReadAccess("Administrators", true);
+    pACL.setRoleWriteAccess("Administrators", true);
+    return pACL;
+};
+
+_getUserACL = function (user) {
+    var pACL = new Parse.ACL(user);
+    pACL.setRoleReadAccess("Administrators", true);
+    pACL.setRoleWriteAccess("Administrators", true);
+    return pACL;
+};
+
+_parsePointer = function (className, objectId) {
     var objPointer = {};
     objPointer["__type"] = "Pointer";
     objPointer["className"] = className;
     objPointer["objectId"] = objectId;
     return objPointer;
 };
-var parseDate;
-parseDate = function (stringDate) {
+
+_parseDate = function (stringDate) {
     var objDate = {};
     objDate["__type"] = "Date";
     objDate["iso"] = stringDate;
     return objDate;
 };
-var holidayTable;
+_getAlertDate = function (date, days, time, wdo) {
+    var daysBefore = days ? days : 1
+        , rgxHour = /^(?:[0,1]?\d{1}|2[0-3])\:[0-5]\d$/g
+        , alertTime = rgxHour.test(time) ? time : "09:30"
+        , alertDate = moment(date).subtract('days', daysBefore).format("YYYY-MM-DD") + "T" + alertTime + ":00.000Z"
+        , tempDate
+        , minOffset = 0
+        ;
+    if (wdo) {
+        tempDate = moment(alertDate).format("YYYY-MM-DD");
+        while (_dateIsHoliDay(tempDate)) {
+            tempDate = moment(tempDate).subtract('days', 1).format("YYYY-MM-DD");
+        }
+        alertDate = moment(tempDate).format("YYYY-MM-DD") + "T" + alertTime + ":00.000Z"
+    }
+    return _parseDate(alertDate);
+};
 holidayTable =
     [
         {
@@ -92,10 +122,46 @@ holidayTable =
         },
         {
             "date": "2013-12-26", "description": "A doua zi de Craciun"
+        },
+        //       2 0 1 4
+        {
+            "date": "2014-01-01", "description": "Revelion"
+        },
+        {
+            "date": "2014-01-02", "description": "Revelion 2"
+        },
+        {
+            "date": "2014-04-20", "description": "Prima zi de Paste"
+        },
+        {
+            "date": "2014-04-21", "description": "A 2-a zi de Paste"
+        },
+        {
+            "date": "2014-05-01", "description": "1 Mai"
+        },
+        {
+            "date": "2014-06-08", "description": "Rusalii"
+        },
+        {
+            "date": "2014-06-09", "description": "Rusalii 2"
+        },
+        {
+            "date": "2014-08-15", "description": "Adormirea Maicii Domnului"
+        },
+        {
+            "date": "2014-11-30", "description": "Sf Andrei"
+        },
+        {
+            "date": "2014-12-01", "description": "Sarbatoare Nationala"
+        },
+        {
+            "date": "2014-12-25", "description": "Prima zi de Craciun"
+        },
+        {
+            "date": "2014-12-26", "description": "A doua zi de Craciun"
         }
     ];
-var dateIsHoliDay;
-dateIsHoliDay = function (date) {
+_dateIsHoliDay = function (date) {
     var weekDay = moment(date).day()
         , pos
         ;
@@ -113,8 +179,7 @@ dateIsHoliDay = function (date) {
     }
 
 };
-var dateIsWorkingDay;
-dateIsWorkingDay = function (date) {
+_dateIsWorkingDay = function (date) {
     var weekDay = moment(date).day()
         , pos
         ;
@@ -131,8 +196,7 @@ dateIsWorkingDay = function (date) {
         return false;
     }
 };
-var dateGetRoTimeOffset;
-dateGetRoTimeOffset = function (date) {
+_dateGetRoTimeOffset = function (date) {
     var arrayDates = [
             {"date": "2000-01-01T00:00:00.000Z", "minOffset": -120, "cnt": 86},
             {"date": "2000-03-27T00:00:00.000Z", "minOffset": -180, "cnt": 217},
@@ -347,7 +411,6 @@ dateGetRoTimeOffset = function (date) {
     return arrayDates[i].minOffset;
 };
 
-var formatAmount;
 formatAmount = function (number, groupSeparator, currency, currencyBefore) {
     var theNumber;
     theNumber = number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, groupSeparator);
@@ -359,63 +422,45 @@ formatAmount = function (number, groupSeparator, currency, currencyBefore) {
     return theNumber;
 };
 
-var iif;
 iif = function (condition, trueExpression, falseExpression) {
     falseExpression = falseExpression ? falseExpression : "";
     return !!condition ? trueExpression : falseExpression;
 };
 
-var replicate;
-replicate = function (pChar, pLen) {
-    return Array(pLen + 1).join(pChar);
+_Log = function (somethingToLog) {
+    console.log(somethingToLog);
 };
 
-var padRight;
-padRight = function (pString, pLen, pChar) {
-    return  (pString + replicate(iif(pChar, pChar, " "), pLen)).substring(0, pLen);
-};
+
+Parse.Cloud.define("test_request", function (q, s) {
+    _Log(q);
+    s.success({ciphers: crypto.getCiphers(), hashes: crypto.getHashes()});
+});
 
 Parse.Cloud.define("test1", function (req, res) {
-    var dd = moment()
-        , d = moment(req.params.data)
+    var dd = moment(req.params.date).format()
         ;
     res.success({
-        moment: dd.format(),
-        date: dd.date(),
-        day: dd.day(),
-        cat_sa_scad: iif(dd.day() > 0, dd.day() - 1, 6),
-        luni: dd.subtract("days", iif(dd.day() > 0, dd.day() - 1, 6)).format(),
-        luni_d: d.subtract("days", iif(d.day() > 0, d.day() - 1, 6)).format(),
-        momentTz: dateGetRoTimeOffset(dd),
-        dt1: dd.date(1).format(),
-        dt10: dd.date(20).format()
+        moment: dd,
+        momentTz: _dateGetRoTimeOffset(dd),
+        lastDayNextMonth: moment(dd).add('months', 2).date(1).subtract('days', 1).format("YYYY-MM-DD") + "T00:00:00.000Z",
+        lastDayOfThisMonth: moment(dd).add('months', 1).date(1).subtract('days', 1).format("YYYY-MM-DD") + "T00:00:00.000Z"
     });
 });
 
 Parse.Cloud.define("test2", function (request, response) {
-    Parse.Cloud.useMasterKey();
-    var x = new Parse.Query("_Installation");
-    x.find().then(function (rez) {
-        response.success(rez);
-    }, function (error) {
-        response.error(error);
+    response.success({
+        applicationId: Parse.applicationId,
+        user: request.user
     });
 });
 
 Parse.Cloud.define("test3", function (request, response) {
-    Parse.Cloud.useMasterKey();
-    var q = new Parse.Query("Vote");
-    q.equalTo("installationId", parsePointer("_Installation", "ezljyA7ITD"));
-    q.equalTo("questionId", parsePointer("Question", "OHnYCdQrI1"));
-    q.first().then(function (rez) {
-
-        response.success(rez);
-    });
+    var userId = request.user
+        ;
+    response.success(_getAlertDate("2013-12-12T00:00:00.000Z"
+        , userId.get("alertDaysBefore")
+        , userId.get("alertHour")
+        , userId.get("alertOnlyWorkingDays")
+    ));
 });
-
-Parse.Cloud.define("test4", function (request, response) {
-    _QuestionCategory("social").then(function (rez) {
-        response.success(rez);
-    })
-});
-

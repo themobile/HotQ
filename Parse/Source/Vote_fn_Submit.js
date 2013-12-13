@@ -6,6 +6,7 @@ Parse.Cloud.define("VoteSubmit", function (request, response) {
         , demographics = request.params.demographics
         , type
         ;
+    Parse.Cloud.useMasterKey();
     var qQuestion = new Parse.Query("Question");
     qQuestion.equalTo("objectId", questionId);
     qQuestion.include("typeId");
@@ -14,11 +15,12 @@ Parse.Cloud.define("VoteSubmit", function (request, response) {
             type = question.get("typeId").get("name");
             var VoteLog = Parse.Object.extend("VoteLog");
             VoteLog = new VoteLog();
-            VoteLog.set("questionId", parsePointer("Question", questionId));
+            VoteLog.set("questionId", _parsePointer("Question", questionId));
             VoteLog.set("installationId", installationId);
             VoteLog.set("answer", answer);
             VoteLog.set("position", position);
-            VoteLog.set("demographics",demographics);
+            VoteLog.set("demographics", demographics);
+            VoteLog.setACL(_getAdminACL());
             return VoteLog.save()
         } else {
             return Parse.Promise.error("error.question-not-found");

@@ -2,12 +2,11 @@ Parse.Cloud.job("SetQuestion", function (request, status) {
     var jobName = "SetQuestion"
         , jobParam = request.params
         , jobRunId
-        , theDate = parseDate(moment().format("YYYY-MM-DD") + "T00:00:00.000Z")
+        , theDate = _parseDate(moment().format("YYYY-MM-DD") + "T00:00:00.000Z")
         , dayId, weekId, monthId, quoteId
         ;
 
     Parse.Cloud.useMasterKey();
-
     AddJobRunCounter({
         name: jobName,
         parameters: jobParam
@@ -17,49 +16,44 @@ Parse.Cloud.job("SetQuestion", function (request, status) {
             return _GetCurrentQs(theDate, "day");
         }).then(function (retD) {
             if (retD) {
-                dayId = parsePointer("Question", retD.id);
+                dayId = _parsePointer("Question", retD.id);
             }
             return _GetCurrentQs(theDate, "week");
         }).then(function (retW) {
             if (retW) {
-                weekId = parsePointer("Question", retW.id);
+                weekId = _parsePointer("Question", retW.id);
             }
             return _GetCurrentQs(theDate, "month");
         }).then(function (retM) {
             if (retM) {
-                monthId = parsePointer("Question", retM.id);
+                monthId = _parsePointer("Question", retM.id);
             }
             return _GetRandomQuote();
         }).then(function (retQuote) {
             if (retQuote) {
-                quoteId = parsePointer("Quote", retQuote.id);
+                quoteId = _parsePointer("Quote", retQuote.id);
             }
             var qS = new Parse.Query("QuestionSelect");
             qS.equalTo("date", theDate);
             qS.notEqualTo("isDeleted", true);
             return qS.first();
-        }).then(function (qT) {
-            if (qT) {
-                qT.increment("updates");
-                qT.set("questionOfDay", dayId);
-                qT.set("questionOfWeek", weekId);
-                qT.set("questionOfMonth", monthId);
-                qT.set("quoteId", quoteId);
-                return qT.save();
-            } else {
+        }).then(function (activeQuestion) {
+            if (!(activeQuestion)) {
                 var QT = Parse.Object.extend("QuestionSelect");
-                QT = new QT();
-                QT.set("date", theDate);
-                QT.set("questionOfDay", dayId);
-                QT.set("questionOfWeek", weekId);
-                QT.set("questionOfMonth", monthId);
-                QT.set("quoteId", quoteId);
-                return QT.save();
+                activeQuestion = new QT();
+                activeQuestion.set("date", theDate);
+                activeQuestion.setACL(_getAdminACL());
             }
+            activeQuestion.increment("updates");
+            activeQuestion.set("questionOfDay", dayId);
+            activeQuestion.set("questionOfWeek", weekId);
+            activeQuestion.set("questionOfMonth", monthId);
+            activeQuestion.set("quoteId", quoteId);
+            return activeQuestion.save();
         }).then(function (qTSaved) {
             return AddJobRunHistory({
                 name: jobName,
-                jobId: parsePointer("AppJob", jobRunId.jobId),
+                jobId: _parsePointer("AppJob", jobRunId.jobId),
                 jobIdText: jobRunId.jobId,
                 runCounter: jobRunId.jobRunCounter,
                 parameters: jobParam,
@@ -73,7 +67,7 @@ Parse.Cloud.job("SetQuestion", function (request, status) {
         }, function (error) {
             return AddJobRunHistory({
                 name: jobName,
-                jobId: parsePointer("AppJob", jobRunId.jobId),
+                jobId: _parsePointer("AppJob", jobRunId.jobId),
                 jobIdText: jobRunId.jobId,
                 runCounter: jobRunId.jobRunCounter,
                 parameters: jobParam,
@@ -87,7 +81,6 @@ Parse.Cloud.job("SetQuestion", function (request, status) {
         });
 });
 
-var _GetCurrentQs;
 _GetCurrentQs = function (date, type) {
     var promise = new Parse.Promise()
         ;
@@ -107,9 +100,9 @@ _GetCurrentQs = function (date, type) {
         } else {
             return _DuplicateLastQuestion(date, type);
         }
-    }).then(function (q) {
-            if (q) {
-                promise.resolve(q);
+    }).then(function (question) {
+            if (question) {
+                promise.resolve(question);
             } else {
                 promise.reject({
                     date: date,
@@ -125,11 +118,9 @@ _GetCurrentQs = function (date, type) {
             })
         }
     );
-
     return promise;
 };
 
-var _DuplicateLastQuestion;
 _DuplicateLastQuestion = function (date, type) {
     var promise = new Parse.Promise()
         ;
@@ -150,8 +141,9 @@ _DuplicateLastQuestion = function (date, type) {
             Question.set("typeId", question.get("typeId"));
             Question.set("subject", question.get("subject"));
             Question.set("body", question.get("body"));
-            Question.set("questionId", parsePointer("Question", question.id));
-            Question.set("startDate", parseDate(moment().format("YYYY-MM-DD") + "T00:00:00.000Z"));
+            Question.set("questionId", _parsePointer("Question", question.id));
+            Question.set("startDate", _parseDate(moment().format("YYYY-MM-DD") + "T00:00:00.000Z"));
+            Question.setACL(question.getACL());
             return Question.save();
         } else {
             return Parse.Promise.error("error.question-not-found");
@@ -163,4 +155,38 @@ _DuplicateLastQuestion = function (date, type) {
         });
     return promise;
 };
+
+_GetRandomQuote = function () {
+    var promise = new Parse.Promise()
+        ;
+    var min = 1
+        , max
+        , number
+        ;
+    var qSeq = new Parse.Query("Sequence");
+    qSeq.equalTo("tableName", "Quote");
+    qSeq.first().then(function (seq) {
+        if (seq) {
+            max = seq.get("identity");
+        } else {
+            max = min;
+        }
+        number = Math.floor(Math.random() * (max - min + 1) + min);
+        var qQuote = new Parse.Query("Quote");
+        qQuote.equalTo("sequence", number);
+        return qQuote.first();
+    }).then(function (quote) {
+            if (quote) {
+                return quote;
+            } else {
+                return Parse.Promise.error("error.quote-not-found");
+            }
+        }).then(function (quote) {
+            promise.resolve(quote);
+        }, function (error) {
+            promise.reject(error);
+        });
+    return promise;
+};
+
 

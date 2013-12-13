@@ -4,26 +4,18 @@ Parse.Cloud.define("GetQuestions", function (request, response) {
         , result = {}
         ;
     Parse.Cloud.useMasterKey();
-
-    //debug
-//    result.time = {};
-//    result.time.start = (new Date()).toISOString();
-
     if (request.params.date) {
         theDate = moment(request.params.date).format("YYYY-MM-DD") + "T00:00:00.000Z";
     } else {
         theDate = moment().format("YYYY-MM-DD") + "T00:00:00.000Z";
     }
-
     var qInst = new Parse.Query("_Installation");
     qInst.equalTo("installationId", request.params.installationId);
     qInst.first().then(function (installation) {
-        //debug
-//        result.time.dupaInstalation = (new Date()).toISOString();
         if (installation) {
             installationId = installation.id;
             var qQ = new Parse.Query("QuestionSelect");
-            qQ.equalTo("date", parseDate(theDate));
+            qQ.equalTo("date", _parseDate(theDate));
             qQ.notEqualTo("isDeleted", true);
             qQ.include("questionOfDay.categoryId,questionOfWeek.categoryId,questionOfMonth.categoryId,quoteId");
             qQ.descending("createdAt");
@@ -32,12 +24,7 @@ Parse.Cloud.define("GetQuestions", function (request, response) {
             return Parse.Promise.error("error.device-not-found");
         }
     }).then(function (qT) {
-
-            //debug
-//            result.time.dupaQuestionSelect = (new Date()).toISOString();
-
             result.date = moment(theDate).format("YYYY-MM-DD");
-
             if (qT) {
                 result.questionOfDay = {};
                 result.questionOfDay.id = qT.get("questionOfDay").id;
@@ -71,12 +58,8 @@ Parse.Cloud.define("GetQuestions", function (request, response) {
             }
             return Parse.Promise.as();
         }).then(function () {
-            //debug
-//            result.time.dupaAsignareRezultat = (new Date()).toISOString();
             return _GetVote(installationId, result.questionOfDay.id);
         }).then(function (rez) {
-            //debug
-//            result.time.day = (new Date()).toISOString();
             if (rez) {
                 result.questionOfDay.hasVote = !!rez.date;
                 result.questionOfDay.dateVote = rez.date;
@@ -85,8 +68,6 @@ Parse.Cloud.define("GetQuestions", function (request, response) {
             }
             return _GetVote(installationId, result.questionOfWeek.id);
         }).then(function (rez) {
-            //debug
-//            result.time.week = (new Date()).toISOString();
             if (rez) {
                 result.questionOfWeek.hasVote = !!rez.date;
                 result.questionOfWeek.dateVote = rez.date;
@@ -95,17 +76,12 @@ Parse.Cloud.define("GetQuestions", function (request, response) {
             }
             return _GetVote(installationId, result.questionOfMonth.id);
         }).then(function (rez) {
-            //debug
-//            result.time.month = (new Date()).toISOString();
             if (rez) {
                 result.questionOfMonth.hasVote = !!rez.date;
                 result.questionOfMonth.dateVote = rez.date;
             } else {
                 result.questionOfMonth.hasVote = false;
             }
-            //debug
-//            result.time.end = (new Date()).toISOString();
-//            response.success(result.time);
             response.success(result);
         }, function (error) {
             response.error(error);
@@ -116,8 +92,8 @@ var _GetVote;
 _GetVote = function (installationId, questionId) {
     var promise = new Parse.Promise();
     var qVote = new Parse.Query("Vote");
-    qVote.equalTo("installationId", parsePointer("_Installation", installationId));
-    qVote.equalTo("questionId", parsePointer("Question", questionId));
+    qVote.equalTo("installationId", _parsePointer("_Installation", installationId));
+    qVote.equalTo("questionId", _parsePointer("Question", questionId));
     qVote.first().then(function (vote) {
         if (vote) {
             promise.resolve({date: moment(vote.get("voteDate")).format("YYYY-MM-DDTHH:mm:ss")});

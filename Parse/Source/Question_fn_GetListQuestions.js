@@ -16,18 +16,18 @@ Parse.Cloud.define("GetListQuestions", function (request, response) {
     qQuestion.descending("startDate");
     qQuestion.skip((pageNo - 1) * pageRows);
     qQuestion.limit(pageRows);
-    qQuestion.find().then(function (qs) {
-        _.each(qs, function (q) {
+    qQuestion.find().then(function (questions) {
+        _.each(questions, function (question) {
             var objToAdd = {
-                id: q.id,
-                category: q.get("categoryId").get("name"),
-                type: q.get("typeId").get("name"),
-                typeLocale: q.get("typeId").get("nameLocale"),
-                text1: q.get("subject"),
-                text2: q.get("body"),
-                startDate: moment(q.get("startDate")).format("YYYY-MM-DD"),
-                endDate: moment(q.get("endDate")).format("YYYY-MM-DD"),
-                resultPercentYes: q.get("results") ? q.get("results").percentYes ? q.get("results").percentYes : 50 : 50
+                id: question.id,
+                category: question.get("categoryId").get("name"),
+                type: question.get("typeId").get("name"),
+                typeLocale: question.get("typeId").get("nameLocale"),
+                text1: question.get("subject"),
+                text2: question.get("body"),
+                startDate: moment(question.get("startDate")).format("YYYY-MM-DD"),
+                endDate: moment(question.get("endDate")).format("YYYY-MM-DD"),
+                resultPercentYes: question.get("results") ? question.get("results").percentYes ? question.get("results").percentYes : 50 : 50
             };
             objToAdd.resultPercentNo = 100 - objToAdd.resultPercentYes;
             results.push(objToAdd);

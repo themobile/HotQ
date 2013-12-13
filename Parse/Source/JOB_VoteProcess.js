@@ -28,7 +28,7 @@ Parse.Cloud.job("VoteProcess", function (request, status) {
         }).then(function (qTSaved) {
             return AddJobRunHistory({
                 name: jobName,
-                jobId: parsePointer("AppJob", jobRunId.jobId),
+                jobId: _parsePointer("AppJob", jobRunId.jobId),
                 jobIdText: jobRunId.jobId,
                 runCounter: jobRunId.jobRunCounter,
                 parameters: jobParam,
@@ -42,7 +42,7 @@ Parse.Cloud.job("VoteProcess", function (request, status) {
         }, function (error) {
             return AddJobRunHistory({
                 name: jobName,
-                jobId: parsePointer("AppJob", jobRunId.jobId),
+                jobId: _parsePointer("AppJob", jobRunId.jobId),
                 jobIdText: jobRunId.jobId,
                 runCounter: jobRunId.jobRunCounter,
                 parameters: jobParam,
@@ -56,8 +56,6 @@ Parse.Cloud.job("VoteProcess", function (request, status) {
         });
 });
 
-
-var _VoteSaveFirst;
 _VoteSaveFirst = function (log) {
     var promise = new Parse.Promise()
         ;
@@ -83,7 +81,6 @@ _VoteSaveFirst = function (log) {
     return promise;
 };
 
-var _VoteSave;
 _VoteSave = function (installationId, questionId, answer, voteDate) {
     var promise = new Parse.Promise()
         , questionObject
@@ -136,6 +133,7 @@ _VoteSave = function (installationId, questionId, answer, voteDate) {
                 Vote.set("installationId", installationObject);
                 Vote.set("voteDate", voteDate);
                 Vote.set("answer", answer);
+                Vote.setACL(_getAdminACL());
                 return Vote.save();
             }
         }).then(function (voteSaved) {
