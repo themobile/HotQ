@@ -466,11 +466,15 @@ Parse.Cloud.define("test3", function (request, response) {
 });
 Parse.Cloud.define("AddDevice", function (request, response) {
     Parse.Cloud.useMasterKey();
-    _AddDevice(request.params.deviceCode, request.params.pushCode).then(function (result) {
-        response.success(result.key);
-    }, function (error) {
-        response.error(error);
-    });
+    _AddDevice(request.params.deviceCode,
+        request.params.pushCode,
+        request.params.timeZone,
+        request.params.tags,
+        request.params.type).then(function (result) {
+            response.success(result.key);
+        }, function (error) {
+            response.error(error);
+        });
 });
 
 _GenerateKey = function (token) {
@@ -492,7 +496,7 @@ _GenerateKey = function (token) {
     return rezult;
 };
 
-_AddDevice = function (deviceCode, pushCode) {
+_AddDevice = function (deviceCode, pushCode, timeZone, tags, type) {
     var promise = new Parse.Promise()
         ;
     var qDevice = new Parse.Query("Device");
@@ -506,6 +510,9 @@ _AddDevice = function (deviceCode, pushCode) {
             device.set("pushCode", pushCode);
             device.setACL(_getAdminACL());
         }
+        device.set("timeZone", timeZone);
+        device.set("tags", tags);
+        device.set("type", type);
         device.increment("uses");
         return device.save();
     }).then(function (deviceSaved) {
