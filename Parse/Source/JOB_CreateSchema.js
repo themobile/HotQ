@@ -71,7 +71,249 @@ var HotQSchema = {
         object: {},
         array: []
     },
-    tables: []
+    tables: [
+        {
+            name: "AppJob",
+            columns: [
+                {
+                    name: "name", type: "string"
+                },
+                {
+                    name: "runCounter", type: "integer"
+                },
+                {
+                    name: "parameters", type: "object"
+                }
+            ]
+        },
+        {
+            name: "AppJobRunHistory",
+            columns: [
+                {
+                    name: "name", type: "string"
+                },
+                {
+                    name: "jobId", type: "pointer", default: {__type: "Pointer", className: "AppJob", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "isSuccess", type: "boolean"
+                },
+                {
+                    name: "isError", type: "boolean"
+                },
+                {
+                    name: "isOther", type: "boolean"
+                },
+                {
+                    name: "runCounter", type: "integer"
+                },
+                {
+                    name: "status", type: "string"
+                },
+                {
+                    name: "statusObject", type: "object"
+                },
+                {
+                    name: "jobIdText", type: "string"
+                },
+                {
+                    name: "parameters", type: "object"
+                }
+            ]
+        },
+        {
+            name: "Device",
+            columns: [
+                {
+                    name: "deviceCode", type: "string"
+                },
+                {
+                    name: "pushCode", type: "string"
+                },
+                {
+                    name: "type", type: "string"
+                },
+                {
+                    name: "timeZone", type: "string"
+                },
+                {
+                    name: "installationId", type: "string"
+                },
+                {
+                    name: "tags", type: "object"
+                },
+                {
+                    name: "isDeleted", type: "boolean"
+                }
+            ]
+        },
+        {
+            name: "Question",
+            columns: [
+                {
+                    name: "categoryId", type: "pointer", default: {__type: "Pointer", className: "QuestionCategory", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "typeId", type: "pointer", default: {__type: "Pointer", className: "QuestionType", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "results", type: "object"
+                },
+                {
+                    name: "subject", type: "string"
+                },
+                {
+                    name: "body", type: "string"
+                },
+                {
+                    name: "startDate", type: "date"
+                },
+                {
+                    name: "endDate", type: "date"
+                },
+                {
+                    name: "isDeleted", type: "boolean"
+                }
+            ]
+        },
+        {
+            name: "QuestionCategory",
+            columns: [
+                {
+                    name: "name", type: "string"
+                },
+                {
+                    name: "nameLocale", type: "string"
+                },
+                {
+                    name: "isDeleted", type: "boolean"
+                }
+            ]
+        },
+        {
+            name: "QuestionSelect",
+            columns: [
+                {
+                    name: "date", type: "date"
+                },
+                {
+                    name: "questionOfDay", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "questionOfWeek", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "questionOfMonth", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "quoteId", type: "pointer", default: {__type: "Pointer", className: "Quote", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "updates", type: "integer"
+                },
+                {
+                    name: "isDeleted", type: "boolean"
+                }
+            ]
+        },
+        {
+            name: "QuestionType",
+            columns: [
+                {
+                    name: "name", type: "string"
+                },
+                {
+                    name: "nameLocale", type: "string"
+                },
+                {
+                    name: "isDeleted", type: "boolean"
+                }
+            ]
+        },
+        {
+            name: "Quote",
+            columns: [
+                {
+                    name: "sequence", type: "integer"
+                },
+                {
+                    name: "author", type: "string"
+                },
+                {
+                    name: "body", type: "string"
+                },
+                {
+                    name: "link", type: "string"
+                },
+                {
+                    name: "isDeleted", type: "boolean"
+                }
+            ]
+        },
+        {
+            name: "Sequence",
+            columns: [
+                {
+                    name: "identity", type: "integer"
+                },
+                {
+                    name: "tableName", type: "string"
+                }
+            ]
+        },
+        {
+            name: "Vote",
+            columns: [
+                {
+                    name: "answer", type: "object"
+                },
+                {
+                    name: "counter", type: "integer"
+                },
+                {
+                    name: "voteDate", type: "date"
+                },
+                {
+                    name: "deviceId", type: "pointer", default: {__type: "Pointer", className: "Device", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "questionId", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "done", type: "boolean"
+                }
+            ]
+        },
+        {
+            name: "VoteLog",
+            columns: [
+                {
+                    name: "answer", type: "object"
+                },
+                {
+                    name: "installationId", type: "string"
+                },
+                {
+                    name: "questionId", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "position", type: "object"
+                },
+                {
+                    name: "demographics", type: "object"
+                },
+                {
+                    name: "isSuccess", type: "boolean"
+                },
+                {
+                    name: "status", type: "string"
+                },
+                {
+                    name: "voteId", type: "pointer", default: {__type: "Pointer", className: "Vote", objectId: "Q2AktMb7uA"}
+                }
+            ]
+        }
+    ]
 };
 
 var adminUsers = [

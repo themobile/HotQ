@@ -464,6 +464,65 @@ Parse.Cloud.define("test3", function (request, response) {
         , userId.get("alertOnlyWorkingDays")
     ));
 });
+Parse.Cloud.define("AddDevice", function (request, response) {
+    Parse.Cloud.useMasterKey();
+    _AddDevice(request.params.deviceCode, request.params.pushCode).then(function (result) {
+        response.success(result.key);
+    }, function (error) {
+        response.error(error);
+    });
+});
+
+_GenerateKey = function (token) {
+    var key = new Array(16)
+        , password
+        , cipher, rezult
+        , plainText = 'ascii'
+        , cipherText = 'base64'
+        , algorithm = 'aes-256-cbc'
+        ;
+    key[0] = key[11] = key[10] = key[9] = "1";
+    key[1] = key[12] = key[15] = key[8] = "2";
+    key[2] = key[13] = key[14] = key[7] = "3";
+    key[3] = key[4] = key[5] = key[6] = "4";
+    password = key.join();
+    cipher = crypto.createCipher(algorithm, password);
+    rezult = cipher.update(token, plainText, cipherText);
+    rezult += cipher.final(cipherText);
+    return rezult;
+};
+
+_AddDevice = function (deviceCode, pushCode) {
+    var promise = new Parse.Promise()
+        ;
+    var qDevice = new Parse.Query("Device");
+    qDevice.equalTo("deviceCode", deviceCode);
+    qDevice.equalTo("pushCode", pushCode);
+    qDevice.first().then(function (device) {
+        if (!device) {
+            var Device = Parse.Object.extend("Device");
+            device = new Device();
+            device.set("deviceCode", deviceCode);
+            device.set("pushCode", pushCode);
+            device.setACL(_getAdminACL());
+        }
+        device.increment("uses");
+        return device.save();
+    }).then(function (deviceSaved) {
+            if (deviceSaved.get("installationId")) {
+                return deviceSaved;
+            } else {
+                deviceSaved.set("installationId", _GenerateKey(deviceSaved.id));
+                return deviceSaved.save();
+            }
+        }).then(function (deviceFinal) {
+            promise.resolve({key: deviceFinal.get("installationId")});
+        }, function (error) {
+            promise.reject(error);
+        });
+    return promise;
+};
+
 Parse.Cloud.beforeSave("AppJob", function (request, response) {
     Parse.Cloud.useMasterKey();
     request.object.increment("runCounter");
@@ -1038,7 +1097,249 @@ var HotQSchema = {
         object: {},
         array: []
     },
-    tables: []
+    tables: [
+        {
+            name: "AppJob",
+            columns: [
+                {
+                    name: "name", type: "string"
+                },
+                {
+                    name: "runCounter", type: "integer"
+                },
+                {
+                    name: "parameters", type: "object"
+                }
+            ]
+        },
+        {
+            name: "AppJobRunHistory",
+            columns: [
+                {
+                    name: "name", type: "string"
+                },
+                {
+                    name: "jobId", type: "pointer", default: {__type: "Pointer", className: "AppJob", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "isSuccess", type: "boolean"
+                },
+                {
+                    name: "isError", type: "boolean"
+                },
+                {
+                    name: "isOther", type: "boolean"
+                },
+                {
+                    name: "runCounter", type: "integer"
+                },
+                {
+                    name: "status", type: "string"
+                },
+                {
+                    name: "statusObject", type: "object"
+                },
+                {
+                    name: "jobIdText", type: "string"
+                },
+                {
+                    name: "parameters", type: "object"
+                }
+            ]
+        },
+        {
+            name: "Device",
+            columns: [
+                {
+                    name: "deviceCode", type: "string"
+                },
+                {
+                    name: "pushCode", type: "string"
+                },
+                {
+                    name: "type", type: "string"
+                },
+                {
+                    name: "timeZone", type: "string"
+                },
+                {
+                    name: "installationId", type: "string"
+                },
+                {
+                    name: "tags", type: "object"
+                },
+                {
+                    name: "isDeleted", type: "boolean"
+                }
+            ]
+        },
+        {
+            name: "Question",
+            columns: [
+                {
+                    name: "categoryId", type: "pointer", default: {__type: "Pointer", className: "QuestionCategory", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "typeId", type: "pointer", default: {__type: "Pointer", className: "QuestionType", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "results", type: "object"
+                },
+                {
+                    name: "subject", type: "string"
+                },
+                {
+                    name: "body", type: "string"
+                },
+                {
+                    name: "startDate", type: "date"
+                },
+                {
+                    name: "endDate", type: "date"
+                },
+                {
+                    name: "isDeleted", type: "boolean"
+                }
+            ]
+        },
+        {
+            name: "QuestionCategory",
+            columns: [
+                {
+                    name: "name", type: "string"
+                },
+                {
+                    name: "nameLocale", type: "string"
+                },
+                {
+                    name: "isDeleted", type: "boolean"
+                }
+            ]
+        },
+        {
+            name: "QuestionSelect",
+            columns: [
+                {
+                    name: "date", type: "date"
+                },
+                {
+                    name: "questionOfDay", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "questionOfWeek", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "questionOfMonth", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "quoteId", type: "pointer", default: {__type: "Pointer", className: "Quote", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "updates", type: "integer"
+                },
+                {
+                    name: "isDeleted", type: "boolean"
+                }
+            ]
+        },
+        {
+            name: "QuestionType",
+            columns: [
+                {
+                    name: "name", type: "string"
+                },
+                {
+                    name: "nameLocale", type: "string"
+                },
+                {
+                    name: "isDeleted", type: "boolean"
+                }
+            ]
+        },
+        {
+            name: "Quote",
+            columns: [
+                {
+                    name: "sequence", type: "integer"
+                },
+                {
+                    name: "author", type: "string"
+                },
+                {
+                    name: "body", type: "string"
+                },
+                {
+                    name: "link", type: "string"
+                },
+                {
+                    name: "isDeleted", type: "boolean"
+                }
+            ]
+        },
+        {
+            name: "Sequence",
+            columns: [
+                {
+                    name: "identity", type: "integer"
+                },
+                {
+                    name: "tableName", type: "string"
+                }
+            ]
+        },
+        {
+            name: "Vote",
+            columns: [
+                {
+                    name: "answer", type: "object"
+                },
+                {
+                    name: "counter", type: "integer"
+                },
+                {
+                    name: "voteDate", type: "date"
+                },
+                {
+                    name: "deviceId", type: "pointer", default: {__type: "Pointer", className: "Device", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "questionId", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "done", type: "boolean"
+                }
+            ]
+        },
+        {
+            name: "VoteLog",
+            columns: [
+                {
+                    name: "answer", type: "object"
+                },
+                {
+                    name: "installationId", type: "string"
+                },
+                {
+                    name: "questionId", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "position", type: "object"
+                },
+                {
+                    name: "demographics", type: "object"
+                },
+                {
+                    name: "isSuccess", type: "boolean"
+                },
+                {
+                    name: "status", type: "string"
+                },
+                {
+                    name: "voteId", type: "pointer", default: {__type: "Pointer", className: "Vote", objectId: "Q2AktMb7uA"}
+                }
+            ]
+        }
+    ]
 };
 
 var adminUsers = [
@@ -1135,6 +1436,98 @@ _createUserIfNotExists = function (user) {
     return promise;
 };
 
+
+Parse.Cloud.job("DeviceAnalysis", function (request, status) {
+    var jobName = "DeviceAnalysis"
+        , jobParam = request.params
+        , jobRunId
+        ;
+    Parse.Cloud.useMasterKey();
+    AddJobRunCounter({
+        name: jobName,
+        parameters: jobParam
+    }).then(function (jobRun) {
+            jobRunId = jobRun;
+
+            var qDevice = new Parse.Query("Device");
+            qDevice.notEqualTo("done", true);
+            qDevice.ascending("createdAt");
+            qDevice.limit(1000);
+            return qDevice.find();
+        }).then(function (devices) {
+            var promise = Parse.Promise.as();
+            _.each(devices, function (device) {
+                promise = promise.then(function () {
+                    return _DeviceAnalysis(device);
+                });
+            });
+            return promise;
+        }).then(function () {
+            return AddJobRunHistory({
+                name: jobName,
+                jobId: _parsePointer("AppJob", jobRunId.jobId),
+                jobIdText: jobRunId.jobId,
+                runCounter: jobRunId.jobRunCounter,
+                parameters: jobParam,
+                status: "success",
+                statusObject: {result: "ok"}
+            }).then(function () {
+                    status.success("ok");
+                }, function (error) {
+                    status.error(JSON.stringify(error));
+                });
+        }, function (error) {
+            return AddJobRunHistory({
+                name: jobName,
+                jobId: _parsePointer("AppJob", jobRunId.jobId),
+                jobIdText: jobRunId.jobId,
+                runCounter: jobRunId.jobRunCounter,
+                parameters: jobParam,
+                status: "error",
+                statusObject: error
+            }).then(function () {
+                    status.error(JSON.stringify(error));
+                }, function (error) {
+                    status.error(JSON.stringify(error));
+                });
+        });
+});
+
+_DeviceAnalysis = function (device) {
+    var promise = new Parse.Promise()
+        ;
+    var deviceCode = device.get("deviceCode")
+        , pushCode = device.get("pushCode")
+        , id = device.id
+        , cntDevices = 0
+        , cntPush = 0
+        ;
+    var qDevice = new Parse.Query("Device");
+    qDevice.equalTo("deviceCode", deviceCode);
+    qDevice.notEqualTo("objectId", id);
+    qDevice.count().then(function (cntDevs) {
+        cntDevices = cntDevs;
+        var qD2 = new Parse.Query("Device");
+        qD2.equalTo("pushCode", pushCode);
+        qD2.notEqualTo("objectId", id);
+        return qD2.count();
+    }).then(function (cntPsh) {
+            cntPush = cntPsh;
+            if (cntDevices > 0) {
+                device.set("cntDevice", cntDevices);
+            }
+            if (cntPush > 0) {
+                device.set("cntPush", cntPush);
+            }
+            device.set("done", true);
+            return device.save();
+        }).then(function (deviceSaved) {
+            promise.resolve({});
+        }, function (error) {
+            promise.reject(error);
+        });
+    return promise;
+};
 
 Parse.Cloud.job("ResultProcess", function (request, status) {
     var jobName = "ResultProcess"
@@ -1544,7 +1937,7 @@ _VoteSaveFirst = function (log) {
 _VoteSave = function (installationId, questionId, answer, voteDate) {
     var promise = new Parse.Promise()
         , questionObject
-        , installationObject
+        , deviceObject
         , duplicate = false
         , voteDateTest
         ;
@@ -1560,22 +1953,22 @@ _VoteSave = function (installationId, questionId, answer, voteDate) {
                 moment(voteDateTest).diff(moment(question.get("endDate")), 'milliseconds') <= 0 && !question.get("isDeleted")
                 ) {
                 questionObject = question;
-                var qInstallation = new Parse.Query("_Installation");
-                qInstallation.equalTo("installationId", installationId);
-                qInstallation.notEqualTo("isDeleted", true);
-                return qInstallation.first();
+                var qDevice = new Parse.Query("Device");
+                qDevice.equalTo("installationId", installationId);
+                qDevice.notEqualTo("isDeleted", true);
+                return qDevice.first();
             } else {
                 return Parse.Promise.error("error.question-not-available");
             }
         } else {
             return Parse.Promise.error("error.question-not-found");
         }
-    }).then(function (installation) {
-            if (installation) {
-                installationObject = installation;
+    }).then(function (device) {
+            if (device) {
+                deviceObject = device;
                 var qVote = new Parse.Query("Vote");
                 qVote.equalTo("questionId", questionObject);
-                qVote.equalTo("installationId", installation);
+                qVote.equalTo("installationId", deviceObject);
                 qVote.notEqualTo("isDeleted", true);
                 return qVote.first();
             } else {
@@ -1590,7 +1983,7 @@ _VoteSave = function (installationId, questionId, answer, voteDate) {
                 var Vote = Parse.Object.extend("Vote");
                 Vote = new Vote();
                 Vote.set("questionId", questionObject);
-                Vote.set("installationId", installationObject);
+                Vote.set("deviceId", deviceObject);
                 Vote.set("voteDate", voteDate);
                 Vote.set("answer", answer);
                 Vote.setACL(_getAdminACL());
@@ -1881,34 +2274,6 @@ _GetVote = function (installationId, questionId) {
     });
     return promise;
 };
-
-//Parse.Cloud.beforeSave("Quote", function (request, response) {
-//    var quote = request.object
-//        ;
-//    if (quote.existed()) {
-//        response.success();
-//    } else {
-//        var qSequence = new Parse.Query("Sequence");
-//        qSequence.equalTo("tableName", "Quote");
-//        qSequence.first().then(function (seq) {
-//            if (seq) {
-//                seq.increment("identity");
-//                return seq.save();
-//            } else {
-//                var Seq = Parse.Object.extend("Sequence");
-//                Seq = new Seq();
-//                Seq.set("tableName", "Quote");
-//                Seq.increment("identity");
-//                return Seq.save();
-//            }
-//        }).then(function (newSeq) {
-//                quote.set("sequence", newSeq.get("identity"));
-//                response.success();
-//            }, function (error) {
-//                response.error(JSON.stringify(error));
-//            });
-//    }
-//});
 Parse.Cloud.define("QuoteAdmin", function (request, response) {
     var thisUser = request.user
         , quote = request.params

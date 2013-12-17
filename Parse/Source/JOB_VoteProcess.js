@@ -84,7 +84,7 @@ _VoteSaveFirst = function (log) {
 _VoteSave = function (installationId, questionId, answer, voteDate) {
     var promise = new Parse.Promise()
         , questionObject
-        , installationObject
+        , deviceObject
         , duplicate = false
         , voteDateTest
         ;
@@ -100,22 +100,22 @@ _VoteSave = function (installationId, questionId, answer, voteDate) {
                 moment(voteDateTest).diff(moment(question.get("endDate")), 'milliseconds') <= 0 && !question.get("isDeleted")
                 ) {
                 questionObject = question;
-                var qInstallation = new Parse.Query("_Installation");
-                qInstallation.equalTo("installationId", installationId);
-                qInstallation.notEqualTo("isDeleted", true);
-                return qInstallation.first();
+                var qDevice = new Parse.Query("Device");
+                qDevice.equalTo("installationId", installationId);
+                qDevice.notEqualTo("isDeleted", true);
+                return qDevice.first();
             } else {
                 return Parse.Promise.error("error.question-not-available");
             }
         } else {
             return Parse.Promise.error("error.question-not-found");
         }
-    }).then(function (installation) {
-            if (installation) {
-                installationObject = installation;
+    }).then(function (device) {
+            if (device) {
+                deviceObject = device;
                 var qVote = new Parse.Query("Vote");
                 qVote.equalTo("questionId", questionObject);
-                qVote.equalTo("installationId", installation);
+                qVote.equalTo("installationId", deviceObject);
                 qVote.notEqualTo("isDeleted", true);
                 return qVote.first();
             } else {
@@ -130,7 +130,7 @@ _VoteSave = function (installationId, questionId, answer, voteDate) {
                 var Vote = Parse.Object.extend("Vote");
                 Vote = new Vote();
                 Vote.set("questionId", questionObject);
-                Vote.set("installationId", installationObject);
+                Vote.set("deviceId", deviceObject);
                 Vote.set("voteDate", voteDate);
                 Vote.set("answer", answer);
                 Vote.setACL(_getAdminACL());
