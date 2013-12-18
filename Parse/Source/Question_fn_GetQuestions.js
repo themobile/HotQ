@@ -31,6 +31,7 @@ Parse.Cloud.define("GetQuestions", function (request, response) {
                 result.questionOfDay.category = qT.get("questionOfDay").get("categoryId").get("name");
                 result.questionOfDay.text1 = qT.get("questionOfDay").get("subject");
                 result.questionOfDay.text2 = qT.get("questionOfDay").get("body");
+                result.questionOfDay.link = qT.get("questionOfDay").get("link");
                 result.questionOfDay.percentYes = qT.get("questionOfDay").get("results") ? qT.get("questionOfDay").get("results").percentYes ? qT.get("questionOfDay").get("results").percentYes : 50 : 50;
                 result.questionOfDay.percentNo = 100 - result.questionOfDay.percentYes;
 
@@ -39,6 +40,7 @@ Parse.Cloud.define("GetQuestions", function (request, response) {
                 result.questionOfWeek.category = qT.get("questionOfWeek").get("categoryId").get("name");
                 result.questionOfWeek.text1 = qT.get("questionOfWeek").get("subject");
                 result.questionOfWeek.text2 = qT.get("questionOfWeek").get("body");
+                result.questionOfWeek.link = qT.get("questionOfWeek").get("link");
                 result.questionOfWeek.percentYes = qT.get("questionOfWeek").get("results") ? qT.get("questionOfWeek").get("results").percentYes ? qT.get("questionOfWeek").get("results").percentYes : 50 : 50;
                 result.questionOfWeek.percentNo = 100 - result.questionOfWeek.percentYes;
 
@@ -47,6 +49,7 @@ Parse.Cloud.define("GetQuestions", function (request, response) {
                 result.questionOfMonth.category = qT.get("questionOfMonth").get("categoryId").get("name");
                 result.questionOfMonth.text1 = qT.get("questionOfMonth").get("subject");
                 result.questionOfMonth.text2 = qT.get("questionOfMonth").get("body");
+                result.questionOfMonth.link = qT.get("questionOfMonth").get("link");
                 result.questionOfMonth.percentYes = qT.get("questionOfMonth").get("results") ? qT.get("questionOfMonth").get("results").percentYes ? qT.get("questionOfMonth").get("results").percentYes : 50 : 50;
                 result.questionOfMonth.percentNo = 100 - result.questionOfMonth.percentYes;
 

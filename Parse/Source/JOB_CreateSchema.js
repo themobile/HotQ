@@ -1,3 +1,7 @@
+//todo: de adaugat in  Question*
+//    Category = "social"
+//    Type x 3 [day, week, month]
+
 Parse.Cloud.job("CreateApplication", function (request, status) {
     Parse.Cloud.useMasterKey();
     _createAdminUsers().then(function () {
@@ -164,6 +168,9 @@ var HotQSchema = {
                 },
                 {
                     name: "body", type: "string"
+                },
+                {
+                    name: "link", type: "string"
                 },
                 {
                     name: "startDate", type: "date"

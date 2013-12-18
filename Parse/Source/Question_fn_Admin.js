@@ -17,28 +17,10 @@ Parse.Cloud.define("QuestionAdmin", function (request, response) {
                 }).then(function (objDates) {
                     startDate = objDates.startDate;
                     endDate = objDates.endDate;
-                    if (!(param.id)) {
-                        param.id = "new";
-                    }
-                    var qQuestion = new Parse.Query("Question");
-                    qQuestion.equalTo("objectId", param.id);
-                    qQuestion.notEqualTo("isDeleted", true);
-                    return qQuestion.first();
-                }).then(function (question) {
-                    if (!question) {
-                        var Question = Parse.Object.extend("Question");
-                        question = new Question();
-                    }
-                    question.set("categoryId", _parsePointer("QuestionCategory", categoryObject.id));
-                    question.set("typeId", _parsePointer("QuestionType", typeObject.id));
-                    question.set("subject", param.text1);
-                    question.set("body", param.text2);
-                    question.set("startDate", _parseDate(startDate));
-                    question.set("endDate", _parseDate(endDate));
-                    question.setACL(_getUserACL(thisUser));
-                    return question.save();
+
+                    return _AdminQuestion(thisUser, param.id, categoryObject, typeObject, param.text1, param.text2, param.link, startDate, endDate);
                 }).then(function (questionSaved) {
-                    response.success(questionSaved.id);
+                    response.success(questionSaved);
                 }, function (error) {
                     response.error(error);
                 })
@@ -49,6 +31,37 @@ Parse.Cloud.define("QuestionAdmin", function (request, response) {
         response.error("error.user-not-found");
     }
 });
+
+_AdminQuestion = function (user, id, categoryId, typeId, subject, body, link, startDate, endDate) {
+    var promise = new Parse.Promise()
+        ;
+    if (!(id)) {
+        id = "new";
+    }
+    var qQuestion = new Parse.Query("Question");
+    qQuestion.equalTo("objectId", id);
+    qQuestion.notEqualTo("isDeleted", true);
+    qQuestion.first().then(function (question) {
+        if (!question) {
+            var Question = Parse.Object.extend("Question");
+            question = new Question();
+        }
+        question.set("categoryId", categoryId);
+        question.set("typeId", typeId);
+        question.set("subject", subject);
+        question.set("body", body);
+        question.set("link", link);
+        question.set("startDate", _parseDate(startDate));
+        question.set("endDate", _parseDate(endDate));
+        question.setACL(_getUserACL(user));
+        return question.save();
+    }).then(function (saved) {
+            promise.resolve(saved);
+        }, function (error) {
+            promise.reject(error);
+        });
+    return promise;
+};
 
 _ValidateDate = function (typeText, startDate) {
     var promise = new Parse.Promise()

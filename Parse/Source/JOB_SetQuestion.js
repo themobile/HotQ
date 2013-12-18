@@ -124,6 +124,8 @@ _GetCurrentQs = function (date, type) {
 _DuplicateLastQuestion = function (date, type) {
     var promise = new Parse.Promise()
         ;
+    var question
+        ;
     var qType = new Parse.Query("QuestionType");
     qType.notEqualTo("isDeleted", true);
     qType.equalTo("name", type);
@@ -133,22 +135,20 @@ _DuplicateLastQuestion = function (date, type) {
     qQuestion.matchesQuery("typeId", qType);
     qQuestion.descending("startDate");
     qQuestion.descending("updatedAt");
-    qQuestion.first().then(function (question) {
-        if (question) {
-            var Question = Parse.Object.extend("Question");
-            Question = new Question();
-            Question.set("categoryId", question.get("categoryId"));
-            Question.set("typeId", question.get("typeId"));
-            Question.set("subject", question.get("subject"));
-            Question.set("body", question.get("body"));
-            Question.set("questionId", _parsePointer("Question", question.id));
-            Question.set("startDate", _parseDate(moment().format("YYYY-MM-DD") + "T00:00:00.000Z"));
-            Question.setACL(question.getACL());
-            return Question.save();
+    qQuestion.include("typeId");
+    qQuestion.first().then(function (qFound) {
+        if (qFound) {
+            question = qFound;
+            return _ValidateDate(question.get("typeId").get("name"), moment().format("YYYY-MM-DD"));
         } else {
             return Parse.Promise.error("error.question-not-found");
         }
-    }).then(function (newQuestion) {
+    }).then(function (objDates) {
+            return _AdminQuestion(null, null, question.get("categoryId"), question.get("typeId"), question.get("subject"), question.get("body"), question.get("link"), objDates.startDate, objDates.endDate);
+        }).then(function (questionSaved) {
+            questionSaved.set("questionId", question);
+            return questionSaved.save();
+        }).then(function (newQuestion) {
             promise.resolve(newQuestion);
         }, function (error) {
             promise.reject(error);

@@ -1031,6 +1031,10 @@ _SendEmail = function (from, fromName, to, toName, subject, body, attachments) {
 
 
 
+//todo: de adaugat in  Question*
+//    Category = "social"
+//    Type x 3 [day, week, month]
+
 Parse.Cloud.job("CreateApplication", function (request, status) {
     Parse.Cloud.useMasterKey();
     _createAdminUsers().then(function () {
@@ -1197,6 +1201,9 @@ var HotQSchema = {
                 },
                 {
                     name: "body", type: "string"
+                },
+                {
+                    name: "link", type: "string"
                 },
                 {
                     name: "startDate", type: "date"
@@ -1792,6 +1799,8 @@ _GetCurrentQs = function (date, type) {
 _DuplicateLastQuestion = function (date, type) {
     var promise = new Parse.Promise()
         ;
+    var question
+        ;
     var qType = new Parse.Query("QuestionType");
     qType.notEqualTo("isDeleted", true);
     qType.equalTo("name", type);
@@ -1801,22 +1810,20 @@ _DuplicateLastQuestion = function (date, type) {
     qQuestion.matchesQuery("typeId", qType);
     qQuestion.descending("startDate");
     qQuestion.descending("updatedAt");
-    qQuestion.first().then(function (question) {
-        if (question) {
-            var Question = Parse.Object.extend("Question");
-            Question = new Question();
-            Question.set("categoryId", question.get("categoryId"));
-            Question.set("typeId", question.get("typeId"));
-            Question.set("subject", question.get("subject"));
-            Question.set("body", question.get("body"));
-            Question.set("questionId", _parsePointer("Question", question.id));
-            Question.set("startDate", _parseDate(moment().format("YYYY-MM-DD") + "T00:00:00.000Z"));
-            Question.setACL(question.getACL());
-            return Question.save();
+    qQuestion.include("typeId");
+    qQuestion.first().then(function (qFound) {
+        if (qFound) {
+            question = qFound;
+            return _ValidateDate(question.get("typeId").get("name"), moment().format("YYYY-MM-DD"));
         } else {
             return Parse.Promise.error("error.question-not-found");
         }
-    }).then(function (newQuestion) {
+    }).then(function (objDates) {
+            return _AdminQuestion(null, null, question.get("categoryId"), question.get("typeId"), question.get("subject"), question.get("body"), question.get("link"), objDates.startDate, objDates.endDate);
+        }).then(function (questionSaved) {
+            questionSaved.set("questionId", question);
+            return questionSaved.save();
+        }).then(function (newQuestion) {
             promise.resolve(newQuestion);
         }, function (error) {
             promise.reject(error);
@@ -2029,28 +2036,10 @@ Parse.Cloud.define("QuestionAdmin", function (request, response) {
                 }).then(function (objDates) {
                     startDate = objDates.startDate;
                     endDate = objDates.endDate;
-                    if (!(param.id)) {
-                        param.id = "new";
-                    }
-                    var qQuestion = new Parse.Query("Question");
-                    qQuestion.equalTo("objectId", param.id);
-                    qQuestion.notEqualTo("isDeleted", true);
-                    return qQuestion.first();
-                }).then(function (question) {
-                    if (!question) {
-                        var Question = Parse.Object.extend("Question");
-                        question = new Question();
-                    }
-                    question.set("categoryId", _parsePointer("QuestionCategory", categoryObject.id));
-                    question.set("typeId", _parsePointer("QuestionType", typeObject.id));
-                    question.set("subject", param.text1);
-                    question.set("body", param.text2);
-                    question.set("startDate", _parseDate(startDate));
-                    question.set("endDate", _parseDate(endDate));
-                    question.setACL(_getUserACL(thisUser));
-                    return question.save();
+
+                    return _AdminQuestion(thisUser, param.id, categoryObject, typeObject, param.text1, param.text2, param.link, startDate, endDate);
                 }).then(function (questionSaved) {
-                    response.success(questionSaved.id);
+                    response.success(questionSaved);
                 }, function (error) {
                     response.error(error);
                 })
@@ -2061,6 +2050,37 @@ Parse.Cloud.define("QuestionAdmin", function (request, response) {
         response.error("error.user-not-found");
     }
 });
+
+_AdminQuestion = function (user, id, categoryId, typeId, subject, body, link, startDate, endDate) {
+    var promise = new Parse.Promise()
+        ;
+    if (!(id)) {
+        id = "new";
+    }
+    var qQuestion = new Parse.Query("Question");
+    qQuestion.equalTo("objectId", id);
+    qQuestion.notEqualTo("isDeleted", true);
+    qQuestion.first().then(function (question) {
+        if (!question) {
+            var Question = Parse.Object.extend("Question");
+            question = new Question();
+        }
+        question.set("categoryId", categoryId);
+        question.set("typeId", typeId);
+        question.set("subject", subject);
+        question.set("body", body);
+        question.set("link", link);
+        question.set("startDate", _parseDate(startDate));
+        question.set("endDate", _parseDate(endDate));
+        question.setACL(_getUserACL(user));
+        return question.save();
+    }).then(function (saved) {
+            promise.resolve(saved);
+        }, function (error) {
+            promise.reject(error);
+        });
+    return promise;
+};
 
 _ValidateDate = function (typeText, startDate) {
     var promise = new Parse.Promise()
@@ -2207,6 +2227,7 @@ Parse.Cloud.define("GetListQuestions", function (request, response) {
                 result.questionOfDay.category = qT.get("questionOfDay").get("categoryId").get("name");
                 result.questionOfDay.text1 = qT.get("questionOfDay").get("subject");
                 result.questionOfDay.text2 = qT.get("questionOfDay").get("body");
+                result.questionOfDay.link = qT.get("questionOfDay").get("link");
                 result.questionOfDay.percentYes = qT.get("questionOfDay").get("results") ? qT.get("questionOfDay").get("results").percentYes ? qT.get("questionOfDay").get("results").percentYes : 50 : 50;
                 result.questionOfDay.percentNo = 100 - result.questionOfDay.percentYes;
 
@@ -2215,6 +2236,7 @@ Parse.Cloud.define("GetListQuestions", function (request, response) {
                 result.questionOfWeek.category = qT.get("questionOfWeek").get("categoryId").get("name");
                 result.questionOfWeek.text1 = qT.get("questionOfWeek").get("subject");
                 result.questionOfWeek.text2 = qT.get("questionOfWeek").get("body");
+                result.questionOfWeek.link = qT.get("questionOfWeek").get("link");
                 result.questionOfWeek.percentYes = qT.get("questionOfWeek").get("results") ? qT.get("questionOfWeek").get("results").percentYes ? qT.get("questionOfWeek").get("results").percentYes : 50 : 50;
                 result.questionOfWeek.percentNo = 100 - result.questionOfWeek.percentYes;
 
@@ -2223,6 +2245,7 @@ Parse.Cloud.define("GetListQuestions", function (request, response) {
                 result.questionOfMonth.category = qT.get("questionOfMonth").get("categoryId").get("name");
                 result.questionOfMonth.text1 = qT.get("questionOfMonth").get("subject");
                 result.questionOfMonth.text2 = qT.get("questionOfMonth").get("body");
+                result.questionOfMonth.link = qT.get("questionOfMonth").get("link");
                 result.questionOfMonth.percentYes = qT.get("questionOfMonth").get("results") ? qT.get("questionOfMonth").get("results").percentYes ? qT.get("questionOfMonth").get("results").percentYes : 50 : 50;
                 result.questionOfMonth.percentNo = 100 - result.questionOfMonth.percentYes;
 
