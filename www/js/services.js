@@ -152,6 +152,9 @@ angular.module('hotq.services', ["btford.modal"]).
     })
 
 
+
+
+
     .directive('loader', function () {
         return {
             restrict: 'A',
