@@ -1,0 +1,213 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <title>My Parse App</title>
+    <meta name="description" content="My Parse App">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/view.css">
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.2.15.min.js"></script>
+    <script type="text/javascript" src="../js/moment.js"></script>
+    <script type="text/javascript" src="../js/underscore.js"></script>
+
+    <script type="text/javascript" src='js/proba.js'></script>
+    <script type="text/javascript" src='js/testfl.js'></script>
+    <script type="text/javascript" src='js/calendar.js'></script>
+
+
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1>HotQ</h1>
+
+    <div class="stk">
+        <!--<div class="stk">-->
+        <p id="stktext"> ht tm f</p>
+    </div>
+
+    <button type="button"
+            onclick='LogInShow()'>
+        LogIn
+    </button>
+    <button type="button" onclick='LogOut()'>LogOut</button>
+
+    <button type="button"
+            onclick='ShowAddQuestion()'>
+        Teste
+    </button>
+    <!--
+        <button type="button"
+                onclick='UploadAFile("oYvsd9hx0NoIlgEadXJsqCtU1PgjcPshRqy18kmP", "gTD0yfs2jDMCE7oxgQVl6Yx9fbdviz5GQPrWHFW9")'>
+            File Upload
+        </button>
+    -->
+    <br>
+
+    <form id="form-add-question" class="add-question" enctype="multipart/form-data">
+        <div class="form_description">
+            <h2>add question</h2>
+
+            <p>This is your form description. Click here to edit.</p>
+        </div>
+        <ul>
+
+            <li id="li_2">
+                <label class="description" for="element_2">Categorie </label>
+
+                <div>
+                    <select class="element select medium" id="element_2" name="element_2">
+                        <option value selected="selected"></option>
+                        <option value="1">Social</option>
+
+                    </select>
+                </div>
+            </li>
+            <li id="li_3">
+                <label class="description" for="element_3">Tip </label>
+		<span>
+			<input id="element_3_1" name="element_3" class="element radio" type="radio" value="1"/>
+            <label class="choice" for="element_3_1">Day</label>
+            <input id="element_3_2" name="element_3" class="element radio" type="radio" value="2"/>
+            <label class="choice" for="element_3_2">Week</label>
+            <input id="element_3_3" name="element_3" class="element radio" type="radio" value="3"/>
+            <label class="choice" for="element_3_3">Month</label>
+
+		</span>
+            </li>
+            <li id="li_6">
+                <label class="description" for="element_6">Data inceput </label>
+		<span>
+			<input id="element_6_1" name="element_6_1" class="element text" size="2" maxlength="2" value="" type="text"> /
+			<label for="element_6_1">DD</label>
+		</span>
+		<span>
+			<input id="element_6_2" name="element_6_2" class="element text" size="2" maxlength="2" value="" type="text"> /
+			<label for="element_6_2">MM</label>
+		</span>
+		<span>
+	 		<input id="element_6_3" name="element_6_3" class="element text" size="4" maxlength="4" value="" type="text">
+			<label for="element_6_3">YYYY</label>
+		</span>
+
+		<span id="calendar_6">
+			<img id="cal_img_6" class="datepicker" src="img/calendar.gif" alt="Pick a date.">
+		</span>
+                <script type="text/javascript">
+                    Calendar.setup({
+                        inputField: "element_6_3",
+                        baseField: "element_6",
+                        displayArea: "calendar_6",
+                        button: "cal_img_6",
+                        ifFormat: "%B %e, %Y",
+                        onSelect: selectEuropeDate
+                    });
+                </script>
+
+            </li>
+            <li id="li_1">
+                <label class="description" for="element_1">Subject </label>
+
+                <div>
+                    <textarea id="element_1" name="element_1" class="element textarea small"></textarea>
+                </div>
+                <p class="guidelines" id="guide_1">
+                    <small>maxim 60 de caractere</small>
+                </p>
+            </li>
+            <li id="li_4">
+                <label class="description" for="element_4">Body </label>
+
+                <div>
+                    <textarea id="element_4" name="element_4" class="element textarea medium"></textarea>
+                </div>
+                <p class="guidelines" id="guide_4">
+                    <small>maxim 140 de caractere</small>
+                </p>
+            </li>
+            <li id="li_7">
+                <label class="description" for="element_7">URL </label>
+
+                <div>
+                    <textarea id="element_7" name="element_7" class="element textarea small"></textarea>
+                </div>
+                <p class="guidelines" id="guide_7">
+                    <small>un url</small>
+                </p>
+            </li>
+            <li id="li_5">
+                <label class="description" for="element_5">Poza </label>
+
+                <div>
+                    <input id="element_5" name="element_5" class="element file" type="file"/>
+                </div>
+            </li>
+
+            <li class="buttons">
+                <input type="hidden" name="form_id" value="763402"/>
+
+                <input id="saveForm" class="button_text" type="submit" name="submit" value="Submit"/>
+            </li>
+        </ul>
+    </form>
+
+
+    <div class="get-login">
+        <br/>
+        <label>Email:</label> <input type="text" id="userName"><br/>
+        <label>Pass:</label><input type="password" id="password"><br/>
+        <button type="button"
+                onclick='LogIn("oYvsd9hx0NoIlgEadXJsqCtU1PgjcPshRqy18kmP", "gTD0yfs2jDMCE7oxgQVl6Yx9fbdviz5GQPrWHFW9")'>
+            LogIn
+        </button>
+        <button type="button"
+                onclick='CloseLogin()'>
+            Close
+        </button>
+    </div>
+
+    <div class="get-data">
+        <br/>
+        <input type="text" id="fileCategory" placeholder="File Category"><br/>
+        <input type="text" id="fileCode" placeholder="File Code"><br/>
+        <input type="file" id="profilePhotoFileUpload">
+    </div>
+
+    <div class="error">
+        Looks like there was a problem ...
+        <button type="button"
+                onclick="hideError()">
+            Close
+        </button>
+        <br/>
+        <code id="p2">
+        </code>
+
+    </div>
+
+    <div class="success">
+        <p id="pw">Operatii cu succes</p>
+        <code id="p1">
+        </code><br/>
+        <button type="button"
+                onclick="hideSucces()">
+            Close
+        </button>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $('input#saveForm').click(function (event) {
+        saveQuestion("oYvsd9hx0NoIlgEadXJsqCtU1PgjcPshRqy18kmP", "gTD0yfs2jDMCE7oxgQVl6Yx9fbdviz5GQPrWHFW9", $('form#form-add-question').serialize(),$('form#form-add-question')[0][10]);
+        event.preventDefault()
+    });
+</script>
+
+</body>
+
+</html>
