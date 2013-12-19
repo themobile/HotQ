@@ -1,6 +1,9 @@
 'use strict';
 
-angular.module('hotQ', ['googlechart']).controller("hotQCtl", function ($scope) {
+angular.module('hotQ', ['googlechart'])
+
+
+    .controller("hotQCtl", function ($scope) {
 
     var chart1 = {};
     chart1.type = "PieChart";
