@@ -1,0 +1,62 @@
+@font-face {
+	font-family: 'hotq';
+	src:url('../fonts/hotq.eot');
+	src:url('../fonts/hotq.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/hotq.ttf') format('truetype'),
+		url('../fonts/hotq.woff') format('woff'),
+		url('../fonts/hotq.svg#hotq') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+    font-family: "OpenSansLight";
+    src: url('../fonts/OpenSansLight.ttf');/* relative path from the css file */
+}
+
+@font-face {
+    font-family: "OpenSansBold";
+    src: url('../fonts/OpenSansBold.ttf');/* relative path from the css file */
+}
+
+[class*="icon-"] {
+	font-family: 'hotq';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.icon-social-facebook:before {
+    content: "\e600";
+}
+.icon-th-small:before {
+    content: "\e601";
+}
+.icon-group:before {
+    content: "\e602";
+}
+.icon-info-large:before {
+    content: "\e603";
+}
+.icon-heart:before {
+    content: "\e604";
+}
+.icon-arrow-back:before {
+    content: "\e605";
+}
+.icon-chevron-left:before {
+    content: "\e606";
+}
+.icon-chevron-right:before {
+    content: "\e607";
+}
+.icon-close:before {
+    content: "\e608";
+}
