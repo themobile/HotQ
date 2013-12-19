@@ -1,4 +1,4 @@
-angular.module("hotq", [ "ngRoute", "ngAnimate","ngTouch", "hotq.services", "hotq.controllers", "shoppinpal.mobile-menu" ])
+angular.module("hotq", [ "ngRoute", "ngAnimate","ngTouch", "hotq.services", "hotq.controllers","shoppinpal.mobile-menu" ])
     .config(function ($routeProvider) {
         $routeProvider
             .when("/questionOfDay", {
@@ -54,46 +54,48 @@ angular.module("hotq", [ "ngRoute", "ngAnimate","ngTouch", "hotq.services", "hot
                 }
 
             })
+            .when("/demographics", {
+                templateUrl: "partials/demographics.html",
+                controller: "HotqCtl",
+                resolve: {
+                    changeScreen: function ($rootScope) {
+                        $rootScope.currScreen = 'demographics';
+                        $rootScope.isQuestionScreen = false;
+                    }
+                }
+
+            })
             .otherwise({redirectTo: "/questionOfDay"})
     })
 
     .run(function ($window, $rootScope) {
 
+        $rootScope.online = navigator.onLine ? 'online' : 'offline';
+        $rootScope.$apply();
+
+        if (window.addEventListener) {
+            window.addEventListener("online", function() {
+                $rootScope.online = "online";
+                $rootScope.$apply();
+            }, true);
+            window.addEventListener("offline", function() {
+                $rootScope.online = "offline";
+                $rootScope.$apply();
+            }, true);
+        } else {
+            document.body.ononline = function() {
+                $rootScope.online = "online";
+                $rootScope.$apply();
+            };
+            document.body.onoffline = function() {
+                $rootScope.online = "offline";
+                $rootScope.$apply();
+            };
+        }
+
         //FIXME de pus hardware id intors de parse
         $rootScope.installId = '891e011e-77f3-4b23-8e0d-f7174da27379';
-//
 
-        if (typeof parseGetInstallationId == 'function')
-        parseGetInstallationId(function (id) {
-            $rootScope.installId = id;
-            console.log('IDDDD:' + id);
-        }, function (e) {
-            console.log('InstallID:' + e);
-        });
-
-//setup eventuri retea
-        $rootScope.online = false;
-
-        $window.addEventListener("offline", function () {
-
-            $rootScope.$broadcast('onlineChanged', false);
-
-//            $rootScope.$apply(function () {
-//                $rootScope.loaderMessage = "hotQ e offline...";
-//                $rootScope.loader = true;
-//                $rootScope.online = false;
-//            });
-        }, false);
-
-        $window.addEventListener("online", function () {
-
-            $rootScope.$broadcast('onlineChanged', true);
-//
-//            $rootScope.$apply(function () {
-//                $rootScope.loader = false;
-//                $rootScope.online = true;
-//            });
-        }, false);
 
 
     }

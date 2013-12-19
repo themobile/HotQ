@@ -2,18 +2,28 @@
 
 /* Services */
 
-angular.module('hotq.services', []).
+angular.module('hotq.services', ["btford.modal"]).
     value('version', '0.1')
+
+
+    .factory('demoModal', function (btfModal) {
+        return btfModal({
+            controller: 'HotqCtl',
+            controllerAs: 'modal',
+            templateUrl: 'partials/demographics.html'
+        })
+    })
 
 //service for voting
     .factory('upVotes', function ($http) {
         return {
-            voteNow: function (questionId, answer, installationId, position) {
+            voteNow: function (questionId, answer, installationId, position, demographics) {
                 var vote = {};
                 vote.installationId = installationId;
                 vote.questionId = questionId;
                 vote.answer = {answer: answer};
                 vote.position = position;
+                vote.demographics = demographics;
                 return $http.post('https://api.parse.com/1/functions/VoteSubmit',
                     vote,
                     {
@@ -31,6 +41,43 @@ angular.module('hotq.services', []).
             }
         }
     })
+
+
+    .factory('poosh', function($q) {
+
+        return {
+            getAll: function(type) {
+                var pushNotification = window.plugins.pushNotification;
+                var deferred=$q.defer();
+                var regString={};
+
+                if (type == "Android") {
+                    regString = { projectid: "315937580723", appid: "53BC6-33E16" };
+                }
+                if (type == "iPhone" || type == "iOS") {
+                    regString = {alert: true, badge: true, sound: true, pw_appid: "53BC6-33E16", appname: "hotq"};
+                }
+                var pushRegister=pushNotification.registerDevice(regString,
+                    function (token) {
+                        //callback when pushwoosh is ready
+                        if (token['deviceToken']) {
+                            deferred.resolve (token['deviceToken']);
+                        } else {
+                            deferred.resolve(token);
+                        }
+                    },
+                    function (status) {
+                        deferred.reject("error");
+                    });
+                return deferred.promise;
+
+            }
+        }
+
+
+
+    })
+
 
 
     .factory('questions', function ($http, $q) {
@@ -105,7 +152,6 @@ angular.module('hotq.services', []).
     })
 
 
-
     .directive('loader', function () {
         return {
             restrict: 'A',
@@ -122,8 +168,7 @@ angular.module('hotq.services', []).
                 '</div>' +
                 '</div>'
         }
-    });
-
+    })
 
 
 

@@ -9,6 +9,15 @@
 	font-style: normal;
 }
 
+@font-face {
+    font-family: "OpenSansLight";
+    src: url('../fonts/OpenSansLight.ttf');/* relative path from the css file */
+}
+
+@font-face {
+    font-family: "OpenSansBold";
+    src: url('../fonts/OpenSansBold.ttf');/* relative path from the css file */
+}
 
 [class*="icon-"] {
 	font-family: 'hotq';
@@ -41,4 +50,13 @@
 }
 .icon-arrow-back:before {
     content: "\e605";
+}
+.icon-chevron-left:before {
+    content: "\e606";
+}
+.icon-chevron-right:before {
+    content: "\e607";
+}
+.icon-close:before {
+    content: "\e608";
 }

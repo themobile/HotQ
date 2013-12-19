@@ -89,23 +89,16 @@ Android: Copy `SocialSharing.java` to `platforms/android/src/nl/xservices/plugin
 SocialSharing works with PhoneGap build too! Version 3.0 of this plugin is compatible with PhoneGap 3.0.0 and up.
 Use an older version of this plugin if you target PhoneGap < 3.0.0.
 
-You can implement the plugin with these simple steps.
-
-1\. Add the following xml to your `config.xml` to always use the latest version of this plugin:
+Just add the following xml to your `config.xml` to always use the latest version of this plugin:
 ```xml
 <gap:plugin name="nl.x-services.plugins.socialsharing" />
 ```
 or to use this exact version:
 ```xml
-<gap:plugin name="nl.x-services.plugins.socialsharing" version="3.1" />
+<gap:plugin name="nl.x-services.plugins.socialsharing" version="3.5" />
 ```
 
-2\. Reference the JavaScript code in your `index.html`:
-```html
-<!-- below <script src="phonegap.js"></script> -->
-<script src="js/plugins/SocialSharing.js"></script>
-```
-
+SocialSharing.js is brought in automatically. There is no need to change or add anything in your html.
 
 ## 3. Usage
 You can share text, a subject (in case the user selects the email application), (any type and location of) image, and a link.
@@ -123,6 +116,7 @@ Here are some examples you can copy-paste to test the various combinations:
   <button onclick="window.plugins.socialsharing.share(null, null, null, 'http://www.x-services.nl')">link only</button>
   <button onclick="window.plugins.socialsharing.share('Message and link', null, null, 'http://www.x-services.nl')">message and link</button>
   <button onclick="window.plugins.socialsharing.share(null, null, 'https://www.google.nl/images/srpr/logo4w.png', null)">image only</button>
+  <button onclick="window.plugins.socialsharing.share(null, null, 'data:image/png;base64,R0lGODlhDAAMALMBAP8AAP///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAUKAAEALAAAAAAMAAwAQAQZMMhJK7iY4p3nlZ8XgmNlnibXdVqolmhcRQA7', null)">base64 image only</button>
   <button onclick="window.plugins.socialsharing.share('Message and image', null, 'https://www.google.nl/images/srpr/logo4w.png', null)">message and image</button>
   <button onclick="window.plugins.socialsharing.share('Message, image and link', null, 'https://www.google.nl/images/srpr/logo4w.png', 'http://www.x-services.nl')">message, image and link</button>
   <button onclick="window.plugins.socialsharing.share('Message, subject, image and link', 'The subject', 'https://www.google.nl/images/srpr/logo4w.png', 'http://www.x-services.nl')">message, subject, image and link</button>
@@ -147,6 +141,8 @@ window.plugins.socialsharing.available(function(isAvailable) {
   }
 });
 ```
+
+If you can't get the plugin to work, have a look at [this demo project](https://github.com/EddyVerbruggen/X-Services-PhoneGap-Build-Plugins-Demo).
 
 #### iOS quirk (with camera plugin)
 When using this plugin in the callback of the Phonegap camera plugin, wrap the call to `share()` in a `setTimeout()`.

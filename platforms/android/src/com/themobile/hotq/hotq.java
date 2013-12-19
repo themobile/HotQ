@@ -21,13 +21,8 @@ package com.themobile.hotq;
 
 import android.os.Bundle;
 import org.apache.cordova.*;
-import com.parse.Parse;
-import com.parse.ParseAnalytics;
-import com.parse.ParseInstallation;
-import com.parse.PushService;
 
-
-public class hotq extends CordovaActivity
+public class hotq extends CordovaActivity 
 {
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -35,17 +30,8 @@ public class hotq extends CordovaActivity
         super.onCreate(savedInstanceState);
         super.init();
         // Set by <content src="index.html" /> in config.xml
-        super.loadUrl(Config.getStartUrl(),3000);
+        super.loadUrl(Config.getStartUrl());
         //super.loadUrl("file:///android_asset/www/index.html")
-
-        Parse.initialize(this, "oYvsd9hx0NoIlgEadXJsqCtU1PgjcPshRqy18kmP", "1vjxiu0XYXEFf0FPrXwN6uyog233oswadPI7U5S2");
-        PushService.setDefaultPushCallback(this, hotq.class);
-        PushService.subscribe(this, "", hotq.class);
-        ParseInstallation.getCurrentInstallation().saveInBackground();
-        ParseAnalytics.trackAppOpened(getIntent());
-
-     }
+    }
 }
-
-
 
