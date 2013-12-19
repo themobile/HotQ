@@ -24,7 +24,7 @@ Parse.Cloud.job("AlertsByEmail", function (request, status) {
 
             var qMail = new Parse.Query("AlertEmail");
             qMail.notEqualTo("isSent", true);
-            qMail.greaterThanOrEqualTo("alertDate", parseDate(minDate));
+            qMail.greaterThanOrEqualTo("alertDate", _parseDate(minDate));
             qMail.include("billId.userId");
             return qMail.find();
         }).then(function (mails) {
@@ -39,7 +39,7 @@ Parse.Cloud.job("AlertsByEmail", function (request, status) {
                     }).then(function (mailSaved) {
                             // aici efectiv trimit mail-ul
                             emailObject = mailSaved;
-                            return SendEmail(
+                            return _SendEmail(
                                 emailObject.get("from"),
                                 emailObject.get("fromName"),
                                 emailObject.get("to"),
@@ -58,7 +58,7 @@ Parse.Cloud.job("AlertsByEmail", function (request, status) {
                             return Parse.Promise.as().then(function () {
                                 return AddJobRunHistory({
                                     name: jobName,
-                                    jobId: parsePointer("AppJob", jobRunId.jobId),
+                                    jobId: _parsePointer("AppJob", jobRunId.jobId),
                                     jobIdText: jobRunId.jobId,
                                     runCounter: jobRunId.jobRunCounter,
                                     parameters: jobParam,
@@ -76,7 +76,7 @@ Parse.Cloud.job("AlertsByEmail", function (request, status) {
         }).then(function () {
             return AddJobRunHistory({
                 name: jobName,
-                jobId: parsePointer("AppJob", jobRunId.jobId),
+                jobId: _parsePointer("AppJob", jobRunId.jobId),
                 jobIdText: jobRunId.jobId,
                 runCounter: jobRunId.jobRunCounter,
                 parameters: jobParam,
@@ -149,47 +149,13 @@ ComposeMail = function (mailObject) {
         mailObject.set("fromName", mailFromName);
         mailObject.set("to", user.get("email"));
         mailObject.set("toName", toName);
-        mailObject.set("subject", "Alerta theBill");
+        mailObject.set("subject", "Alerta theBill"+iif(isProduction,""," ( D E V E L O P M E N T )"));
         mailObject.set("body", body);
         return mailObject.save();
     }).then(function (mailSaved) {
             prm.resolve(mailSaved);
         }, function (error) {
             prm.reject(error);
-        });
-    return prm;
-};
-
-var SendEmail;
-SendEmail = function (from, fromName, to, toName, subject, body) {
-    var prm = new Parse.Promise();
-    var Mandrill = require('mandrill');
-    Mandrill.initialize('WAteKfECxJyYsjLNqujMug');
-    Mandrill.sendEmail({
-            message: {
-                text: body,
-                subject: subject,
-                from_email: from,
-                from_name: fromName,
-                to: [
-                    {
-                        email: to,
-                        name: toName
-                    },
-                    {
-                        email: "gmail@thebill.ro",
-                        name: "",
-                        type: "bcc"
-                    }
-                ]
-            },
-            async: true
-        },
-        {success: function (httpResponse) {
-            prm.resolve({httpResponse: httpResponse});
-        }, error: function (httpResponse) {
-            prm.reject({httpResponse: httpResponse});
-        }
         });
     return prm;
 };
@@ -204,8 +170,8 @@ TotalOverDueBills = function (userId) {
     qType.notEqualTo("isDeleted", true);
     qProvider.notEqualTo("isDeleted", true);
     qProvider.matchesQuery("typeId", qType);
-    qBill.equalTo("userId", parsePointer("_User", userId));
-    qBill.lessThanOrEqualTo("dueDate", parseDate(moment().format("YYYY-MM-DD") + "T00:00:00.000Z"));
+    qBill.equalTo("userId", _parsePointer("_User", userId));
+    qBill.lessThanOrEqualTo("dueDate", _parseDate(moment().format("YYYY-MM-DD") + "T00:00:00.000Z"));
     qBill.notEqualTo("isDeleted", true);
     qBill.matchesQuery("providerId", qProvider);
     qBill.find().then(function (bills) {
@@ -225,3 +191,56 @@ TotalOverDueBills = function (userId) {
     });
     return prm;
 };
+
+var _SendEmail;
+_SendEmail = function (from, fromName, to, toName, subject, body, attachments) {
+    var promise = new Parse.Promise();
+    var objMail = {
+            message: {
+                text: body,
+                subject: subject,
+                from_email: from,
+                from_name: fromName,
+                to: [
+                    {
+                        email: to,
+                        name: toName
+                    },
+                    {
+                        email: "gmail@thebill.ro",
+                        name: "",
+                        type: "bcc"
+                    }
+                ],
+                headers: {
+                    "Reply-To": "office@thebill.ro"
+                }
+            },
+            async: true
+        }
+        ;
+    if ((attachments || []).length > 0) {
+        objMail.message.attachments = [];
+        _.each(attachments, function (attachment) {
+            objMail.message.attachments.push({
+                type: attachment.type,
+                name: attachment.name,
+                content: attachment.content
+            });
+        });
+    }
+    var Mandrill = require('mandrill');
+    Mandrill.initialize('WAteKfECxJyYsjLNqujMug');
+    Mandrill.sendEmail(objMail, {
+        success: function (httpResponse) {
+            promise.resolve({httpResponse: httpResponse});
+        },
+        error: function (httpResponse) {
+            promise.reject({httpResponse: httpResponse});
+        }
+    });
+    return promise;
+};
+
+
+

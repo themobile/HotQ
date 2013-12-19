@@ -3,42 +3,24 @@ Parse.Cloud.define("QuestionAdmin", function (request, response) {
         , param = request.params
         , categoryObject
         , typeObject
+        , startDate
+        , endDate
         ;
     if (thisUser) {
         if (param.text1 && param.text2 && param.category && param.type && param.startDate) {
-            _QuestionCategory(param.category).then(function (categoryId) {
+            _ValidateCategory(param.category).then(function (categoryId) {
                 categoryObject = categoryId;
-                return _QuestionType(param.type);
+                return _ValidateType(param.type);
             }).then(function (typeId) {
                     typeObject = typeId;
-                    if (!(param.id)) {
-                        param.id = "new";
-                    }
-                    var qQuestion = new Parse.Query("Question");
-                    qQuestion.equalTo("objectId", param.id);
-                    qQuestion.notEqualTo("isDeleted", true);
-                    return qQuestion.first();
-                }).then(function (question) {
-                    var theDate = moment(param.startDate).format("YYYY-MM-DD") + "T00:00:00.000Z";
-                    if (question) {
-                        question.set("categoryId", parsePointer("QuestionCategory", categoryObject.id));
-                        question.set("typeId", parsePointer("QuestionType", typeObject.id));
-                        question.set("subject", param.text1);
-                        question.set("body", param.text2);
-                        question.set("startDate", parseDate(theDate));
-                        return question.save();
-                    } else {
-                        var Question = Parse.Object.extend("Question");
-                        Question = new Question();
-                        Question.set("categoryId", parsePointer("QuestionCategory", categoryObject.id));
-                        Question.set("typeId", parsePointer("QuestionType", typeObject.id));
-                        Question.set("subject", param.text1);
-                        Question.set("body", param.text2);
-                        Question.set("startDate", parseDate(theDate));
-                        return Question.save();
-                    }
+                    return _ValidateDate(typeId.get("name"), param.startDate);
+                }).then(function (objDates) {
+                    startDate = objDates.startDate;
+                    endDate = objDates.endDate;
+
+                    return _AdminQuestion(thisUser, param.id, categoryObject, typeObject, param.text1, param.text2, param.link, startDate, endDate);
                 }).then(function (questionSaved) {
-                    response.success(questionSaved.id);
+                    response.success(questionSaved);
                 }, function (error) {
                     response.error(error);
                 })
@@ -50,8 +32,76 @@ Parse.Cloud.define("QuestionAdmin", function (request, response) {
     }
 });
 
-var _QuestionType;
-_QuestionType = function (type) {
+_AdminQuestion = function (user, id, categoryId, typeId, subject, body, link, startDate, endDate) {
+    var promise = new Parse.Promise()
+        ;
+    if (!(id)) {
+        id = "new";
+    }
+    var qQuestion = new Parse.Query("Question");
+    qQuestion.equalTo("objectId", id);
+    qQuestion.notEqualTo("isDeleted", true);
+    qQuestion.first().then(function (question) {
+        if (!question) {
+            var Question = Parse.Object.extend("Question");
+            question = new Question();
+        }
+        question.set("categoryId", categoryId);
+        question.set("typeId", typeId);
+        question.set("subject", subject);
+        question.set("body", body);
+        question.set("link", link);
+        question.set("startDate", _parseDate(startDate));
+        question.set("endDate", _parseDate(endDate));
+        question.setACL(_getUserACL(user));
+        return question.save();
+    }).then(function (saved) {
+            promise.resolve(saved);
+        }, function (error) {
+            promise.reject(error);
+        });
+    return promise;
+};
+
+_ValidateDate = function (typeText, startDate) {
+    var promise = new Parse.Promise()
+        , prm = Parse.Promise.as()
+        ;
+
+    var dNewStart
+        , dNewEnd
+        , dD
+        ;
+    prm = prm.then(function () {
+        startDate = moment(startDate).format("YYYY-MM-DD") + "T00:00:00.000Z";
+        switch (typeText) {
+            case "day":
+                dNewStart = startDate;
+                dNewEnd = startDate;
+                break;
+            case  "week":
+                dD = moment(startDate);
+                dNewStart = dD.subtract("days", iif(dD.day() > 0, dD.day() - 1, 6)).format("YYYY-MM-DD") + "T00:00:00.000Z";
+                dNewEnd = moment(dNewStart).add("days", 6).format("YYYY-MM-DD") + "T00:00:00.000Z";
+                break;
+            case "month":
+                dD = moment(startDate);
+                dNewStart = dD.date(1).format("YYYY-MM-DD") + "T00:00:00.000Z";
+                dNewEnd = moment(dNewStart).add("months", 1).subtract("days", 1).format("YYYY-MM-DD") + "T00:00:00.000Z";
+                break;
+            default:
+                return Parse.Promise.error("error.invalid-type");
+        }
+        return {startDate: dNewStart, endDate: dNewEnd};
+    }).then(function (result) {
+            promise.resolve(result);
+        }, function (error) {
+            promise.reject(error);
+        });
+    return promise;
+};
+
+_ValidateType = function (type) {
     var promise = new Parse.Promise()
         ;
     var qType = new Parse.Query("QuestionType");
@@ -69,9 +119,7 @@ _QuestionType = function (type) {
     return promise;
 };
 
-
-var _QuestionCategory;
-_QuestionCategory = function (category) {
+_ValidateCategory = function (category) {
     var promise = new Parse.Promise()
         ;
     var qCategory = new Parse.Query("QuestionCategory");

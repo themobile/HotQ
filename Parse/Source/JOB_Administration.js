@@ -185,7 +185,6 @@ AddJobRunHistory = function (request) {
     Parse.Cloud.useMasterKey();
     var promise = new Parse.Promise();
     var NewJobRun = Parse.Object.extend("AppJobRunHistory")
-        , pACL = new Parse.ACL()
         ;
 
     NewJobRun = new NewJobRun();
@@ -199,10 +198,8 @@ AddJobRunHistory = function (request) {
     NewJobRun.set("isSuccess", (request.status == "success"));
     NewJobRun.set("isError", (request.status == "error"));
     NewJobRun.set("isOther", ((request.status != "success") && (request.status != "error")));
+    NewJobRun.setACL(_getAdminACL());
 
-    pACL.setRoleReadAccess("Administrators", true);
-    pACL.setRoleWriteAccess("Administrators", true);
-    NewJobRun.setACL(pACL);
     NewJobRun.save().then(function (jrs) {
         promise.resolve({});
     }, function (error) {
@@ -227,15 +224,11 @@ AddJobRunCounter = function (request) {
             return job.save();
         } else {
             var NewJob = Parse.Object.extend("AppJob")
-                , pACL = new Parse.ACL()
                 ;
-            pACL.setRoleReadAccess("Administrators", true);
-            pACL.setRoleWriteAccess("Administrators", true);
-
             NewJob = new NewJob();
             NewJob.set("name", jobName);
             NewJob.set("parameters", request.parameters);
-            NewJob.setACL(pACL);
+            NewJob.setACL(_getAdminACL());
             return NewJob.save();
         }
     }).then(function (jobSaved) {
@@ -243,7 +236,7 @@ AddJobRunCounter = function (request) {
             jobRunId = jobSaved.get("runCounter");
             return AddJobRunHistory({
                 name: jobSaved.get("name"),
-                jobId: parsePointer("AppJob", jobId),
+                jobId: _parsePointer("AppJob", jobId),
                 jobIdText: jobId,
                 runCounter: jobRunId,
                 parameters: request.parameters,
