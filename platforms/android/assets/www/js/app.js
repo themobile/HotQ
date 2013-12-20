@@ -73,25 +73,18 @@ angular.module("hotq", [ "ngRoute", "ngAnimate","ngTouch", "hotq.services", "hot
         $rootScope.online = navigator.onLine ? 'online' : 'offline';
         $rootScope.$apply();
 
-        if (window.addEventListener) {
-            window.addEventListener("online", function() {
-                $rootScope.online = "online";
-                $rootScope.$apply();
-            }, true);
-            window.addEventListener("offline", function() {
-                $rootScope.online = "offline";
-                $rootScope.$apply();
-            }, true);
-        } else {
-            document.body.ononline = function() {
-                $rootScope.online = "online";
-                $rootScope.$apply();
-            };
-            document.body.onoffline = function() {
-                $rootScope.online = "offline";
-                $rootScope.$apply();
-            };
+        if (!navigator.onLine) {
+            superScope.loaderMessage = "hotq este offline! Avem nevoie de internet!";
+            superScope.loader = !isOnline;
         }
+
+
+            document.addEventListener("online",function(){
+                $rootScope.$broadcast('onlineChanged',true);
+            },true)
+            document.addEventListener("offline",function(){
+                $rootScope.$broadcast('onlineChanged',false);
+            },true)
 
         //FIXME de pus hardware id intors de parse
         $rootScope.installId = '891e011e-77f3-4b23-8e0d-f7174da27379';

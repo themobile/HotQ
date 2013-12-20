@@ -76,6 +76,21 @@ module.exports = [
         "clobbers": [
             "window.plugins.socialsharing"
         ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.network-information/www/network.js",
+        "id": "org.apache.cordova.network-information.network",
+        "clobbers": [
+            "navigator.connection",
+            "navigator.network.connection"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.network-information/www/Connection.js",
+        "id": "org.apache.cordova.network-information.Connection",
+        "clobbers": [
+            "Connection"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -88,7 +103,8 @@ module.exports.metadata =
     "org.apache.cordova.vibration": "0.3.5",
     "org.apache.cordova.splashscreen": "0.2.5",
     "com.pushwoosh.plugins.pushwoosh": "3.0.2",
-    "nl.x-services.plugins.socialsharing": "3.5"
+    "nl.x-services.plugins.socialsharing": "3.5",
+    "org.apache.cordova.network-information": "0.2.5"
 }
 // BOTTOM OF METADATA
 });

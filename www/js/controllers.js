@@ -56,36 +56,36 @@ angular.module('hotq.controllers', ['btford.modal'])
             $scope.swipe_indicator=false;
 
 //            initializare PUSHWOOSH
-//            $scope.initPushwoosh = poosh.getAll(device.platform);
-//            $scope.initPushwoosh.then(
-//                function(token) {
-//                    var postData={deviceCode:device.uuid,pushCode:token};
-//                    $http(
-//                        {
-//                            method: 'POST',
-//                            url: 'https://api.parse.com/1/functions/AddDevice',
-//                            headers: {
-//                                "X-Parse-Application-Id": "oYvsd9hx0NoIlgEadXJsqCtU1PgjcPshRqy18kmP",
-//                                "X-Parse-REST-API-Key": "gX3SUxGPeSnAefjtFmF9MeWpbTIa9YhC8q1n7hLk",
-//                                "Content-Type": "application/json"
-//                            },
-//                            withCredentials: false,
-//                            cache: false,
-//                            data: postData
-//                        }
-//                    )
-//                        .success(function (data, status, headers, config) {
-//                            $rootScope.installId=data.result;
-//                        })
-//                        .error(function (data, status, headers, config) {
-//                            $rootScope.installId=data;
-//                        });
-//
-//                },
-//                function(status) {
-//                    $rootScope.installId=status;
-//                }
-//            );
+            $scope.initPushwoosh = poosh.getAll(device.platform);
+            $scope.initPushwoosh.then(
+                function(token) {
+                    var postData={deviceCode:device.uuid,pushCode:token};
+                    $http(
+                        {
+                            method: 'POST',
+                            url: 'https://api.parse.com/1/functions/AddDevice',
+                            headers: {
+                                "X-Parse-Application-Id": "oYvsd9hx0NoIlgEadXJsqCtU1PgjcPshRqy18kmP",
+                                "X-Parse-REST-API-Key": "gX3SUxGPeSnAefjtFmF9MeWpbTIa9YhC8q1n7hLk",
+                                "Content-Type": "application/json"
+                            },
+                            withCredentials: false,
+                            cache: false,
+                            data: postData
+                        }
+                    )
+                        .success(function (data, status, headers, config) {
+                            $rootScope.installId=data.result;
+                        })
+                        .error(function (data, status, headers, config) {
+                            $rootScope.installId=data.result;
+                        });
+
+                },
+                function(status) {
+                    $rootScope.installId=status;
+                }
+            );
 
             //   SFARSIT INITIALIZARE PUSHWOOSH
 

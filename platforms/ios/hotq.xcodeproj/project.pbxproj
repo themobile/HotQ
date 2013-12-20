@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		06EB32EF88A34752940A0E3B /* CDVSplashScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = DA6C3F10ADAD4925904D1181 /* CDVSplashScreen.m */; };
 		07DA8DC07C59448F9193B8F0 /* SocialSharing.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BC01248F2EF492F96810E71 /* SocialSharing.m */; };
@@ -68,6 +67,9 @@
 		D132347487604F3F9419A9D9 /* PushRuntime.m in Sources */ = {isa = PBXBuildFile; fileRef = 3368F441733E42A3BE03BF60 /* PushRuntime.m */; };
 		D4A0D8761607E02300AEF8BB /* Default-568h@2x~iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = D4A0D8751607E02300AEF8BB /* Default-568h@2x~iphone.png */; };
 		F840E1F1165FE0F500CFE078 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = F840E1F0165FE0F500CFE078 /* config.xml */; };
+		4B23D60A99944701AAC2A4ED /* CDVConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = EF6A0558A46A4472899071B6 /* CDVConnection.m */; };
+		5D50F61F8066408D9FD1422B /* CDVReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = EE90C99F9CF54CCAA4C0D4E7 /* CDVReachability.m */; };
+		0A1FEC12048440F3B16C8165 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C545C5EB802C4F7E9E7D95D9 /* SystemConfiguration.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -186,6 +188,11 @@
 		FCCC4E81AF7747BC8E4FDE02 /* PW_SBJsonWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PW_SBJsonWriter.m; path = com.pushwoosh.plugins.pushwoosh/ios/PW_SBJsonWriter.m; sourceTree = "<group>"; };
 		FD9AF22CF1AF417D8B9B49C8 /* PWPushStatRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PWPushStatRequest.h; path = com.pushwoosh.plugins.pushwoosh/ios/PWPushStatRequest.h; sourceTree = "<group>"; };
 		FF2D4DA39978443BADF866C7 /* PWGetTagsRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PWGetTagsRequest.h; path = com.pushwoosh.plugins.pushwoosh/ios/PWGetTagsRequest.h; sourceTree = "<group>"; };
+		EF6A0558A46A4472899071B6 /* CDVConnection.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "CDVConnection.m"; path = "org.apache.cordova.network-information/CDVConnection.m"; sourceTree = "<group>"; fileEncoding = 4; };
+		EE90C99F9CF54CCAA4C0D4E7 /* CDVReachability.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "CDVReachability.m"; path = "org.apache.cordova.network-information/CDVReachability.m"; sourceTree = "<group>"; fileEncoding = 4; };
+		AE16D76E2C334CA3A9B87C53 /* CDVConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CDVConnection.h"; path = "org.apache.cordova.network-information/CDVConnection.h"; sourceTree = "<group>"; fileEncoding = 4; };
+		3A7B388439C64A9AA9E68585 /* CDVReachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CDVReachability.h"; path = "org.apache.cordova.network-information/CDVReachability.h"; sourceTree = "<group>"; fileEncoding = 4; };
+		C545C5EB802C4F7E9E7D95D9 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "SystemConfiguration.framework"; path = "System/Library/Frameworks/SystemConfiguration.framework"; sourceTree = SDKROOT; fileEncoding = 4; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -199,6 +206,7 @@
 				288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */,
 				305D5FD1115AB8F900A74A75 /* MobileCoreServices.framework in Frameworks */,
 				5AEE5B35173C68D80009041E /* CoreLocation.framework in Frameworks */,
+				0A1FEC12048440F3B16C8165 /* SystemConfiguration.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -295,6 +303,7 @@
 				5B1594DC16A7569C00FEF299 /* AssetsLibrary.framework */,
 				288765FC0DF74451002DB57D /* CoreGraphics.framework */,
 				305D5FD0115AB8F900A74A75 /* MobileCoreServices.framework */,
+				C545C5EB802C4F7E9E7D95D9 /* SystemConfiguration.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -362,6 +371,10 @@
 				D6303CED65DE419EADB763A0 /* PushRuntime.h */,
 				4BC01248F2EF492F96810E71 /* SocialSharing.m */,
 				8473580822FE4A09B1D35FDB /* SocialSharing.h */,
+				EF6A0558A46A4472899071B6 /* CDVConnection.m */,
+				EE90C99F9CF54CCAA4C0D4E7 /* CDVReachability.m */,
+				AE16D76E2C334CA3A9B87C53 /* CDVConnection.h */,
+				3A7B388439C64A9AA9E68585 /* CDVReachability.h */,
 			);
 			name = Plugins;
 			path = hotq/Plugins;
@@ -574,6 +587,8 @@
 				4E04BCD336D542509D77A261 /* PWUnregisterDeviceRequest.m in Sources */,
 				D132347487604F3F9419A9D9 /* PushRuntime.m in Sources */,
 				07DA8DC07C59448F9193B8F0 /* SocialSharing.m in Sources */,
+				4B23D60A99944701AAC2A4ED /* CDVConnection.m in Sources */,
+				5D50F61F8066408D9FD1422B /* CDVReachability.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

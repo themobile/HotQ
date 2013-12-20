@@ -143,13 +143,18 @@ angular.module('hotq.services', ["btford.modal"]).
             });
 
             if (isOnline == true) {
+                angular.element(document.getElementsByTagName('body')[0]).scope().init();
+                angular.element(document.getElementsByTagName('body')[0]).scope().$apply();
+
                 //reincarcare date
                 console.log('reincarcare date');
             }
             console.log('isOnline: ' + isOnline);
-//            currentStorage = isOnline ? $http : LocalStorage
         });
     })
+
+
+
 
 
     .directive('loader', function () {
