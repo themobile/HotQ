@@ -94,35 +94,11 @@ angular.module('hotq.controllers', ['btford.modal'])
 
             //   SFARSIT INITIALIZARE PUSHWOOSH
 
-
-            $scope.timesLoaded = window.localStorage.getItem("hotQTimesLoaded");
-            if ($scope.timesLoaded) {
-                $scope.timesLoaded++;
-            } else {
-                $scope.timesLoaded = 1;
-            }
-
-            window.localStorage.setItem("hotQTimesLoaded", $scope.timesLoaded);
-
-            //la 4 incarcari de aplicatie arata demograficele
-            if ($scope.timesLoaded > 3) {
-                if (!window.localStorage.getItem("hotQUserDemo")) {
-                    this.showModal = demoModal.activate();
-                } else {
-                    $scope.user = JSON.parse(window.localStorage.getItem("hotQUserDemo"));
-
-                    if ($scope.user.sex != 1 && $scope.user.sex != 2) {
-                        this.showModal = demoModal.activate();
-                    }
-                }
-            }
-
-            //obiect cu uuid (nu e acceptat de IOS) si devicename
+            //obiect cu uuid (nu e acceptat de IOS?????) si devicename
             $scope.deviceInfo = {
                 name: device.name,
                 uuid: device.uuid
             };
-
 
             $rootScope.loaderMessage = "hotQ încarcă întrebările...";
             $rootScope.loader = true;
@@ -164,6 +140,8 @@ angular.module('hotq.controllers', ['btford.modal'])
 
                 });
 
+
+            //geolocatie si decodare google
             $scope.position = geolocation.getAll();
             $scope.position.then(function (position) {
                 $scope.position = position.coords;
@@ -182,6 +160,28 @@ angular.module('hotq.controllers', ['btford.modal'])
                 console.log(error);
             });
 
+            //citeste din localStorage
+            $scope.timesLoaded = window.localStorage.getItem("hotQTimesLoaded");
+            if ($scope.timesLoaded) {
+                $scope.timesLoaded++;   // incrementare timesLoaded
+            } else {
+                $scope.timesLoaded = 1; // initiere timesLoaded
+            }
+
+            //scrie timesLoaded in storage
+            window.localStorage.setItem("hotQTimesLoaded", $scope.timesLoaded);
+
+            //la 4 incarcari de aplicatie arata demograficele
+            if ($scope.timesLoaded > 3) {
+                if (!window.localStorage.getItem("hotQUserDemo")) {
+                    this.showModal = demoModal.activate();  // arata demograficele in modal
+                } else {
+                    $scope.user = JSON.parse(window.localStorage.getItem("hotQUserDemo"));
+                    if ($scope.user.sex != 1 && $scope.user.sex != 2) {
+                        this.showModal = demoModal.activate();
+                    }
+                }
+            }
 
             //            la primele doua incarcari arata swipe indicator
             if ($scope.timesLoaded <= 2) {
@@ -190,8 +190,6 @@ angular.module('hotq.controllers', ['btford.modal'])
                     $scope.swipe_indicator = false;
                 }, 5000);
             }
-
-
         };
 
         //functie pentru rutare
@@ -261,6 +259,8 @@ angular.module('hotq.controllers', ['btford.modal'])
             }
         };
 
+
+        //votare efectiva cu service voteNow
         $scope.voteNow = function (questionId, voteValue) {
             $rootScope.loaderMessage = "hotQ notează răspunsul tău...";
             $rootScope.loader = true;
