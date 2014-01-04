@@ -2,8 +2,7 @@ angular.module('hotq.controllers', ['btford.modal'])
 
     .value('version', '0.1')
 
-
-    .controller("HotqCtl", function ($scope, $rootScope, $timeout, $location, $http, $q, upVotes, questions,poosh, offlineswitch, geolocation, demoModal) {
+    .controller("HotqCtl", function ($scope, $rootScope, $timeout, $location, $http, $q, upVotes, questions, poosh, offlineswitch, geolocation, demoModal) {
 
         var screenList = ["questionOfDay", "questionOfWeek", "questionOfMonth", "reward"];
 
@@ -36,7 +35,7 @@ angular.module('hotq.controllers', ['btford.modal'])
         $scope.handlePrevious = function () {
             $scope.step -= ($scope.isFirstStep()) ? 0 : 1;
         };
-        $scope.handleNext = function (dismiss) {
+        $scope.handleNext = function () {
             if ($scope.isLastStep()) {
                 $scope.demoThanks = true;
                 window.localStorage.setItem("hotQUserDemo", JSON.stringify($scope.user));
@@ -53,13 +52,18 @@ angular.module('hotq.controllers', ['btford.modal'])
         //end fereastra modala
 
         $scope.init = function () {
-            $scope.swipe_indicator=false;
+            $timeout(function () {
+                $rootScope.startup = false;
+            }, 1000);
+            $scope.swipe_indicator = false;
+            $rootScope.loader = false;
+
 
 //            initializare PUSHWOOSH
             $scope.initPushwoosh = poosh.getAll(device.platform);
             $scope.initPushwoosh.then(
-                function(token) {
-                    var postData={deviceCode:device.uuid,pushCode:token};
+                function (token) {
+                    var postData = {deviceCode: device.uuid, pushCode: token};
                     $http(
                         {
                             method: 'POST',
@@ -74,21 +78,21 @@ angular.module('hotq.controllers', ['btford.modal'])
                             data: postData
                         }
                     )
-                        .success(function (data, status, headers, config) {
-                            $rootScope.installId=data.result;
+                        .success(function (data) {
+                            $rootScope.installId = data.result;
                         })
-                        .error(function (data, status, headers, config) {
-                            $rootScope.installId=data.result;
+                        .error(function (data) {
+//                            FIXME: de tratat eroare
+                            $rootScope.installId = data;
                         });
 
                 },
-                function(status) {
-                    $rootScope.installId=status;
+                function (status) {
+                    $rootScope.installId = status;
                 }
             );
 
             //   SFARSIT INITIALIZARE PUSHWOOSH
-
 
 
             $scope.timesLoaded = window.localStorage.getItem("hotQTimesLoaded");
@@ -97,13 +101,8 @@ angular.module('hotq.controllers', ['btford.modal'])
             } else {
                 $scope.timesLoaded = 1;
             }
-            $rootScope.loaderMessage = "hotQ încarcă întrebările...";
-            $rootScope.loader = true;
 
             window.localStorage.setItem("hotQTimesLoaded", $scope.timesLoaded);
-
-//            la primele doua incarcari arata swipe indicator
-
 
             //la 4 incarcari de aplicatie arata demograficele
             if ($scope.timesLoaded > 3) {
@@ -122,11 +121,11 @@ angular.module('hotq.controllers', ['btford.modal'])
             $scope.deviceInfo = {
                 name: device.name,
                 uuid: device.uuid
-            }
+            };
 
-            $timeout(function () {
-                $rootScope.startup = false;
-            }, 1000);
+
+            $rootScope.loaderMessage = "hotQ încarcă întrebările...";
+            $rootScope.loader = true;
 
             //call getAll with installationId
             $scope.questions = questions.getAll({installationId: $rootScope.installId});
@@ -143,39 +142,26 @@ angular.module('hotq.controllers', ['btford.modal'])
                             $scope.questions.questionOfWeek.hasVote = localData.questionOfWeek.hasVote;
                             $scope.questions.questionOfMonth.hasVote = localData.questionOfMonth.hasVote;
                         }
-                    };
-                    $rootScope.loader = false;
-
-                    if ($scope.timesLoaded <= 2) {
-                        $scope.swipe_indicator=true;
-                        $timeout(function() {
-                            $scope.swipe_indicator=false;
-                        },5000);
                     }
-
-
+                    $rootScope.loader = false;
 
                     //scriem in localstorage
                     window.localStorage.setItem("hotQuestions", JSON.stringify(data.result));
-                }, function (status) {
+                }, function () {
                     //prelevare date din localstorage daca exista in caz de eroare server
                     var localQuestions = window.localStorage.getItem('hotQuestions');
                     if (localQuestions) {
                         $scope.questions = JSON.parse(localQuestions);
                         $scope.yesproc = $scope.questions.questionOfDay.percentYes;
                         $scope.noproc = $scope.questions.questionOfDay.percentNo;
+                        console.log('nu incarc date - eroare grava');
 
                     } else {
 //                        TODO: de pus dummy questions sau de vazut ce e cu reteaua. ceva nu merge
-                        console.log('error grava');
+                        console.log('nu incarc date - eroare grava');
                     }
                     $rootScope.loader = false;
-                    if ($scope.timesLoaded <= 2) {
-                        $scope.swipe_indicator=true;
-                        $timeout(function() {
-                            $scope.swipe_indicator=false;
-                        },5000);
-                    }
+
                 });
 
             $scope.position = geolocation.getAll();
@@ -195,6 +181,17 @@ angular.module('hotq.controllers', ['btford.modal'])
             }, function (error) {
                 console.log(error);
             });
+
+
+            //            la primele doua incarcari arata swipe indicator
+            if ($scope.timesLoaded <= 2) {
+                $scope.swipe_indicator = true;
+                $timeout(function () {
+                    $scope.swipe_indicator = false;
+                }, 5000);
+            }
+
+
         };
 
         //functie pentru rutare
@@ -213,7 +210,7 @@ angular.module('hotq.controllers', ['btford.modal'])
         $scope.goReward = function (location) {
             console.log(location);
             window.open(location, '_blank', 'location=yes');
-        }
+        };
 
         //useful when voting :)
         $scope.getQuestionId = function () {
@@ -221,7 +218,7 @@ angular.module('hotq.controllers', ['btford.modal'])
         };
 
         //pay atention to currentScreen
-        $rootScope.$watch('currScreen', function (currScreen) {
+        $rootScope.$watch('currScreen', function () {
             if ($scope.questions) {
                 if ($scope.questions[$rootScope.currScreen]) {
                     $scope.yesproc = $scope.questions[$rootScope.currScreen].percentYes;
@@ -237,7 +234,7 @@ angular.module('hotq.controllers', ['btford.modal'])
                 if ($scope.questions[$rootScope.currScreen]) {
                     return $scope.questions[$rootScope.currScreen].hasVote ? false : true;
                 } else {
-                    return true
+                    return true;
                 }
             } else {
                 return false;
@@ -251,8 +248,6 @@ angular.module('hotq.controllers', ['btford.modal'])
             curr++;
             if (curr <= screenList.length - 1) {
                 $location.path("/" + screenList[curr]);
-            } else {
-                curr--;
             }
         };
 
@@ -263,13 +258,11 @@ angular.module('hotq.controllers', ['btford.modal'])
             curr--;
             if (curr >= 0) {
                 $location.path("/" + screenList[curr]);
-            } else {
-                curr++;
             }
         };
 
         $scope.voteNow = function (questionId, voteValue) {
-            $rootScope.loaderMessage = "hotQ notează răspunsul tău..."
+            $rootScope.loaderMessage = "hotQ notează răspunsul tău...";
             $rootScope.loader = true;
             upVotes.voteNow(questionId, voteValue, $rootScope.installId, {deviceInfo: $scope.deviceInfo, position: $scope.position, address: $scope.geoInfo}, {demographics: $scope.user})
                 .success(function (data /* tipul de intrebare la care s-a votat */) {
@@ -277,8 +270,8 @@ angular.module('hotq.controllers', ['btford.modal'])
                     window.localStorage.setItem("hotQuestions", JSON.stringify($scope.questions));
                     $rootScope.loader = false;
                 })
-                .error(function (error) {
+                .error(function () {
                     $rootScope.loader = false;
                 });
         };
-    })
+    });

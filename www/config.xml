@@ -13,7 +13,7 @@
     <preference name="SplashScreen" value="splash" />
     <preference name="SplashScreenDelay" value="3000" />
     <preference name="KeepRunning" value="false"/>
-    <preference name="LoadUrlTimeoutValue" value="10000"/>
+    <preference name="LoadUrlTimeoutValue" value="3000"/>
 
     <feature name="SocialSharing">
         <param name="android-package" value="nl.xservices.plugins.SocialSharing" />

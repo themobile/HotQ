@@ -78,7 +78,6 @@ angular.module("hotq", [ "ngRoute", "ngAnimate","ngTouch", "hotq.services", "hot
             superScope.loader = !isOnline;
         }
 
-
             document.addEventListener("online",function(){
                 $rootScope.$broadcast('onlineChanged',true);
             },true)

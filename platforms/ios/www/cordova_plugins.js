@@ -91,6 +91,20 @@ module.exports = [
         "clobbers": [
             "Connection"
         ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.console/www/console-via-logger.js",
+        "id": "org.apache.cordova.console.console",
+        "clobbers": [
+            "console"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.console/www/logger.js",
+        "id": "org.apache.cordova.console.logger",
+        "clobbers": [
+            "cordova.logger"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -104,7 +118,8 @@ module.exports.metadata =
     "org.apache.cordova.splashscreen": "0.2.5",
     "com.pushwoosh.plugins.pushwoosh": "3.0.2",
     "nl.x-services.plugins.socialsharing": "3.5",
-    "org.apache.cordova.network-information": "0.2.5"
+    "org.apache.cordova.network-information": "0.2.5",
+    "org.apache.cordova.console": "0.2.5"
 }
 // BOTTOM OF METADATA
 });

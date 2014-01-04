@@ -78,7 +78,7 @@ angular.module('hotq.controllers', ['btford.modal'])
                             $rootScope.installId=data.result;
                         })
                         .error(function (data, status, headers, config) {
-                            $rootScope.installId=data.result;
+                            $rootScope.installId=data;
                         });
 
                 },
@@ -97,8 +97,7 @@ angular.module('hotq.controllers', ['btford.modal'])
             } else {
                 $scope.timesLoaded = 1;
             }
-            $rootScope.loaderMessage = "hotQ încarcă întrebările...";
-            $rootScope.loader = true;
+
 
             window.localStorage.setItem("hotQTimesLoaded", $scope.timesLoaded);
 
@@ -127,6 +126,9 @@ angular.module('hotq.controllers', ['btford.modal'])
             $timeout(function () {
                 $rootScope.startup = false;
             }, 1000);
+
+            $rootScope.loaderMessage = "hotQ încarcă întrebările...";
+            $rootScope.loader = true;
 
             //call getAll with installationId
             $scope.questions = questions.getAll({installationId: $rootScope.installId});

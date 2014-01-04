@@ -53,7 +53,12 @@ angular.module('hotq.controllers', ['btford.modal'])
         //end fereastra modala
 
         $scope.init = function () {
+            $timeout(function () {
+                $rootScope.startup = false;
+            }, 1000);
             $scope.swipe_indicator=false;
+            $rootScope.loader = false;
+
 
 //            initializare PUSHWOOSH
             $scope.initPushwoosh = poosh.getAll(device.platform);
@@ -78,7 +83,7 @@ angular.module('hotq.controllers', ['btford.modal'])
                             $rootScope.installId=data.result;
                         })
                         .error(function (data, status, headers, config) {
-                            $rootScope.installId=data.result;
+                            $rootScope.installId=data;
                         });
 
                 },
@@ -97,13 +102,8 @@ angular.module('hotq.controllers', ['btford.modal'])
             } else {
                 $scope.timesLoaded = 1;
             }
-            $rootScope.loaderMessage = "hotQ încarcă întrebările...";
-            $rootScope.loader = true;
 
             window.localStorage.setItem("hotQTimesLoaded", $scope.timesLoaded);
-
-//            la primele doua incarcari arata swipe indicator
-
 
             //la 4 incarcari de aplicatie arata demograficele
             if ($scope.timesLoaded > 3) {
@@ -124,9 +124,10 @@ angular.module('hotq.controllers', ['btford.modal'])
                 uuid: device.uuid
             }
 
-            $timeout(function () {
-                $rootScope.startup = false;
-            }, 1000);
+
+
+            $rootScope.loaderMessage = "hotQ încarcă întrebările...";
+            $rootScope.loader = true;
 
             //call getAll with installationId
             $scope.questions = questions.getAll({installationId: $rootScope.installId});
@@ -146,15 +147,6 @@ angular.module('hotq.controllers', ['btford.modal'])
                     };
                     $rootScope.loader = false;
 
-                    if ($scope.timesLoaded <= 2) {
-                        $scope.swipe_indicator=true;
-                        $timeout(function() {
-                            $scope.swipe_indicator=false;
-                        },5000);
-                    }
-
-
-
                     //scriem in localstorage
                     window.localStorage.setItem("hotQuestions", JSON.stringify(data.result));
                 }, function (status) {
@@ -164,18 +156,14 @@ angular.module('hotq.controllers', ['btford.modal'])
                         $scope.questions = JSON.parse(localQuestions);
                         $scope.yesproc = $scope.questions.questionOfDay.percentYes;
                         $scope.noproc = $scope.questions.questionOfDay.percentNo;
+                        console.log('nu incarc date - eroare grava');
 
                     } else {
 //                        TODO: de pus dummy questions sau de vazut ce e cu reteaua. ceva nu merge
-                        console.log('error grava');
+                        console.log('nu incarc date - eroare grava');
                     }
                     $rootScope.loader = false;
-                    if ($scope.timesLoaded <= 2) {
-                        $scope.swipe_indicator=true;
-                        $timeout(function() {
-                            $scope.swipe_indicator=false;
-                        },5000);
-                    }
+
                 });
 
             $scope.position = geolocation.getAll();
@@ -195,6 +183,17 @@ angular.module('hotq.controllers', ['btford.modal'])
             }, function (error) {
                 console.log(error);
             });
+
+
+            //            la primele doua incarcari arata swipe indicator
+            if ($scope.timesLoaded <= 2) {
+                $scope.swipe_indicator=true;
+                $timeout(function() {
+                    $scope.swipe_indicator=false;
+                },5000);
+            }
+
+
         };
 
         //functie pentru rutare

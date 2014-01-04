@@ -87,7 +87,7 @@ angular.module("hotq", [ "ngRoute", "ngAnimate","ngTouch", "hotq.services", "hot
             },true)
 
         //FIXME de pus hardware id intors de parse
-        $rootScope.installId = '891e011e-77f3-4b23-8e0d-f7174da27379';
+        $rootScope.installId = '291e011e-77f3-4b23-8e0d-f7174da27379';
 
 
 
