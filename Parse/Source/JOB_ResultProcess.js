@@ -90,29 +90,33 @@ _ResultProcess = function (vote) {
             if (beforeAnswer.cntNo) {
                 cntNo += beforeAnswer.cntNo;
             }
-            cntAll = cntYes + cntNo;
             results.cntYes = cntYes;
             results.cntNo = cntNo;
-            if (cntAll < 10) {
-                cntYes *= 100;
-                cntNo *= 100;
+            cntAll = results.cntYes + results.cntNo;
+
+            if ((cntAll < 10) && (moment().diff(moment(question.createdAt), 'hours') <= 12)) {
+                results.percentYes = 50;
+                results.percentNo = 50;
             } else {
-                if (cntAll < 100) {
-                    cntYes *= 10;
-                    cntNo *= 10;
+                if (cntAll < 10) {
+                    cntYes *= 100;
+                    cntNo *= 100;
+                } else {
+                    if (cntAll < 100) {
+                        cntYes *= 10;
+                        cntNo *= 10;
+                    }
                 }
-            }
-            cntAll = cntYes + cntNo;
-            if (cntAll < 1000) {
-                cntAdd = Math.ceil((1000 - cntAll) / 2);
-                cntYes += cntAdd;
-                cntNo += cntAdd;
                 cntAll = cntYes + cntNo;
+                if (cntAll < 1000) {
+                    cntAdd = Math.ceil((1000 - cntAll) / 2);
+                    cntYes += cntAdd;
+                    cntNo += cntAdd;
+                    cntAll = cntYes + cntNo;
+                }
+                results.percentYes = Math.round((cntYes * 100 / cntAll) * 10) / 10;
+                results.percentNo = 100 - results.percentYes;
             }
-
-            results.percentYes = Math.round((cntYes * 100 / cntAll) * 10) / 10;
-            results.percentNo = 100 - results.percentYes;
-
             question.set("results", results);
             return question.save();
         } else {

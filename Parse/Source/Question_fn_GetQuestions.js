@@ -1,6 +1,6 @@
 Parse.Cloud.define("GetQuestions", function (request, response) {
     var theDate
-        , installationId
+        , deviceId
         , result = {}
         ;
     Parse.Cloud.useMasterKey();
@@ -9,11 +9,11 @@ Parse.Cloud.define("GetQuestions", function (request, response) {
     } else {
         theDate = moment().format("YYYY-MM-DD") + "T00:00:00.000Z";
     }
-    var qInst = new Parse.Query("_Installation");
+    var qInst = new Parse.Query("Device");
     qInst.equalTo("installationId", request.params.installationId);
-    qInst.first().then(function (installation) {
-        if (installation) {
-            installationId = installation.id;
+    qInst.first().then(function (device) {
+        if (device) {
+            deviceId = device.id;
             var qQ = new Parse.Query("QuestionSelect");
             qQ.equalTo("date", _parseDate(theDate));
             qQ.notEqualTo("isDeleted", true);
@@ -64,7 +64,7 @@ Parse.Cloud.define("GetQuestions", function (request, response) {
             }
             return Parse.Promise.as();
         }).then(function () {
-            return _GetVote(installationId, result.questionOfDay.id);
+            return _GetVote(deviceId, result.questionOfDay.id);
         }).then(function (rez) {
             if (rez) {
                 result.questionOfDay.hasVote = !!rez.date;
@@ -72,7 +72,7 @@ Parse.Cloud.define("GetQuestions", function (request, response) {
             } else {
                 result.questionOfDay.hasVote = false;
             }
-            return _GetVote(installationId, result.questionOfWeek.id);
+            return _GetVote(deviceId, result.questionOfWeek.id);
         }).then(function (rez) {
             if (rez) {
                 result.questionOfWeek.hasVote = !!rez.date;
@@ -80,7 +80,7 @@ Parse.Cloud.define("GetQuestions", function (request, response) {
             } else {
                 result.questionOfWeek.hasVote = false;
             }
-            return _GetVote(installationId, result.questionOfMonth.id);
+            return _GetVote(deviceId, result.questionOfMonth.id);
         }).then(function (rez) {
             if (rez) {
                 result.questionOfMonth.hasVote = !!rez.date;
@@ -95,10 +95,10 @@ Parse.Cloud.define("GetQuestions", function (request, response) {
 });
 
 var _GetVote;
-_GetVote = function (installationId, questionId) {
+_GetVote = function (deviceId, questionId) {
     var promise = new Parse.Promise();
     var qVote = new Parse.Query("Vote");
-    qVote.equalTo("installationId", _parsePointer("_Installation", installationId));
+    qVote.equalTo("deviceId", _parsePointer("Device", deviceId));
     qVote.equalTo("questionId", _parsePointer("Question", questionId));
     qVote.first().then(function (vote) {
         if (vote) {
