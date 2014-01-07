@@ -3,7 +3,7 @@ Parse.Cloud.define("GetListQuestions", function (request, response) {
         , pageNo = request.params.pageNo
         , results = []
         ;
-    Parse.Cloud.useMasterKey();
+//    Parse.Cloud.useMasterKey();
     if (!(pageRows)) {
         pageRows = 100;
     }

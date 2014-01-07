@@ -1,11 +1,11 @@
 Parse.Cloud.beforeSave("AppJob", function (request, response) {
-    Parse.Cloud.useMasterKey();
+//    Parse.Cloud.useMasterKey();
     request.object.increment("runCounter");
     response.success();
 });
 
 Parse.Cloud.define("JobHistory", function (request, response) {
-    Parse.Cloud.useMasterKey();
+//    Parse.Cloud.useMasterKey();
     var results = [];
     var qJob = new Parse.Query("AppJob");
     var pageRows = request.params.pageRows
@@ -101,7 +101,7 @@ Parse.Cloud.define("JobHistory", function (request, response) {
 
 
 Parse.Cloud.define("JobStatus", function (request, response) {
-    Parse.Cloud.useMasterKey();
+//    Parse.Cloud.useMasterKey();
     var job = request.params
         , results = []
         ;
