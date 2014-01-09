@@ -35,11 +35,14 @@
             onclick='LogInShow()'>
         LogIn
     </button>
-    <button type="button" onclick='LogOut()'>LogOut</button>
+    <button type="button"
+            onclick='LogOut()'>
+        LogOut
+    </button>
 
     <button type="button"
             onclick='ShowAddQuestion()'>
-        Teste
+        Add Question
     </button>
     <!--
         <button type="button"
@@ -203,7 +206,7 @@
 
 <script type="text/javascript">
     $('input#saveForm').click(function (event) {
-        saveQuestion("oYvsd9hx0NoIlgEadXJsqCtU1PgjcPshRqy18kmP", "gTD0yfs2jDMCE7oxgQVl6Yx9fbdviz5GQPrWHFW9", $('form#form-add-question').serialize(),$('form#form-add-question')[0][10]);
+        saveQuestion("oYvsd9hx0NoIlgEadXJsqCtU1PgjcPshRqy18kmP", "gTD0yfs2jDMCE7oxgQVl6Yx9fbdviz5GQPrWHFW9", $('form#form-add-question').serialize(), $('form#form-add-question')[0][10]);
         event.preventDefault()
     });
 </script>

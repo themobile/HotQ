@@ -30,7 +30,6 @@ body
 	clear:both;
 	color:#999999;
 	text-align:center;
-	width:640px;
 	padding-bottom: 15px;
 	font-size: 85%;
 }
@@ -79,7 +78,8 @@ h1 a
 
 img
 {
-	behavior:url(css/iepngfix.htc);
+	/*behavior:url(css/iepngfix.htc);*/
+	behavior:url(../form/form/iepngfix.htc);
 	border:none;
 }
 

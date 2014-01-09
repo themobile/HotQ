@@ -2161,23 +2161,33 @@ _ValidateCategory = function (category) {
 };
 
 Parse.Cloud.define("GetListQuestions", function (request, response) {
-    var pageRows = request.params.pageRows
-        , pageNo = request.params.pageNo
-        , results = []
+    Parse.Cloud.useMasterKey();
+    var results = []
+        , startDate
+        , endDate
         ;
-//    Parse.Cloud.useMasterKey();
-    if (!(pageRows)) {
-        pageRows = 100;
-    }
-    if (!(pageNo) || (pageNo < 1)) {
-        pageNo = 1;
-    }
+//    var pageRows = request.params.pageRows
+//        , pageNo = request.params.pageNo
+//        , results = []
+//        ;
+//    if (!(pageRows)) {
+//        pageRows = 100;
+//    }
+//    if (!(pageNo) || (pageNo < 1)) {
+//        pageNo = 1;
+//    }
+
+    endDate = moment().format('YYYY-MM-DD')+'T00:00:00.000Z';
+    startDate = moment(endDate).subtract('days',31).format('YYYY-MM-DD')+'T00:00:00.000Z';
+
     var qQuestion = new Parse.Query("Question");
     qQuestion.notEqualTo("isDeleted", true);
+    qQuestion.greaterThanOrEqualTo('startDate',_parseDate(startDate));
+    qQuestion.lessThanOrEqualTo('startDate',_parseDate(endDate));
     qQuestion.include("categoryId,typeId");
     qQuestion.descending("startDate");
-    qQuestion.skip((pageNo - 1) * pageRows);
-    qQuestion.limit(pageRows);
+//    qQuestion.skip((pageNo - 1) * pageRows);
+//    qQuestion.limit(pageRows);
     qQuestion.find().then(function (questions) {
         _.each(questions, function (question) {
             var objToAdd = {
@@ -2187,8 +2197,8 @@ Parse.Cloud.define("GetListQuestions", function (request, response) {
                 typeLocale: question.get("typeId").get("nameLocale"),
                 text1: question.get("subject"),
                 text2: question.get("body"),
-                startDate: moment(question.get("startDate")).format("YYYY-MM-DD"),
-                endDate: moment(question.get("endDate")).format("YYYY-MM-DD"),
+                startDate: moment(question.get("startDate")).format("YYYY,M,D"),
+                endDate: moment(question.get("endDate")).format("YYYY,M,D"),
                 resultPercentYes: question.get("results") ? question.get("results").percentYes ? question.get("results").percentYes : 50 : 50
             };
             objToAdd.resultPercentNo = 100 - objToAdd.resultPercentYes;
