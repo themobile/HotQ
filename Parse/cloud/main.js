@@ -6,11 +6,16 @@ var moment = require('moment')
     ;
 //require('cloud/app.js');
 
+moment.lang('ro', {
+    months: ["ianuarie", "februarie", "martie", "aprilie", "mai", "iunie", "iulie", "august", "septembrie", "octombrie", "noiembrie", "decembrie"],
+    monthsShort: ["ian", "feb", "mar", "apr", "mai", "iun", "iul", "aug", "sep", "oct", "nov", "dec"]
+});
+
 var theBillSecretKey = 'v0]w?I)2~T~S[6n0(z0*';
 var crypto = require('crypto');
 var Buffer = require('buffer').Buffer;
 var isProduction = Parse.applicationId == "V1geU0nKmidZiMLVU0bUpFCDYdnbLqTRUXTrTzWV";
-var HotQVersion = '0.0.1';
+var HotQVersion = '0.1.215';
 var StringBuffer = function () {
     this.buffer = [];
 };
@@ -2166,42 +2171,47 @@ Parse.Cloud.define("GetListQuestions", function (request, response) {
         , startDate
         , endDate
         ;
-//    var pageRows = request.params.pageRows
-//        , pageNo = request.params.pageNo
-//        , results = []
-//        ;
-//    if (!(pageRows)) {
-//        pageRows = 100;
-//    }
-//    if (!(pageNo) || (pageNo < 1)) {
-//        pageNo = 1;
-//    }
-
-    endDate = moment().format('YYYY-MM-DD')+'T00:00:00.000Z';
-    startDate = moment(endDate).subtract('days',31).format('YYYY-MM-DD')+'T00:00:00.000Z';
+    endDate = moment().format('YYYY-MM-DD') + 'T00:00:00.000Z';
+    startDate = moment(endDate).subtract('days', 31).format('YYYY-MM-DD') + 'T00:00:00.000Z';
 
     var qQuestion = new Parse.Query("Question");
     qQuestion.notEqualTo("isDeleted", true);
-    qQuestion.greaterThanOrEqualTo('startDate',_parseDate(startDate));
-    qQuestion.lessThanOrEqualTo('startDate',_parseDate(endDate));
+    qQuestion.greaterThanOrEqualTo('startDate', _parseDate(startDate));
+    qQuestion.lessThanOrEqualTo('startDate', _parseDate(endDate));
     qQuestion.include("categoryId,typeId");
     qQuestion.descending("startDate");
-//    qQuestion.skip((pageNo - 1) * pageRows);
-//    qQuestion.limit(pageRows);
     qQuestion.find().then(function (questions) {
+        var indice = 0;
         _.each(questions, function (question) {
+            var startDate = question.get("startDate")
+                , endDate = question.get("endDate")
+                ;
             var objToAdd = {
+                index: ++indice,
                 id: question.id,
                 category: question.get("categoryId").get("name"),
                 type: question.get("typeId").get("name"),
                 typeLocale: question.get("typeId").get("nameLocale"),
                 text1: question.get("subject"),
                 text2: question.get("body"),
-                startDate: moment(question.get("startDate")).format("YYYY,M,D"),
-                endDate: moment(question.get("endDate")).format("YYYY,M,D"),
+//                startDate: moment(question.get("startDate")).format("YYYY,M,D"),
+//                endDate: moment(question.get("endDate")).format("YYYY,M,D"),
                 resultPercentYes: question.get("results") ? question.get("results").percentYes ? question.get("results").percentYes : 50 : 50
             };
             objToAdd.resultPercentNo = 100 - objToAdd.resultPercentYes;
+            objToAdd.period = "unknown";
+            if (objToAdd.type == "day") {
+                objToAdd.period = moment(startDate).format("D MMM YYYY");
+            } else {
+                if (objToAdd.type == "week") {
+                    objToAdd.period = moment(startDate).format("D") +
+                        iif(moment(startDate).format("M") == moment(endDate).format("M"), "", moment(startDate).format(" MMM")) +
+                        iif(moment(startDate).format("YY") == moment(endDate).format("YY"), "", moment(startDate).format(" YYYY")) +
+                        " - " + moment(endDate).format("D MMM YYYY");
+                } else {
+                    objToAdd.period = moment(startDate).format("MMMM YYYY");
+                }
+            }
             results.push(objToAdd);
         });
         response.success(results);
@@ -2451,6 +2461,33 @@ Parse.Cloud.define("QuoteAdmin", function (request, response) {
         response.error("error.user-not-found");
     }
 });
+Parse.Cloud.define("UserQuestionSubmit", function (request, response) {
+    var title = request.params.title
+        , subtitle = request.params.subtitle
+        , tricks = request.params.tricks
+        , UserQuestion = Parse.Object.extend("UserQuestion")
+
+
+        , installationId = request.params.installationId
+        , questionId = request.params.questionId
+        , answer = request.params.answer
+        , position = request.params.position
+        , demographics = request.params.demographics
+        , type
+        ;
+    Parse.Cloud.useMasterKey();
+    UserQuestion = new UserQuestion();
+    UserQuestion.set("title", title);
+    UserQuestion.set("subtitle", subtitle);
+    UserQuestion.set("tricks", tricks);
+    UserQuestion.setACL(_getAdminACL());
+    UserQuestion.save().then(function (userQuestion) {
+        response.success(userQuestion.id);
+    }, function (error) {
+        response.error(JSON.stringify(error));
+    });
+});
+
 Parse.Cloud.define("VoteSubmit", function (request, response) {
     var installationId = request.params.installationId
         , questionId = request.params.questionId

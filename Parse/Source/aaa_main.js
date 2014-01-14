@@ -6,11 +6,16 @@ var moment = require('moment')
     ;
 //require('cloud/app.js');
 
+moment.lang('ro', {
+    months: ["ianuarie", "februarie", "martie", "aprilie", "mai", "iunie", "iulie", "august", "septembrie", "octombrie", "noiembrie", "decembrie"],
+    monthsShort: ["ian", "feb", "mar", "apr", "mai", "iun", "iul", "aug", "sep", "oct", "nov", "dec"]
+});
+
 var theBillSecretKey = 'v0]w?I)2~T~S[6n0(z0*';
 var crypto = require('crypto');
 var Buffer = require('buffer').Buffer;
 var isProduction = Parse.applicationId == "V1geU0nKmidZiMLVU0bUpFCDYdnbLqTRUXTrTzWV";
-var HotQVersion = '0.0.1';
+var HotQVersion = '0.1.215';
 var StringBuffer = function () {
     this.buffer = [];
 };
