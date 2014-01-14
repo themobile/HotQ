@@ -1,13 +1,23 @@
 {
     "applications": {
         "_default": {
-            "link": "hotq"
-        }, 
-        "hotq": {
+            "link": "hotqDevelopment"
+        },
+        "production": {
+            "link": "hotqProduction"
+        },
+        "development": {
+            "link": "hotqDevelopment"
+        },
+        "hotqDevelopment": {
             "applicationId": "oYvsd9hx0NoIlgEadXJsqCtU1PgjcPshRqy18kmP", 
             "masterKey": "RlVVTkb0bQq4WUNdXtI7msDwSCyUGJrvCutpe3d9"
+        },
+        "hotqProduction": {
+            "applicationId": "MqJG79VqkwRoUZIFJrOJ348AYdXqAnifz603oSMM",
+            "masterKey": "eBgT6SM8q5LoqPKuRmWUY4OMNoHOvMDhc4ZDZ38D"
         }
-    }, 
+    },
     "global": {
         "parseVersion": "1.2.13"
     }

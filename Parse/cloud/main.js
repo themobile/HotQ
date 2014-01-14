@@ -14,8 +14,8 @@ moment.lang('ro', {
 var theBillSecretKey = 'v0]w?I)2~T~S[6n0(z0*';
 var crypto = require('crypto');
 var Buffer = require('buffer').Buffer;
-var isProduction = Parse.applicationId == "V1geU0nKmidZiMLVU0bUpFCDYdnbLqTRUXTrTzWV";
-var HotQVersion = '0.1.215';
+var isProduction = Parse.applicationId == "MqJG79VqkwRoUZIFJrOJ348AYdXqAnifz603oSMM";
+var HotQVersion = '0.2.220';
 var StringBuffer = function () {
     this.buffer = [];
 };
@@ -1048,13 +1048,14 @@ Parse.Cloud.job("CreateApplication", function (request, status) {
     }).then(function () {
             return _createSchema();
         }).then(function () {
+            return _createQuestionType();
+        }).then(function () {
             status.success("OK");
         }, function (error) {
             _Log(error);
             status.error(JSON.stringify(error));
         });
 });
-
 
 _createSchema = function () {
     var promise = new Parse.Promise()
@@ -1076,6 +1077,30 @@ _createSchema = function () {
     return promise;
 };
 
+_createQuestionType = function () {
+    var promise = new Parse.Promise()
+        , prm = Parse.Promise.as()
+        , qtArray = ["day", "week", "month"]
+        ;
+    _.each(qtArray, function (qt) {
+        prm = prm.then(function () {
+            var qtObject = Parse.Object.extend("QuestionType");
+            qtObject = new qtObject();
+            qtObject.set("name", qt);
+            qtObject.set("nameLocale", "type.q-" + qt);
+            qtObject.setACL(_getAdminACL());
+            return qtObject.save();
+        });
+    });
+
+    prm = prm.then(function () {
+        promise.resolve({});
+    }, function (error) {
+        promise.reject(error);
+    });
+
+    return promise;
+};
 
 _createSchemaTable = function (table) {
     var promise = new Parse.Promise()
@@ -1098,7 +1123,6 @@ _createSchemaTable = function (table) {
         });
     return promise;
 };
-
 
 var HotQSchema = {
     columnTypeDefaults: {
@@ -1303,6 +1327,17 @@ var HotQSchema = {
                 },
                 {
                     name: "tableName", type: "string"
+                }
+            ]
+        },
+        {
+            name: "UserQuestion",
+            columns: [
+                {
+                    name: "questionContent", type: "string"
+                },
+                {
+                    name: "tricks", type: "string"
                 }
             ]
         },
@@ -2462,23 +2497,13 @@ Parse.Cloud.define("QuoteAdmin", function (request, response) {
     }
 });
 Parse.Cloud.define("UserQuestionSubmit", function (request, response) {
-    var title = request.params.title
-        , subtitle = request.params.subtitle
+    var questionContent = request.params.questionContent
         , tricks = request.params.tricks
         , UserQuestion = Parse.Object.extend("UserQuestion")
-
-
-        , installationId = request.params.installationId
-        , questionId = request.params.questionId
-        , answer = request.params.answer
-        , position = request.params.position
-        , demographics = request.params.demographics
-        , type
         ;
     Parse.Cloud.useMasterKey();
     UserQuestion = new UserQuestion();
-    UserQuestion.set("title", title);
-    UserQuestion.set("subtitle", subtitle);
+    UserQuestion.set("questionContent", questionContent);
     UserQuestion.set("tricks", tricks);
     UserQuestion.setACL(_getAdminACL());
     UserQuestion.save().then(function (userQuestion) {
