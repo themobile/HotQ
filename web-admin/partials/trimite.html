@@ -1,0 +1,80 @@
+<div class="container">
+    <div class="header">
+        <!--<button ng-click="reverse=!reverse">reverse</button>-->
+        <button class="btnMenu" ng-click="$spMenu.toggle()"><p>Menu</p></button>
+    </div>
+
+    <div class="answers">
+        <div id="answersTop"></div>
+        <div class="explicatii">
+            <h1>
+                Pune o întrebare
+            </h1>
+
+            <h2 class="subtitle">relevantă pentru români</h2>
+
+            <p>
+                Formulează subtitlul și titlul întrebării astfel încât să se poată răspunde cu DA sau NU.
+                Întrebarea va fi postată în aplicația hotQ în măsura în care nu contravine principiilor noastre.
+                Întrebările nu pot conține cuvinte / elemente obscene, nu au voie să aducă atingere intereselor unei
+                persoane sau grup de persoane.
+                Ele trebuie să fie relevante pentru un grup mare de oameni și să fie formulate într-o manieră ușor de
+                înțeles.
+            </p>
+
+            <p>
+                HotQ își rezervă dreptul să reformuleze și / sau respingă orice întrebare trimisă, fără a oferi
+                explicații pentru acest lucru.
+            </p>
+        </div>
+
+
+
+        <div class="loader" ng-show="loading">
+            <div id="bowlG">
+                <div id="bowl_ringG">
+                    <div class="ball_holderG">
+                        <div class="ballG">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="thankyou" ng-hide="!thankyou">
+                    <span class="thankyoutext">Mulțumim pentru întrebarea trimisă. Ea va fi revizuită de către editorii hotQ și este posibil să fie inclusă în aplicație.</span>
+                    <button ng-click="reset()" >Trimite altă întrebare</button>
+        </div>
+
+        <form novalidate name="sendQForm" class="sendQForm" ng-show="!loading" ng-hide="thankyou">
+
+            <!--<label for="subtitle">-->
+                <!--Subtitlu-->
+                <!--<span class="explanation">min 10, max 60 caractere</span>-->
+            <!--</label>-->
+
+            <!--<textarea id="subtitle" name="subtitle" rows="2" type="text" ng-model="qSend.subtitle"-->
+                      <!--placeholder="ex: sunteti sau nu de acord cu afirmația" required="necesar" ng-minlength="10" ng-maxlength="60">-->
+            <!--</textarea>-->
+
+            <label for="title">
+                Întrebare
+                <span class="explanation">min 15, max 200 caractere</span>
+            </label>
+            <textarea id="title" name="title" type="text" rows="5" ng-model="qSend.questionContent"
+                      placeholder="întrebarea ta pentru toți românii" required="necesar" ng-maxlength="200" ng-minlength="15">
+            </textarea>
+
+            <input name="tricks" type="text" ng-model="qSend.tricks" class="tricks"/>
+            <span class="explanation error" ng-show="error">Hmmm.... Avem o eroare...</span>
+
+            <button ng-click="sendQ()" ng-show="!error" ng-disabled="sendQForm.$invalid">Trimite</button>
+            <button ng-click="sendQ()" ng-show="error">Reîncearcă</button>
+            <button ng-click="reset()" ng-show="error">Cancel</button>
+
+        </form>
+
+
+    </div>
+
+
+</div>
