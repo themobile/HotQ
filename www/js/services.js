@@ -35,6 +35,7 @@ angular.module('hotq.services', ["btford.modal"]).
                         cache: false,
                         withCredentials: false
                     }
+
                 );
 
             }
