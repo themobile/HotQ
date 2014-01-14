@@ -59,12 +59,12 @@ Parse.Cloud.job("VoteProcess", function (request, status) {
 _VoteSaveFirst = function (log) {
     var promise = new Parse.Promise()
         ;
-    var inst = log.get("installationId")
-        , quest = log.get("questionId").id
-        , answ = log.get("answer")
+    var installationId = log.get("installationId")
+        , questionId = log.get("questionId").id
+        , answer = log.get("answer")
         , date = log.createdAt
         ;
-    _VoteSave(inst, quest, answ, date).then(function (voteSaved) {
+    _VoteSave(installationId, questionId, answer, date).then(function (voteSaved) {
         log.set("status", "ok");
         log.set("isSuccess", true);
         log.set("voteId", voteSaved);

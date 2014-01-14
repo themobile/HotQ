@@ -6,11 +6,16 @@ var moment = require('moment')
     ;
 //require('cloud/app.js');
 
+moment.lang('ro', {
+    months: ["ianuarie", "februarie", "martie", "aprilie", "mai", "iunie", "iulie", "august", "septembrie", "octombrie", "noiembrie", "decembrie"],
+    monthsShort: ["ian", "feb", "mar", "apr", "mai", "iun", "iul", "aug", "sep", "oct", "nov", "dec"]
+});
+
 var theBillSecretKey = 'v0]w?I)2~T~S[6n0(z0*';
 var crypto = require('crypto');
 var Buffer = require('buffer').Buffer;
 var isProduction = Parse.applicationId == "V1geU0nKmidZiMLVU0bUpFCDYdnbLqTRUXTrTzWV";
-var HotQVersion = '0.0.1';
+var HotQVersion = '0.1.215';
 var StringBuffer = function () {
     this.buffer = [];
 };
@@ -531,13 +536,13 @@ _AddDevice = function (deviceCode, pushCode, timeZone, tags, type) {
 };
 
 Parse.Cloud.beforeSave("AppJob", function (request, response) {
-    Parse.Cloud.useMasterKey();
+//    Parse.Cloud.useMasterKey();
     request.object.increment("runCounter");
     response.success();
 });
 
 Parse.Cloud.define("JobHistory", function (request, response) {
-    Parse.Cloud.useMasterKey();
+//    Parse.Cloud.useMasterKey();
     var results = [];
     var qJob = new Parse.Query("AppJob");
     var pageRows = request.params.pageRows
@@ -633,7 +638,7 @@ Parse.Cloud.define("JobHistory", function (request, response) {
 
 
 Parse.Cloud.define("JobStatus", function (request, response) {
-    Parse.Cloud.useMasterKey();
+//    Parse.Cloud.useMasterKey();
     var job = request.params
         , results = []
         ;
@@ -1635,29 +1640,33 @@ _ResultProcess = function (vote) {
             if (beforeAnswer.cntNo) {
                 cntNo += beforeAnswer.cntNo;
             }
-            cntAll = cntYes + cntNo;
             results.cntYes = cntYes;
             results.cntNo = cntNo;
-            if (cntAll < 10) {
-                cntYes *= 100;
-                cntNo *= 100;
+            cntAll = results.cntYes + results.cntNo;
+
+            if ((cntAll < 10) && (moment().diff(moment(question.createdAt), 'hours') <= 12)) {
+                results.percentYes = 50;
+                results.percentNo = 50;
             } else {
-                if (cntAll < 100) {
-                    cntYes *= 10;
-                    cntNo *= 10;
+                if (cntAll < 10) {
+                    cntYes *= 100;
+                    cntNo *= 100;
+                } else {
+                    if (cntAll < 100) {
+                        cntYes *= 10;
+                        cntNo *= 10;
+                    }
                 }
-            }
-            cntAll = cntYes + cntNo;
-            if (cntAll < 1000) {
-                cntAdd = Math.ceil((1000 - cntAll) / 2);
-                cntYes += cntAdd;
-                cntNo += cntAdd;
                 cntAll = cntYes + cntNo;
+                if (cntAll < 1000) {
+                    cntAdd = Math.ceil((1000 - cntAll) / 2);
+                    cntYes += cntAdd;
+                    cntNo += cntAdd;
+                    cntAll = cntYes + cntNo;
+                }
+                results.percentYes = Math.round((cntYes * 100 / cntAll) * 10) / 10;
+                results.percentNo = 100 - results.percentYes;
             }
-
-            results.percentYes = Math.round((cntYes * 100 / cntAll) * 10) / 10;
-            results.percentNo = 100 - results.percentYes;
-
             question.set("results", results);
             return question.save();
         } else {
@@ -1926,12 +1935,12 @@ Parse.Cloud.job("VoteProcess", function (request, status) {
 _VoteSaveFirst = function (log) {
     var promise = new Parse.Promise()
         ;
-    var inst = log.get("installationId")
-        , quest = log.get("questionId").id
-        , answ = log.get("answer")
+    var installationId = log.get("installationId")
+        , questionId = log.get("questionId").id
+        , answer = log.get("answer")
         , date = log.createdAt
         ;
-    _VoteSave(inst, quest, answ, date).then(function (voteSaved) {
+    _VoteSave(installationId, questionId, answer, date).then(function (voteSaved) {
         log.set("status", "ok");
         log.set("isSuccess", true);
         log.set("voteId", voteSaved);
@@ -2157,37 +2166,52 @@ _ValidateCategory = function (category) {
 };
 
 Parse.Cloud.define("GetListQuestions", function (request, response) {
-    var pageRows = request.params.pageRows
-        , pageNo = request.params.pageNo
-        , results = []
-        ;
     Parse.Cloud.useMasterKey();
-    if (!(pageRows)) {
-        pageRows = 100;
-    }
-    if (!(pageNo) || (pageNo < 1)) {
-        pageNo = 1;
-    }
+    var results = []
+        , startDate
+        , endDate
+        ;
+    endDate = moment().format('YYYY-MM-DD') + 'T00:00:00.000Z';
+    startDate = moment(endDate).subtract('days', 31).format('YYYY-MM-DD') + 'T00:00:00.000Z';
+
     var qQuestion = new Parse.Query("Question");
     qQuestion.notEqualTo("isDeleted", true);
+    qQuestion.greaterThanOrEqualTo('startDate', _parseDate(startDate));
+    qQuestion.lessThanOrEqualTo('startDate', _parseDate(endDate));
     qQuestion.include("categoryId,typeId");
     qQuestion.descending("startDate");
-    qQuestion.skip((pageNo - 1) * pageRows);
-    qQuestion.limit(pageRows);
     qQuestion.find().then(function (questions) {
+        var indice = 0;
         _.each(questions, function (question) {
+            var startDate = question.get("startDate")
+                , endDate = question.get("endDate")
+                ;
             var objToAdd = {
+                index: ++indice,
                 id: question.id,
                 category: question.get("categoryId").get("name"),
                 type: question.get("typeId").get("name"),
                 typeLocale: question.get("typeId").get("nameLocale"),
                 text1: question.get("subject"),
                 text2: question.get("body"),
-                startDate: moment(question.get("startDate")).format("YYYY-MM-DD"),
-                endDate: moment(question.get("endDate")).format("YYYY-MM-DD"),
+//                startDate: moment(question.get("startDate")).format("YYYY,M,D"),
+//                endDate: moment(question.get("endDate")).format("YYYY,M,D"),
                 resultPercentYes: question.get("results") ? question.get("results").percentYes ? question.get("results").percentYes : 50 : 50
             };
             objToAdd.resultPercentNo = 100 - objToAdd.resultPercentYes;
+            objToAdd.period = "unknown";
+            if (objToAdd.type == "day") {
+                objToAdd.period = moment(startDate).format("D MMM YYYY");
+            } else {
+                if (objToAdd.type == "week") {
+                    objToAdd.period = moment(startDate).format("D") +
+                        iif(moment(startDate).format("M") == moment(endDate).format("M"), "", moment(startDate).format(" MMM")) +
+                        iif(moment(startDate).format("YY") == moment(endDate).format("YY"), "", moment(startDate).format(" YYYY")) +
+                        " - " + moment(endDate).format("D MMM YYYY");
+                } else {
+                    objToAdd.period = moment(startDate).format("MMMM YYYY");
+                }
+            }
             results.push(objToAdd);
         });
         response.success(results);
@@ -2196,7 +2220,7 @@ Parse.Cloud.define("GetListQuestions", function (request, response) {
     });
 });Parse.Cloud.define("GetQuestions", function (request, response) {
     var theDate
-        , installationId
+        , deviceId
         , result = {}
         ;
     Parse.Cloud.useMasterKey();
@@ -2205,11 +2229,11 @@ Parse.Cloud.define("GetListQuestions", function (request, response) {
     } else {
         theDate = moment().format("YYYY-MM-DD") + "T00:00:00.000Z";
     }
-    var qInst = new Parse.Query("_Installation");
+    var qInst = new Parse.Query("Device");
     qInst.equalTo("installationId", request.params.installationId);
-    qInst.first().then(function (installation) {
-        if (installation) {
-            installationId = installation.id;
+    qInst.first().then(function (device) {
+        if (device) {
+            deviceId = device.id;
             var qQ = new Parse.Query("QuestionSelect");
             qQ.equalTo("date", _parseDate(theDate));
             qQ.notEqualTo("isDeleted", true);
@@ -2260,7 +2284,7 @@ Parse.Cloud.define("GetListQuestions", function (request, response) {
             }
             return Parse.Promise.as();
         }).then(function () {
-            return _GetVote(installationId, result.questionOfDay.id);
+            return _GetVote(deviceId, result.questionOfDay.id);
         }).then(function (rez) {
             if (rez) {
                 result.questionOfDay.hasVote = !!rez.date;
@@ -2268,7 +2292,7 @@ Parse.Cloud.define("GetListQuestions", function (request, response) {
             } else {
                 result.questionOfDay.hasVote = false;
             }
-            return _GetVote(installationId, result.questionOfWeek.id);
+            return _GetVote(deviceId, result.questionOfWeek.id);
         }).then(function (rez) {
             if (rez) {
                 result.questionOfWeek.hasVote = !!rez.date;
@@ -2276,7 +2300,7 @@ Parse.Cloud.define("GetListQuestions", function (request, response) {
             } else {
                 result.questionOfWeek.hasVote = false;
             }
-            return _GetVote(installationId, result.questionOfMonth.id);
+            return _GetVote(deviceId, result.questionOfMonth.id);
         }).then(function (rez) {
             if (rez) {
                 result.questionOfMonth.hasVote = !!rez.date;
@@ -2291,10 +2315,10 @@ Parse.Cloud.define("GetListQuestions", function (request, response) {
 });
 
 var _GetVote;
-_GetVote = function (installationId, questionId) {
+_GetVote = function (deviceId, questionId) {
     var promise = new Parse.Promise();
     var qVote = new Parse.Query("Vote");
-    qVote.equalTo("installationId", _parsePointer("_Installation", installationId));
+    qVote.equalTo("deviceId", _parsePointer("Device", deviceId));
     qVote.equalTo("questionId", _parsePointer("Question", questionId));
     qVote.first().then(function (vote) {
         if (vote) {
@@ -2307,6 +2331,77 @@ _GetVote = function (installationId, questionId) {
     });
     return promise;
 };
+Parse.Cloud.define("GetQuestions4Site", function (request, response) {
+    var theDate
+        , result = {}
+        ;
+    Parse.Cloud.useMasterKey();
+    if (request.params.date) {
+        theDate = moment(request.params.date).format("YYYY-MM-DD") + "T00:00:00.000Z";
+    } else {
+        theDate = moment().format("YYYY-MM-DD") + "T00:00:00.000Z";
+    }
+    var qQ = new Parse.Query("QuestionSelect");
+    qQ.equalTo("date", _parseDate(theDate));
+    qQ.notEqualTo("isDeleted", true);
+    qQ.include("questionOfDay.categoryId,questionOfWeek.categoryId,questionOfMonth.categoryId");
+    qQ.descending("createdAt");
+    qQ.first().then(function (qT) {
+        result.date = moment(theDate).format("YYYY-MM-DD");
+        if (qT) {
+            result.questionOfDay = {id: "0", category: "unknown", text1: "", text2: "", link: "", picture: "", percentYes: 100, percentNo: 0};
+            if (qT.get("questionOfDay")) {
+                result.questionOfDay.id = qT.get("questionOfDay").id;
+                result.questionOfDay.category = qT.get("questionOfDay").get("categoryId").get("name");
+                result.questionOfDay.text1 = qT.get("questionOfDay").get("subject");
+                result.questionOfDay.text2 = qT.get("questionOfDay").get("body");
+                result.questionOfDay.link = qT.get("questionOfDay").get("link");
+                result.questionOfDay.picture = qT.get("questionOfDay").get("imageFile");
+                result.questionOfDay.percentYes = qT.get("questionOfDay").get("results") ? qT.get("questionOfDay").get("results").percentYes ? qT.get("questionOfDay").get("results").percentYes : 50 : 50;
+                result.questionOfDay.percentNo = 100 - result.questionOfDay.percentYes;
+            }
+
+            result.questionOfWeek = {id: "0", category: "unknown", text1: "", text2: "", link: "", picture: "", percentYes: 100, percentNo: 0};
+            if (qT.get("questionOfWeek")) {
+                result.questionOfWeek.id = qT.get("questionOfWeek").id;
+                result.questionOfWeek.category = qT.get("questionOfWeek").get("categoryId").get("name");
+                result.questionOfWeek.text1 = qT.get("questionOfWeek").get("subject");
+                result.questionOfWeek.text2 = qT.get("questionOfWeek").get("body");
+                result.questionOfWeek.link = qT.get("questionOfWeek").get("link");
+                result.questionOfWeek.picture = qT.get("questionOfWeek").get("imageFile");
+                result.questionOfWeek.percentYes = qT.get("questionOfWeek").get("results") ? qT.get("questionOfWeek").get("results").percentYes ? qT.get("questionOfWeek").get("results").percentYes : 50 : 50;
+                result.questionOfWeek.percentNo = 100 - result.questionOfWeek.percentYes;
+            }
+
+            result.questionOfMonth = {id: "0", category: "unknown", text1: "", text2: "", link: "", picture: "", percentYes: 100, percentNo: 0};
+            if (qT.get("questionOfMonth")) {
+                result.questionOfMonth.id = qT.get("questionOfMonth").id;
+                result.questionOfMonth.category = qT.get("questionOfMonth").get("categoryId").get("name");
+                result.questionOfMonth.text1 = qT.get("questionOfMonth").get("subject");
+                result.questionOfMonth.text2 = qT.get("questionOfMonth").get("body");
+                result.questionOfMonth.link = qT.get("questionOfMonth").get("link");
+                result.questionOfMonth.picture = qT.get("questionOfMonth").get("imageFile");
+                result.questionOfMonth.percentYes = qT.get("questionOfMonth").get("results") ? qT.get("questionOfMonth").get("results").percentYes ? qT.get("questionOfMonth").get("results").percentYes : 50 : 50;
+                result.questionOfMonth.percentNo = 100 - result.questionOfMonth.percentYes;
+            }
+            return Parse.Promise.as();
+        }
+        else {
+            return Parse.Promise.error("error.question-not-found");
+        }
+    }).then(function (rez) {
+            if (moment().diff(moment(theDate), 'days') > 31) {
+                return Parse.Promise.error("error.history-not-found");
+            } else {
+                return Parse.Promise.as();
+            }
+        }).then(function (rez) {
+            response.success(result);
+        }, function (error) {
+            response.error(error);
+        });
+})
+;
 Parse.Cloud.define("QuoteAdmin", function (request, response) {
     var thisUser = request.user
         , quote = request.params
@@ -2366,6 +2461,33 @@ Parse.Cloud.define("QuoteAdmin", function (request, response) {
         response.error("error.user-not-found");
     }
 });
+Parse.Cloud.define("UserQuestionSubmit", function (request, response) {
+    var title = request.params.title
+        , subtitle = request.params.subtitle
+        , tricks = request.params.tricks
+        , UserQuestion = Parse.Object.extend("UserQuestion")
+
+
+        , installationId = request.params.installationId
+        , questionId = request.params.questionId
+        , answer = request.params.answer
+        , position = request.params.position
+        , demographics = request.params.demographics
+        , type
+        ;
+    Parse.Cloud.useMasterKey();
+    UserQuestion = new UserQuestion();
+    UserQuestion.set("title", title);
+    UserQuestion.set("subtitle", subtitle);
+    UserQuestion.set("tricks", tricks);
+    UserQuestion.setACL(_getAdminACL());
+    UserQuestion.save().then(function (userQuestion) {
+        response.success(userQuestion.id);
+    }, function (error) {
+        response.error(JSON.stringify(error));
+    });
+});
+
 Parse.Cloud.define("VoteSubmit", function (request, response) {
     var installationId = request.params.installationId
         , questionId = request.params.questionId
