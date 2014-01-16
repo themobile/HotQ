@@ -10,13 +10,14 @@ Parse.Cloud.job("CreateApplication", function (request, status) {
     }).then(function () {
             return _createSchema();
         }).then(function () {
+            return _createQuestionType();
+        }).then(function () {
             status.success("OK");
         }, function (error) {
             _Log(error);
             status.error(JSON.stringify(error));
         });
 });
-
 
 _createSchema = function () {
     var promise = new Parse.Promise()
@@ -38,6 +39,30 @@ _createSchema = function () {
     return promise;
 };
 
+_createQuestionType = function () {
+    var promise = new Parse.Promise()
+        , prm = Parse.Promise.as()
+        , qtArray = ["day", "week", "month"]
+        ;
+    _.each(qtArray, function (qt) {
+        prm = prm.then(function () {
+            var qtObject = Parse.Object.extend("QuestionType");
+            qtObject = new qtObject();
+            qtObject.set("name", qt);
+            qtObject.set("nameLocale", "type.q-" + qt);
+            qtObject.setACL(_getAdminACL());
+            return qtObject.save();
+        });
+    });
+
+    prm = prm.then(function () {
+        promise.resolve({});
+    }, function (error) {
+        promise.reject(error);
+    });
+
+    return promise;
+};
 
 _createSchemaTable = function (table) {
     var promise = new Parse.Promise()
@@ -60,7 +85,6 @@ _createSchemaTable = function (table) {
         });
     return promise;
 };
-
 
 var HotQSchema = {
     columnTypeDefaults: {
@@ -265,6 +289,17 @@ var HotQSchema = {
                 },
                 {
                     name: "tableName", type: "string"
+                }
+            ]
+        },
+        {
+            name: "UserQuestion",
+            columns: [
+                {
+                    name: "questionContent", type: "string"
+                },
+                {
+                    name: "tricks", type: "string"
                 }
             ]
         },
