@@ -1,13 +1,23 @@
 <!doctype html>
-<html lang="en">
+<html lang="ro" >
 <head>
-  <meta charset="utf-8">
-  <style>
-    [ng-cloak] {
-      display: none;
-    }
-  </style>
+    <meta charset="utf-8">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <title>hotQ - adevărul este anonim</title>
+    <link rel="stylesheet" href="css/app.css"/>
+    <link rel="stylesheet" href="css/animate.css"/>
+    <link rel="stylesheet" href="css/ng-mobile-menu.min.css"/>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,700&subset=latin,latin-ext' rel='stylesheet'>
+
   <script>
+
+
+      window.addEventListener('load', function(e) {
+          setTimeout(function() { window.scrollTo(0, 1); }, 1);
+      }, false);
+
+
     // include angular loader, which allows the files to load in any order
     /*
      AngularJS v1.2.6
@@ -31,8 +41,11 @@
 
     // load all of the dependencies asynchronously.
     $script([
-      'lib/angular/angular.js',
-      'lib/angular/angular-route.js',
+      'lib/angular/angular.min.js',
+      'lib/angular/angular-route.min.js',
+      'lib/angular/angular-touch.min.js',
+      'lib/angular/angular-animate.min.js',
+      'js/ng-mobile-menu.min.js',
       'js/app.js',
       'js/services.js',
       'js/controllers.js',
@@ -40,21 +53,58 @@
       'js/directives.js'
     ], function() {
       // when all is done, execute bootstrap angular application
-      angular.bootstrap(document, ['myApp']);
+      angular.bootstrap(document, ['hotq']);
+
+
+
+
     });
   </script>
-  <title>My AngularJS App</title>
-  <link rel="stylesheet" href="css/app.css">
+
+
+
 </head>
 <body ng-cloak>
-  <ul class="menu">
-    <li><a href="#/view1">view1</a></li>
-    <li><a href="#/view2">view2</a></li>
-  </ul>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=563739410383596";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
 
-  <div ng-view></div>
 
-  <div>Angular seed app: v<span app-version></span></div>
+
+<div id="sp-nav"  ng-swipe-right="$spMenu.toggle()" ng-controller="navigation">
+    <div class="nav_empty" ng-click="$spMenu.toggle()"></div>
+    <div class="nav">
+        <button  ng-click="$spMenu.toggle()" class=" close icon-cross"></button>
+        <button ng-click="goto('/raspunsuri')">Răspunsurile românilor</button>
+        <button ng-click="goto('/instaleaza')">Răspunde și tu</button>
+        <button ng-click="goto('/trimite')">Pune întrebări</button>
+        <button ng-click="goto('/despre')">Despre hotQ</button>
+    </div>
+</div>
+
+
+<div id="sp-page" ng-swipe-left="$spMenu.toggle()" >
+    <div ng-view></div>
+</div>
+
+<div class="footer">
+        <span class="copyright">
+            © themobile | <a href="instaleaza">hotQ pe mobil</a>
+        </span>
+        <span class="fb">
+            <div class="fb-like" data-href="https://hotq.ro" data-width="200" data-layout="button_count"
+                 data-action="like" data-show-faces="false" data-share="false"></div>
+        </span>
+</div>
+<!-- In production use:
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+-->
+
 
 </body>
 </html>
