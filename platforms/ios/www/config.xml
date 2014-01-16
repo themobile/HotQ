@@ -60,6 +60,9 @@
     <feature name="NetworkStatus">
         <param name="ios-package" value="CDVConnection" />
     </feature>
+    <feature name="Console">
+        <param name="ios-package" value="CDVLogger"/>
+    </feature>
     <access origin="*.pushwoosh.com" />
     <access origin="https://*.parse.com" />
     <access origin="*.googleapis.com"/>
