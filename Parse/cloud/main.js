@@ -15,7 +15,7 @@ var theBillSecretKey = 'v0]w?I)2~T~S[6n0(z0*';
 var crypto = require('crypto');
 var Buffer = require('buffer').Buffer;
 var isProduction = Parse.applicationId == "MqJG79VqkwRoUZIFJrOJ348AYdXqAnifz603oSMM";
-var HotQVersion = '0.2.220';
+var HotQVersion = '0.2.224';
 var StringBuffer = function () {
     this.buffer = [];
 };
@@ -1242,6 +1242,9 @@ var HotQSchema = {
                 },
                 {
                     name: "isDeleted", type: "boolean"
+                },
+                {
+                    name: "imageSource", type: "string"
                 }
             ]
         },
@@ -1316,6 +1319,9 @@ var HotQSchema = {
                 },
                 {
                     name: "isDeleted", type: "boolean"
+                },
+                {
+                    name: "imageSource", type: "string"
                 }
             ]
         },
@@ -2081,7 +2087,7 @@ Parse.Cloud.define("QuestionAdmin", function (request, response) {
                     startDate = objDates.startDate;
                     endDate = objDates.endDate;
 
-                    return _AdminQuestion(thisUser, param.id, categoryObject, typeObject, param.text1, param.text2, param.link, startDate, endDate);
+                    return _AdminQuestion(thisUser, param.id, categoryObject, typeObject, param.text1, param.text2, param.link, startDate, endDate, param.imageSource);
                 }).then(function (questionSaved) {
                     response.success(questionSaved);
                 }, function (error) {
@@ -2095,7 +2101,7 @@ Parse.Cloud.define("QuestionAdmin", function (request, response) {
     }
 });
 
-_AdminQuestion = function (user, id, categoryId, typeId, subject, body, link, startDate, endDate) {
+_AdminQuestion = function (user, id, categoryId, typeId, subject, body, link, startDate, endDate, imageSource) {
     var promise = new Parse.Promise()
         ;
     if (!(id)) {
@@ -2116,6 +2122,7 @@ _AdminQuestion = function (user, id, categoryId, typeId, subject, body, link, st
         question.set("link", link);
         question.set("startDate", _parseDate(startDate));
         question.set("endDate", _parseDate(endDate));
+        question.set("imageSource", imageSource);
         question.setACL(_getUserACL(user));
         return question.save();
     }).then(function (saved) {
@@ -2288,6 +2295,7 @@ Parse.Cloud.define("GetListQuestions", function (request, response) {
                 result.questionOfDay.text2 = qT.get("questionOfDay").get("body");
                 result.questionOfDay.link = qT.get("questionOfDay").get("link");
                 result.questionOfDay.picture = qT.get("questionOfDay").get("imageFile");
+                result.questionOfDay.imageSource = qT.get("questionOfDay").get("imageSource");
                 result.questionOfDay.percentYes = qT.get("questionOfDay").get("results") ? qT.get("questionOfDay").get("results").percentYes ? qT.get("questionOfDay").get("results").percentYes : 50 : 50;
                 result.questionOfDay.percentNo = 100 - result.questionOfDay.percentYes;
 
@@ -2298,6 +2306,7 @@ Parse.Cloud.define("GetListQuestions", function (request, response) {
                 result.questionOfWeek.text2 = qT.get("questionOfWeek").get("body");
                 result.questionOfWeek.link = qT.get("questionOfWeek").get("link");
                 result.questionOfWeek.picture = qT.get("questionOfWeek").get("imageFile");
+                result.questionOfWeek.imageSource = qT.get("questionOfWeek").get("imageSource");
                 result.questionOfWeek.percentYes = qT.get("questionOfWeek").get("results") ? qT.get("questionOfWeek").get("results").percentYes ? qT.get("questionOfWeek").get("results").percentYes : 50 : 50;
                 result.questionOfWeek.percentNo = 100 - result.questionOfWeek.percentYes;
 
@@ -2308,6 +2317,7 @@ Parse.Cloud.define("GetListQuestions", function (request, response) {
                 result.questionOfMonth.text2 = qT.get("questionOfMonth").get("body");
                 result.questionOfMonth.link = qT.get("questionOfMonth").get("link");
                 result.questionOfMonth.picture = qT.get("questionOfMonth").get("imageFile");
+                result.questionOfMonth.imageSource = qT.get("questionOfMonth").get("imageSource");
                 result.questionOfMonth.percentYes = qT.get("questionOfMonth").get("results") ? qT.get("questionOfMonth").get("results").percentYes ? qT.get("questionOfMonth").get("results").percentYes : 50 : 50;
                 result.questionOfMonth.percentNo = 100 - result.questionOfMonth.percentYes;
 
@@ -2316,6 +2326,8 @@ Parse.Cloud.define("GetListQuestions", function (request, response) {
                 result.quote.author = qT.get("quoteId").get("author");
                 result.quote.body = qT.get("quoteId").get("body");
                 result.quote.link = qT.get("quoteId").get("link");
+                result.quote.picture = qT.get("quoteId").get("imageFile");
+                result.quote.imageSource = qT.get("quoteId").get("imageSource");
             }
             return Parse.Promise.as();
         }).then(function () {
@@ -2455,6 +2467,7 @@ Parse.Cloud.define("QuoteAdmin", function (request, response) {
             }
             quoteObject.set("author", quote.author);
             quoteObject.set("link", quote.link);
+            quoteObject.set("imageSource", quote.imageSource);
             quoteObject.setACL(_getUserACL(thisUser));
             return quoteObject.save();
         }).then(function (quoteSaved) {
@@ -2488,7 +2501,7 @@ Parse.Cloud.define("QuoteAdmin", function (request, response) {
                     return Parse.Promise.as();
                 }
             }).then(function () {
-                response.success(quoteRet.id);
+                response.success(quoteRet);
             }, function (error) {
                 response.error(JSON.stringify(error));
             })

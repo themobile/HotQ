@@ -204,6 +204,9 @@ var HotQSchema = {
                 },
                 {
                     name: "isDeleted", type: "boolean"
+                },
+                {
+                    name: "imageSource", type: "string"
                 }
             ]
         },
@@ -278,6 +281,9 @@ var HotQSchema = {
                 },
                 {
                     name: "isDeleted", type: "boolean"
+                },
+                {
+                    name: "imageSource", type: "string"
                 }
             ]
         },

@@ -16,6 +16,7 @@ Parse.Cloud.define("QuoteAdmin", function (request, response) {
             }
             quoteObject.set("author", quote.author);
             quoteObject.set("link", quote.link);
+            quoteObject.set("imageSource", quote.imageSource);
             quoteObject.setACL(_getUserACL(thisUser));
             return quoteObject.save();
         }).then(function (quoteSaved) {
@@ -49,7 +50,7 @@ Parse.Cloud.define("QuoteAdmin", function (request, response) {
                     return Parse.Promise.as();
                 }
             }).then(function () {
-                response.success(quoteRet.id);
+                response.success(quoteRet);
             }, function (error) {
                 response.error(JSON.stringify(error));
             })
