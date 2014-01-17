@@ -2,11 +2,11 @@
 
 
 // Declare app level module which depends on filters, and services
-angular.module('hotq', [
+angular.module('hotq-admin', [
         'ngRoute',
-        'ngAnimate',
-        'ngTouch',
-        'shoppinpal.mobile-menu',
+        'ngCookies',
+        'truncate',
+        'blockingClick',
         'hotq.filters',
         'hotq.services',
         'hotq.directives',
@@ -20,30 +20,27 @@ angular.module('hotq', [
 
     .config(['$routeProvider', function ($routeProvider) {
 
+        $routeProvider.when('/login', {templateUrl: 'partials/login.html', controller: 'login'});
+        $routeProvider.when('/main', {templateUrl: 'partials/main.html'});
 
-        $routeProvider.when('/',            {templateUrl: 'partials/main.html',controller: 'main'});
-        $routeProvider.when('/raspunsuri',  {templateUrl: 'partials/raspunsuri.html', controller: 'main'});
-        $routeProvider.when('/instaleaza',  {templateUrl: 'partials/instaleaza.html'});
-        $routeProvider.when('/despre',      {templateUrl: 'partials/despre.html'});
-        $routeProvider.when('/trimite',     {templateUrl: 'partials/trimite.html', controller: 'sendquestion'});
-
-        $routeProvider.otherwise({redirectTo: '/'});
+        $routeProvider.otherwise({redirectTo: '/login'});
     }])
 
 
-
-    .run(function ($timeout,$location,$rootScope) {
-        $rootScope.slogan=true;
-        if ($location.path()=='/' || $location.path()=='') {
-            $timeout(function() {
-                $rootScope.slogan=false;
-                $timeout(function(){
-                    $location.path('/raspunsuri');
-                },1000)
-            },2000);
+    .run(function ($cookieStore,$location,userservice,$q) {
+        var user=$cookieStore.get('hotQAdminUser');
+        if (user) {
+            userservice.setToken(user.sessionToken);
+            userservice.getUserByToken(user.sessionToken).then(
+                function(success) {
+                    $location.path('/main');
+                },
+                function(error) {
+                    $cookieStore.set('hotQAdminUser','');
+                    $location.path('/login');
+                }
+            );
         }
-
-
 
     });
 

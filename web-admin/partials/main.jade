@@ -1,0 +1,66 @@
+//.page-header
+    //h1 Main interface
+    //    h5 hotQ admin system
+
+.content
+
+
+    .row
+        .col-lg-6.col-md-6.col-sm-6.col-xs-12
+            .panel.panel-info
+                .panel-heading
+                    h2.panel-title Add hotQuestion
+                .panel-body
+                    form(name='addquestion',role='form', enctype="multipart/form-data", method="post", ng-controller='main_addquestion')
+                        .input-group.input-group-sm.col-xs-12
+                            label.qType.col-xs-4(for='day') Day
+                                input#day.form-control(name='questiontype', ng-model='q.type',type='radio',value='day')
+                            label.qType.col-xs-4(for='week') Week
+                                input#week.form-control(name='questiontype', type='radio', ng-model='q.type',value='week')
+                            label.qType.col-xs-4(for='month') Month
+                                input#month.form-control(name='questiontype', type='radio', ng-model='q.type',value='month')
+                        .input-group.input-group-sm
+                            label.col-xs-12.qCategory(for='category') Category
+                                select#category.form-control(ng-model='q.category')
+                                    option social
+                                    option politics
+                            label.col-xs-12.qCategory(for='startdate') Start Date
+                                input#startdate.form-control(type='date',name='startdate', ng-model='q.startDate')
+
+                        .input-group.input-group-sm
+                            label.col-xs-12(for='text1') Subtitle
+                                textarea#text1.col-xs-12.form-control.input-lg(name='text1',text="file",placeholder='text1', rows='3', ng-model='q.text1')
+                            label.col-xs-12(for='text2') Title
+                                textarea#text2.col-xs-12.form-control.input-lg(name='text2',type="text",placeholder='text2', rows='4', ng-model='q.text2')
+                            label.col-xs-12(for='url') URL
+                                textarea#url.col-xs-12.form-control.input-lg(name='url',type="url",placeholder='url', rows='2', ng-model='q.url')
+                            label.col-xs-12(for='file') Image file
+                                input#file.col-xs-12.form-control.input-lg(type="file", name="file", ng-model="q.image",onchange="angular.element(this).scope().addFile(this.files)")
+
+                        button.btn.btn-primary.pull-right.col-xs-4(type='submit',ng-click='addQuestion()',ng-disabled='addquestion.$invalid') Add question
+                        p.p-success(ng-show="saveQuestionSuccess")    Succeeded to save the question.
+                        p.p-error(ng-show="saveQuestionError")    Error in saving the question.
+
+
+        .col-lg-6.col-md-6.col-sm-6.col-xs-12
+            div(ng-controller='main_userquestions', ng-init='getAll()')
+                .panel.panel-success
+                    .panel-heading
+                        h2.panel-title user questions
+                            span.badge  Total: {{questions.length}}
+                        input.pagesize.input-sm.pull-right.clearfix(type='text',ng-model='pageSize')
+
+
+                    .panel-body
+                        button.btn.btn-primary.btn-success.btn-xs.icon-arrow-left.col-xs-4(ng-disabled="currentPage == 0",ng-click="currentPage=currentPage-1") Previous
+                        p.pagesizeIndic.center-block.col-xs-4 {{currentPage+1}}/{{numberOfPages()}}
+                        button.btn.btn-primary.btn-success.btn-xs.icon-arrow-right.col-xs-4(ng-disabled="currentPage >= questions.length/pageSize -1",ng-click="currentPage=currentPage+1") Next
+
+                        ul.questionList
+                            li(ng-repeat='question in questions | startFrom:currentPage*pageSize | limitTo:pageSize', ng-class="['even', 'odd'][$index %2]")
+                                a.currentNumber {{$index+1}}
+                                span.qTitle(ng-class="{read:isRead($index)}") {{question.questionContent | characters:250}}
+                                button.delButton.icon-cross(ng-click='deleteQuestion($index)')
+                                button.markButton.icon-pencil(ng-click='markQuestion($index)')
+
+                                p.p-error(ng-show="{{operationError}}") Error marking / deleting

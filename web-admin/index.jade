@@ -1,0 +1,55 @@
+//
+   Created by daniel on 15/01/14.
+doctype html
+html(lang="ro" ng-app="hotq-admin")
+    head
+        meta(charset="utf-8")
+        meta(name="apple-mobile-web-app-capable", content="yes")
+        meta(name="viewport",content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0")
+        title HotQ - adevărul este anonim
+        link(rel="stylesheet", href="css/app.css")
+        link(rel="stylesheet", href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css")
+        script(type='text/javascript', src='//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js')
+        script(type='text/javascript', src='//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js')
+        script(type='text/javascript', src='lib/angular/angular.js')
+        script(type='text/javascript', src='lib/angular/angular-route.js')
+        script(type='text/javascript', src='lib/angular/angular-cookies.js')
+        script(type='text/javascript', src='js/blocking_click.js')
+        script(type='text/javascript', src='js/truncate.js')
+        script(type='text/javascript', src='js/app.js')
+        script(type='text/javascript', src='js/services.js')
+        script(type='text/javascript', src='js/controllers.js')
+        script(type='text/javascript', src='js/filters.js')
+        script(type='text/javascript', src='js/directives.js')
+        script.
+            window.setTimeout(function() {
+                $('input[ng-model]').trigger('input');
+            }, 100);
+
+    body(ng-cloack)
+
+
+        .container
+
+
+            #nav.navbar.navbar-default.navbar-fixed-top(ng-controller='menuCtrl',role='navigation')
+                div.navbar-header
+                    button.navbar-toggle(type='button',data-toggle='collapse',data-target='#bs-example-navbar-collapse-1')
+                        span.sr-only Toggle nav
+                        span.icon-bar
+                        span.icon-bar
+                        span.icon-bar
+                    a.navbar-brand hotQ Admin
+
+                div#bs-example-navbar-collapse-1.collapse.navbar-collapse
+                    ul.nav.navbar-nav
+                        li
+                            a(href='#/main') Main
+                        li(ng-show='isLoggedIn()')
+                            a(href='#/logout') User
+                        li(ng-show='!isLoggedIn()')
+                            a(href='#/login') Login
+            div#main(ng-view)
+
+
+            //div.navbar.navbar-default.navbar-fixed-bottom

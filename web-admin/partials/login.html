@@ -1,0 +1,46 @@
+
+<!--
+Created by daniel on 15/01/14.
+
+-->
+<div class="header">
+  <h1>Login
+    <h4>hotQ admin system</h4>
+  </h1>
+</div>
+<div class="content">
+  <table ng-show="isLoggedIn()" class="pure-table">
+    <tbody>
+      <tr>
+        <td>username:</td>
+        <td>{{user.username}}</td>
+      </tr>
+      <tr>
+        <td>has token:</td>
+        <td>{{user.sessionToken}}</td>
+      </tr>
+    </tbody>
+  </table>
+  <button type="submit" ng-click="logout()" ng-show="isLoggedIn()" class="btn btn-primary btn-lg">Logout</button>
+  <div ng-show="!isLoggedIn()" class="row">
+    <!--.pure-u-1-4-->
+    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+      <form role="form" novalidate="novalidate" ng-hide="thankyou" ng-submit="login()" class="form-inline">
+        <div class="form-group">
+          <input id="username" autocomplete="off" name="username" type="email" placeholder="email address" required="required" ng-model="user.username" ng-minlength="5" ng-maxlength="160" class="col-xs-12 form-control"/>
+          <input id="password" autocomplete="off" name="password" type="password" placeholder="password" required="required" ng-model="user.password" ng-minlength="5" ng-maxlength="160" class="col-xs-12 form-control"/>
+          <div class="checkbox col-xs-12 col-md-6 col-sm-6 col-lg-6">
+            <label for="remember" class="rememberLabel">Remember me
+              <input id="remember" name="remember" type="checkbox" ng-model="user.remember" class="input-lg"/>
+            </label>
+          </div>
+        </div>
+        <button type="submit" blocking-click="Logging in..." class="btn btn-primary btn-lg">Login</button>
+      </form>
+    </div>
+  </div>
+  <div class="row">
+    <p ng-show="error" class="p-error">   Error logging in.</p>
+    <p ng-show="success" class="p-success">   Success logging in.</p>
+  </div>
+</div>

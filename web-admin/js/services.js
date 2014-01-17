@@ -9,96 +9,225 @@ angular.module('hotq.services', [])
     .value('version', '0.1')
 
 
-    .factory('questions', function ($http, $q, $rootScope,$timeout) {
+    .factory('userQuestions', function ($http,userservice) {
 
-        var allQ = [];
-        var indx = 0;
-//
 
+        var userQ = [];
+        var credent1=userservice.getCredentials();
+        var credent2=credent1;
+        credent1['Content-Type']= 'application/x-www-form-urlencoded'
+        credent2['Content-Type']= 'application/json'
         return {
-            getAll: function (installationId) {
-                var deferred = $q.defer();
-                $http(
+            getAll: function () {
+                return $http(
                     {
-                        method: 'POST',
-                        url: 'https://api.parse.com/1/functions/GetListQuestions',
-                        headers: {
-                            "X-Parse-Application-Id": "oYvsd9hx0NoIlgEadXJsqCtU1PgjcPshRqy18kmP",
-                            "X-Parse-REST-API-Key": "gX3SUxGPeSnAefjtFmF9MeWpbTIa9YhC8q1n7hLk",
-                            "Content-Type": "application/json"
-                        },
+                        method: 'GET',
+                        url: 'https://api.parse.com/1/classes/UserQuestion',
+                        headers: credent1,
                         withCredentials: false,
                         cache: false,
-                        data: installationId
+                        params:{"where":"{\"isDeleted\":{\"$ne\":true}}"}
                     }
                 )
                     .success(function (data) {
-                        allQ = data.result;
-                        deferred.resolve(data.result);
+                        userQ = data.results;
                     })
-                    .error(function (data /*, status, headers, config*/) {
-                        console.log('aaaiaaaiaaai');
-                        deferred.reject(data);
+                    .error(function (error) {
+
+                    })
+            },
+
+            deleteQuestion: function(id) {
+                return $http(
+                    {
+                        method: 'PUT',
+                        url: 'https://api.parse.com/1/classes/UserQuestion/' + userQ[id].objectId,
+                        headers: credent2,
+                        withCredentials: false,
+                        cache: false,
+                        data: {"isDeleted":true}
+                    }
+                )
+                    .success(function (data) {
+                        userQ.splice(id,1);
+                    })
+                    .error(function (error) {
+
+                    })
+            },
+
+            markQuestion: function(newMark,index) {
+
+                return $http(
+                    {
+                        method: 'PUT',
+                        url: 'https://api.parse.com/1/classes/UserQuestion/' + userQ[index].objectId,
+                        headers: credent2,
+                        withCredentials: false,
+                        cache: false,
+                        data: {"isRead":newMark}
+                    }
+                )
+                    .success(function (data) {
+                        userQ[index].isRead=newMark;
+                    })
+                    .error(function (error) {
+
+                    })
+            }
+
+
+
+        }
+    })
+
+
+    .factory('userservice', function ($http, $q, $cookieStore) {
+
+        var parseCredentials = {
+            "X-Parse-Application-Id": "oYvsd9hx0NoIlgEadXJsqCtU1PgjcPshRqy18kmP",
+            "X-Parse-REST-API-Key": "gX3SUxGPeSnAefjtFmF9MeWpbTIa9YhC8q1n7hLk",
+            "X-Parse-Session-Token": '',
+            "Content-Type": "application/json"
+        };
+
+        var userData = {};
+
+        return {
+            login: function (user) {
+                return $http(
+                    {
+                        method: 'GET',
+                        url: 'https://api.parse.com/1/login',
+                        headers: parseCredentials,
+                        withCredentials: false,
+                        cache: false,
+                        params: user
+                    }
+                )
+                    .success(function (data) {
+                        userData = data;
+                        parseCredentials['X-Parse-Session-Token']=userData.sessionToken;
+                        if (user.remember == 1) {
+                            $cookieStore.put('hotQAdminUser', userData);
+                        } else {
+                            $cookieStore.remove('hotQAdminUser');
+                        }
+                    })
+                    .error(function (error) {
+
                     });
-                return deferred.promise;
+            },
+            //get user with token stored in cookie
+            getUserByToken: function (token) {
+
+                return $http(
+                    {
+                        method: 'GET',
+                        url: 'https://api.parse.com/1/users/me',
+                        headers: parseCredentials,
+                        withCredentials: false,
+                        cache: false
+                    }
+                )
+                    .success(function (data) {
+                        userData = data;
+                    })
+                    .error(function (error) {
+                        userData = {};
+                    })
+
             },
 
-            getAllQuestions: function() {
-              return allQ;
+            getUser: function () {
+                return userData;
             },
 
-            getCurrentQuestion: function () {
-                return currQuestion;
+            logout: function () {
+                userData = {};
+                $cookieStore.remove('hotQAdminUser');
             },
-            nextQuestion: function () {
-                var isEnd = false;
-                indx = allQ.indexOf(currQuestion);
-                if (indx < allQ.length - 1) {
-                    indx++;
-                    currQuestion = allQ[indx];
-                    if (indx == allQ.length - 1)  isEnd = 'last';
-                    $rootScope.$broadcast('questionChanged', currQuestion, isEnd);
-                }
+            isLoggedIn: function () {
+                return userData.sessionToken;
             },
-
-            prevQuestion: function () {
-                var isEnd = false;
-                indx = allQ.indexOf(currQuestion);
-                if (indx > 0) {
-                    indx--;
-                    currQuestion = allQ[indx];
-                    if (indx == 0)  isEnd = 'first';
-                    $rootScope.$broadcast('questionChanged', currQuestion, isEnd);
-                }
+            getToken: function () {
+                return userData.sessionToken;
             },
-            isLast: function () {
-                return (indx == allQ.length - 1);
+            getCredentials: function () {
+                return parseCredentials;
             },
-            isFirst: function () {
-                return (indx == 0);
+            setToken: function (token) {
+                parseCredentials["X-Parse-Session-Token"] = token;
             }
         }
     })
 
 
-//service for voting
-    .factory('sendQuestion', function ($http) {
+    .factory('sendQuestion', function ($http, userservice) {
+
         return {
-            now: function (qSend) {
+            add: function (question, file) {
 
-                return $http.post('https://api.parse.com/1/functions/UserQuestionSubmit',
-                    qSend,
+                var qToSave = {
+                    category: question.category,
+                    type: question.type,
+                    text1: question.text1,
+                    text2: question.text2,
+                    startDate: question.startDate,
+                    link: question.url
+                };
+
+
+                var qId, imgLocation;
+
+                return $http(
                     {
-                        headers: {
-                            "X-Parse-Application-Id": "oYvsd9hx0NoIlgEadXJsqCtU1PgjcPshRqy18kmP",
-                            "X-Parse-REST-API-Key": "gX3SUxGPeSnAefjtFmF9MeWpbTIa9YhC8q1n7hLk",
-                            "Content-Type": "application/json"
-                        },
+                        method: 'POST',
+                        url: 'https://api.parse.com/1/functions/QuestionAdmin',
+                        headers: userservice.getCredentials(),
+                        withCredentials: false,
                         cache: false,
-                        withCredentials: false
+                        data: qToSave
                     }
-                );
+                )
+                    .then(function (data) {
+                        qId = data.data.result.objectId;
+                        var credent = userservice.getCredentials();
+                        credent["Content-Type"] = "image/jpeg";
+                        return $http(
+                            {
+                                method: 'POST',
+                                url: 'https://api.parse.com/1/files/' + file.name,
+                                headers: credent,
+                                withCredentials: false,
+                                cache: false,
+                                data: file
+                            }
+                        )
+                    })
+                    .then(function (data) {
+                        imgLocation = data.data;
+                        var credent = userservice.getCredentials();
+                        credent["Content-Type"] = "application/json";
+                        var dataFile = {
+                            "imageFile": {
+                                "name": imgLocation.name,
+                                "__type": "File"
+                            }
+                        }
 
+                        return $http(
+                            {
+                                method: 'PUT',
+                                url: 'https://api.parse.com/1/classes/Question/' + qId,
+                                headers: credent,
+                                withCredentials: false,
+                                cache: false,
+                                data: dataFile
+                            }
+                        )
+                    })
             }
         }
-    });
+
+    })

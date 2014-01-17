@@ -4,94 +4,202 @@
 
 angular.module('hotq.controllers', [])
 
-    .controller('main', function ($scope, $rootScope, questions) {
-
-        //init default values
-        $scope.isLast = false;
-        $scope.isFirst = false;
-        $scope.loading = false;
-        $scope.reverse = false;
-
-        $scope.init = function () {
-
-
-
-
-            $scope.error = false;
-            $scope.loading = true;
-            $scope.isFirst = true;
-            $scope.loading = true;
-
-            if (questions.getAllQuestions().length == 0) {
-                questions.getAll({" ": " "}).then(
-                    function (data) {
-                        $scope.questions = data;
-                        $scope.loading = false;
-                    },
-                    function (error) {
-                        $scope.error = true;
-                        $scope.loading = false;
-
-                    });
-            } else {
-                $scope.questions = questions.getAllQuestions();
-                $scope.loading = false;
-            }
-
-
-        };
-
-        //calls init
-        $scope.init();
+    .controller('main', function ($scope,questions) {
 
 
     })
 
-    .controller('navigation', function ($scope, $rootScope, $location) {
+
+    .controller('main_userquestions', function ($scope, userQuestions,userservice,$timeout) {
+
+        $scope.operationError=false;
+        $scope.user=userservice.getUser();
+        $scope.questions=[];
+
+        $scope.currentPage=0;
+        $scope.pageSize=10;
 
 
-        $scope.goto = function (location) {
-            $scope.$spMenu.toggle();
-            $location.path(location);
+
+
+        $scope.numberOfPages=function() {
+            return Math.ceil($scope.questions.length/$scope.pageSize);
         }
 
 
+        $scope.getAll=function() {
+            userQuestions.getAll().then(
+                function(data){
+                    $scope.questions=data.data.results;
+
+                },
+                function(error){
+                    $scope.questions='Error retrieving user questions!';
+                    $scope.operationError = true;
+                    $timeout(function () {
+                        $scope.operationError = false;
+                    }, 3000);
+                }
+
+            );
+        };
+
+        $scope.deleteQuestion=function(index) {
+            userQuestions.deleteQuestion(index).then(
+                function(success) {
+//                    $scope.questions.splice(index,1);
+
+                },
+                function(error){
+                    console.log('nu am putut sterge');
+                    $scope.operationError = true;
+                    $timeout(function () {
+                        $scope.operationError = false;
+                    }, 3000);
+                }
+            )
+        }
+
+
+        $scope.isRead=function(index) {
+            var res=$scope.questions[index].isRead;
+            var username=userservice.getUser().username;
+            if (res) {
+                return (res.indexOf(username)>=0) ? true : false;
+            } else {
+                return false;
+            }
+        }
+
+
+        $scope.markQuestion=function(index) {
+
+            var username= userservice.getUser().username;
+            var unmark,res,newMark=[];
+            if ($scope.questions[index].isRead){
+                res=$scope.questions[index].isRead.indexOf(username);
+            } else {
+                $scope.questions[index].isRead=[];
+                res=-1;
+            }
+
+
+            if (res==-1) {
+                unmark=false;
+                $scope.questions[index].isRead.push(username);
+                newMark=$scope.questions[index].isRead;
+            } else {
+                unmark=true;
+                $scope.questions[index].isRead.splice(res,1);
+                newMark=$scope.questions[index].isRead;
+
+            }
+
+
+            userQuestions.markQuestion(newMark,index).then(
+                function(success) {
+                    $scope.questions[index].isRead=newMark;
+
+                },
+                function(error){
+                    console.log('nu am putut marca');
+                    $scope.operationError = true;
+                    $timeout(function () {
+                        $scope.operationError = false;
+                    }, 3000);
+                }
+            )
+        }
+
+    })
+
+    .controller('main_addquestion', function ($scope, sendQuestion, $timeout) {
+
+        $scope.saveQuestionSuccess = false;
+        $scope.saveQuestionError = false;
+
+
+        $scope.addFile = function (files) {
+            $scope.files = files[0];
+        }
+
+
+        $scope.addQuestion = function () {
+
+            sendQuestion.add($scope.q, $scope.files)
+                .then(
+                function (success) {
+                    $scope.saveQuestionSuccess = true;
+                    $timeout(function () {
+                        $scope.saveQuestionSuccess = false;
+                    }, 3000);
+
+                },
+                function (error) {
+                    $scope.saveQuestionError = true;
+                    $timeout(function () {
+                        $scope.saveQuestionError = false;
+                    }, 3000);
+                }
+            )
+        };
     })
 
 
-    .controller('sendquestion', function ($scope, sendQuestion) {
-        $scope.qSend = {tricks:''};
-        $scope.thankyou=false;
-        $scope.loading=false;
-        $scope.error=false;
+    .controller('login', function ($scope, userservice, $location, $timeout, $log) {
+        $scope.error = false;
+        $scope.success = false;
 
-        $scope.sendQ = function () {
 
-            $scope.loading=true;
-            sendQuestion.now($scope.qSend).then (
+        $scope.isLoggedIn = function () {
+            return userservice.isLoggedIn();
+        };
 
-                function(success) {
-                    $scope.error=false;
-                    $scope.loading=false;
-                    $scope.thankyou=true;
-                    $scope.qSend={tricks:''};
+        $scope.logout = function () {
+            userservice.logout();
+            $scope.reset();
+        }
+
+        $scope.user = userservice.getUser();
+
+        $scope.login = function () {
+            $log.info('logging in')
+            userservice.login($scope.user).then(
+
+                function (success) {
+                    $scope.user.sessionToken = success.data.sessionToken;
+                    $scope.error = false;
+                    $scope.success = true;
+                    $timeout(function () {
+                        $scope.success = false;
+                    }, 3000);
                 },
 
-                function(error) {
-                    $scope.error=true;
-                    $scope.loading=false;
+                function (error) {
+                    $scope.error = true;
+                    $timeout(function () {
+                        $scope.error = false;
+                    }, 3000);
+                    $scope.loading = false;
                 }
 
             )
         };
 
-        $scope.reset=function() {
-            $scope.error=false;
-            $scope.loading=false;
-            $scope.thankyou=false;
-            $scope.qSend={tricks:''};
+        $scope.reset = function () {
+            $scope.error = false;
+            $scope.loading = false;
+            $scope.success = false;
+
+            $scope.user = {};
         }
 
+    })
+
+    .controller('menuCtrl', function ($scope, userservice) {
+        $scope.isLoggedIn = function () {
+            return userservice.isLoggedIn();
+        }
 
 
     })
