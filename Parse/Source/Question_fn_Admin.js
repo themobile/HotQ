@@ -18,7 +18,7 @@ Parse.Cloud.define("QuestionAdmin", function (request, response) {
                     startDate = objDates.startDate;
                     endDate = objDates.endDate;
 
-                    return _AdminQuestion(thisUser, param.id, categoryObject, typeObject, param.text1, param.text2, param.link, startDate, endDate);
+                    return _AdminQuestion(thisUser, param.id, categoryObject, typeObject, param.text1, param.text2, param.link, startDate, endDate, param.imageSource);
                 }).then(function (questionSaved) {
                     response.success(questionSaved);
                 }, function (error) {
@@ -32,7 +32,7 @@ Parse.Cloud.define("QuestionAdmin", function (request, response) {
     }
 });
 
-_AdminQuestion = function (user, id, categoryId, typeId, subject, body, link, startDate, endDate) {
+_AdminQuestion = function (user, id, categoryId, typeId, subject, body, link, startDate, endDate, imageSource) {
     var promise = new Parse.Promise()
         ;
     if (!(id)) {
@@ -53,6 +53,7 @@ _AdminQuestion = function (user, id, categoryId, typeId, subject, body, link, st
         question.set("link", link);
         question.set("startDate", _parseDate(startDate));
         question.set("endDate", _parseDate(endDate));
+        question.set("imageSource", imageSource);
         question.setACL(_getUserACL(user));
         return question.save();
     }).then(function (saved) {
