@@ -111,7 +111,8 @@ module.exports.metadata =
     "org.apache.cordova.splashscreen": "0.2.5",
     "com.pushwoosh.plugins.pushwoosh": "3.0.2",
     "nl.x-services.plugins.socialsharing": "3.5",
-    "org.apache.cordova.network-information": "0.2.5"
+    "org.apache.cordova.network-information": "0.2.5",
+    "org.apache.cordova.console": "0.2.6"
 }
 // BOTTOM OF METADATA
 });

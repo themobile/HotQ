@@ -175,6 +175,7 @@ ul.menu li > a:hover {
 
 #sp-page {
     position: absolute;
+    overflow-y: hidden;
     background-color: #ffffff;
     display: -webkit-flex;
     display: -moz-flex;

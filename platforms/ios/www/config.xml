@@ -9,7 +9,6 @@
     </author>
 
     <preference name="PaginationMode" value="unpaginated" />
-
     <preference name="SplashScreen" value="splash" />
     <preference name="SplashScreenDelay" value="3000" />
     <preference name="KeepRunning" value="false"/>
@@ -59,9 +58,6 @@
     </feature>
     <feature name="NetworkStatus">
         <param name="ios-package" value="CDVConnection" />
-    </feature>
-    <feature name="Console">
-        <param name="ios-package" value="CDVLogger"/>
     </feature>
     <access origin="*.pushwoosh.com" />
     <access origin="https://*.parse.com" />

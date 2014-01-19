@@ -299,51 +299,6 @@ ul.menu li > a:hover {
 }
 
 
-
-.question.ng-enter, .question.ng-leave {
-    -webkit-animation-duration: 0.3s;
-
-}
-
-.question.animate-forward.ng-enter {
-    -webkit-animation-name: slideInRight;
-    animation-name:slideInRight;
-}
-.question.animate-forward.ng-enter.ng-enter-active {
-    opacity:1;
-}
-
-.question.animate-forward.ng-leave{
-    -webkit-animation-name: slideOutLeft;
-    animation-name:slideOutLeft;
-}
-
-.question.animate-forward.ng-leave.ng-leave-active {
-    opacity:0;
-}
-
-
-
-.question.ng-enter {
-    -webkit-animation-name: slideInLeft;
-    animation-name:slideInLeft;
-}
-.question.ng-enter.ng-enter-active {
-    opacity:1;
-}
-
-.question.ng-leave{
-    -webkit-animation-name: slideOutRight;
-    animation-name:slideOutRight;
-}
-
-.question.ng-leave.ng-leave-active {
-    opacity:0;
-}
-
-
-
-
 .question-image {
     flex:1;
     -webkit-flex:1;

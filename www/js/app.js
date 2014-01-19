@@ -1,4 +1,13 @@
-angular.module("hotq", [ "ngRoute", "ngAnimate","ngTouch", "hotq.services", "hotq.controllers","shoppinpal.mobile-menu" ])
+angular.module("hotq", [
+        "ngRoute",
+        "ngAnimate",
+        "ngTouch",
+        "hotq.services",
+        "hotq.controllers",
+//        "hotq.directives",
+        "shoppinpal.mobile-menu" ])
+
+
     .config(function ($routeProvider) {
         $routeProvider
             .when("/questionOfDay", {
@@ -78,15 +87,13 @@ angular.module("hotq", [ "ngRoute", "ngAnimate","ngTouch", "hotq.services", "hot
             superScope.loader = !isOnline;
         }
 
-            document.addEventListener("online",function(){
-                $rootScope.$broadcast('onlineChanged',true);
-            },true)
-            document.addEventListener("offline",function(){
-                $rootScope.$broadcast('onlineChanged',false);
-            },true)
+        document.addEventListener("online", function () {
+            $rootScope.$broadcast('onlineChanged', true);
+        }, true)
+        document.addEventListener("offline", function () {
+            $rootScope.$broadcast('onlineChanged', false);
+        }, true)
 
-        //FIXME de pus hardware id intors de parse
-        $rootScope.installId = '891e011e-77f3-4b23-8e0d-f7174da27379';
 
 
 

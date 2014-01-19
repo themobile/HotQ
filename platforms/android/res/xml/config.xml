@@ -26,7 +26,11 @@
     <preference name="SplashScreen" value="splash" />
     <preference name="SplashScreenDelay" value="3000" />
     <preference name="KeepRunning" value="false" />
-    <preference name="LoadUrlTimeoutValue" value="3000" />
+    <preference name="LoadUrlTimeoutValue" value="5000" />
+    <preference name="Fullscreen" value="true" />
+    <preference name="Orientation" value="portrait" />
+    <preference name="DisallowOverscroll" value="false" />
+    <preference name="stay-in-webview" value="true" />
     <feature name="LocalStorage">
         <param name="ios-package" value="CDVLocalStorage" />
     </feature>

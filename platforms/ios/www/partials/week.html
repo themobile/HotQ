@@ -1,14 +1,14 @@
 <div class="question-image">
     <img class="image-source"
-         ng-src="img/slide2.jpg"/>
+         ng-src="{{questions.questionOfWeek.picture.url}}"/>
     <div class="question-title">săptămână</div>
 </div>
 
 
 <div class="question-body">
     <div class="moreinfo">
-        <div class="info icon-info-large"></div>
-        <div class="credit">Sursa: Agerpres</div>
+        <a  ng-show="{{questions.questionOfWeek.link}}" ng-href="{{questions.questionOfWeek.link}}"> <div class="info icon-info-large"></div></a>
+        <div class="credit">{{questions.questionOfWeek.imageSource}}</div>
     </div>
 
     <div ng-cloack class="question-pre">{{questions.questionOfWeek.text1}}</div>

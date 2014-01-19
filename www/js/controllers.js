@@ -2,7 +2,7 @@ angular.module('hotq.controllers', ['btford.modal'])
 
     .value('version', '0.1')
 
-    .controller("HotqCtl", function ($scope, $rootScope, $timeout, $location, $http, $q, upVotes, questions, poosh, offlineswitch, geolocation, demoModal) {
+    .controller("HotqCtl", function ($scope, $rootScope, $timeout, $location, $http, $q, upVotes, questions, poosh, offlineswitch, geolocation, demoModal, parseBAAS) {
 
         var screenList = ["questionOfDay", "questionOfWeek", "questionOfMonth", "reward"];
 
@@ -46,10 +46,13 @@ angular.module('hotq.controllers', ['btford.modal'])
             } else {
                 $timeout(function () {
                     $scope.step += 1;
-                }, 1000);
+                }, 200);
             }
         };
         //end fereastra modala
+
+
+
 
         $scope.init = function () {
             $timeout(function () {
@@ -59,109 +62,120 @@ angular.module('hotq.controllers', ['btford.modal'])
             $rootScope.loader = false;
 
 
-//            initializare PUSHWOOSH
-//            $scope.initPushwoosh = poosh.getAll(device.platform);
-//            $scope.initPushwoosh.then(
-//                function (token) {
-//                    var postData = {deviceCode: device.uuid, pushCode: token};
-//                    $http(
-//                        {
-//                            method: 'POST',
-//                            url: 'https://api.parse.com/1/functions/AddDevice',
-//                            headers: {
-//                                "X-Parse-Application-Id": "oYvsd9hx0NoIlgEadXJsqCtU1PgjcPshRqy18kmP",
-//                                "X-Parse-REST-API-Key": "gX3SUxGPeSnAefjtFmF9MeWpbTIa9YhC8q1n7hLk",
-//                                "Content-Type": "application/json"
-//                            },
-//                            withCredentials: false,
-//                            cache: false,
-//                            data: postData
-//                        }
-//                    )
-//                        .success(function (data) {
-//                            $rootScope.installId = data.result;
-//                        })
-//                        .error(function (data) {
-////                            FIXME: de tratat eroare
-//                            $rootScope.installId = data;
-//                        });
-//
-//                },
-//                function (status) {
-//                    $rootScope.installId = status;
-//                }
-//            );
-
-            //   SFARSIT INITIALIZARE PUSHWOOSH
-
-            //obiect cu uuid (nu e acceptat de IOS?????) si devicename
-            $scope.deviceInfo = {
-                name: device.name,
-                uuid: device.uuid
+            var tags = {
+                cordova: device.cordova,
+                platform: device.platform,
+                version: device.version,
+                model: device.model
             };
 
-            $rootScope.loaderMessage = "hotQ încarcă întrebările...";
-            $rootScope.loader = true;
+            var timeOffset = (new Date()).getTimezoneOffset().toString();
+            var hotQPushSyncLastDate = (new Date()).getFullYear().toString() + (new Date()).getMonth().toString();
 
-            //call getAll with installationId
-            $scope.questions = questions.getAll({installationId: $rootScope.installId});
-            $scope.questions.then(
-                function (data) {
-                    var localData = {};
-                    $scope.questions = data.result;
-                    $scope.yesproc = $scope.questions.questionOfDay.percentYes;
-                    $scope.noproc = $scope.questions.questionOfDay.percentNo;
+
+            var hotQPushSyncIdLocal = window.localStorage.getItem('hotQPooshSyncID');
+            var hotQPushSyncLastDateLocal = window.localStorage.getItem('hotQPooshSyncDate');
+
+
+            var checkPoosh = function () {
+                var dfd = $q.defer(); //promise pe toata functia
+
+                if (hotQPushSyncIdLocal && (hotQPushSyncLastDateLocal == hotQPushSyncLastDate)) {
+                    $rootScope.installId=hotQPushSyncIdLocal;
+                    dfd.resolve(hotQPushSyncIdLocal); // nu mai e nevoie de poosh
+                } else {
+                    dfd.resolve(
+                        poosh.getPooshToken(device.platform)
+                            .then(function (token) {
+                                var postData = {deviceCode: device.uuid, timeZone: timeOffset, tags: tags, type: device.platform, pushCode: token};
+                                var deferred = $q.defer();
+
+                                parseBAAS.post('AddDevice', postData)
+                                    .success(function () {
+                                        var hotQPushSyncId = parseBAAS.getResult();
+                                        $rootScope.installId=hotQPushSyncId;
+                                        window.localStorage.setItem('hotQPooshSyncID', hotQPushSyncId);
+                                        window.localStorage.setItem('hotQPooshSyncDate', hotQPushSyncLastDate);
+                                        deferred.resolve(hotQPushSyncId);
+                                    })
+
+                                    .error(function (error) {
+
+                                        deferred.reject(error);
+                                    });
+                                return deferred.promise;
+                            })
+                    );
+                }
+                return dfd.promise; // returneaza promise
+            };
+
+
+            var getQuestions = function (installId) {
+                var dfd = $q.defer();
+                $rootScope.loaderMessage = "hotQ încarcă întrebările...";
+                $rootScope.loader = true;
+                questions.loadRemote({installationId: installId})
+                    .then(
+                    function (data) {
+                        dfd.resolve(data);
+                    },
+                    function (error) {
+                        dfd.reject(error);
+                    }
+                );
+                return dfd.promise;
+            };
+
+
+            checkPoosh()
+                .then(function (data) {
+                    return getQuestions(data);
+                })
+                .then(function () {
+                    $scope.questions = questions.getLocal();
+                    console.log($scope.questions.questionOfDay.picture);
                     if (window.localStorage.getItem("hotQuestions")) {
-                        localData = JSON.parse(window.localStorage.getItem("hotQuestions"));
-                        if (localData.date === $scope.questions.date) {
-                            $scope.questions.questionOfDay.hasVote = localData.questionOfDay.hasVote;
-                            $scope.questions.questionOfWeek.hasVote = localData.questionOfWeek.hasVote;
-                            $scope.questions.questionOfMonth.hasVote = localData.questionOfMonth.hasVote;
+                        var localQ = JSON.parse(window.localStorage.getItem("hotQuestions"));
+                        if (localQ.date === $scope.questions.date) {
+                            questions.setVote('questionOfDay', localQ.questionOfDay.hasVote);
+                            questions.setVote('questionOfWeek', localQ.questionOfWeek.hasVote);
+                            questions.setVote('questionOfMonth', localQ.questionOfMonth.hasVote);
+                            $scope.questions = questions.getLocal();
                         }
                     }
-                    $rootScope.loader = false;
 
-                    //scriem in localstorage
-                    window.localStorage.setItem("hotQuestions", JSON.stringify(data.result));
+                    $scope.yesproc = $scope.questions.questionOfDay.percentYes;
+                    $scope.noproc = $scope.questions.questionOfDay.percentNo;
+                    //succes
+                    $rootScope.loader = false;
                 }, function () {
-                    //prelevare date din localstorage daca exista in caz de eroare server
-                    var localQuestions = window.localStorage.getItem('hotQuestions');
-                    if (localQuestions) {
-                        $scope.questions = JSON.parse(localQuestions);
-                        $scope.yesproc = $scope.questions.questionOfDay.percentYes;
-                        $scope.noproc = $scope.questions.questionOfDay.percentNo;
-                        console.log('nu incarc date - eroare grava');
-
-                    } else {
-//                        TODO: de pus dummy questions sau de vazut ce e cu reteaua. ceva nu merge
-                        console.log('nu incarc date - eroare grava');
-                    }
+                    //eroare
                     $rootScope.loader = false;
-
                 });
 
 
-            //geolocatie si decodare google
-            $scope.position = geolocation.getAll();
-            $scope.position.then(function (position) {
-                $scope.position = position.coords;
-                var latP = parseFloat($scope.position.latitude);
-                var lngP = parseFloat($scope.position.longitude);
-                var geocoder = new google.maps.Geocoder();
-                var latlng = new google.maps.LatLng(latP, lngP);
-                geocoder.geocode({'latLng': latlng}, function (results, status) {
-                    if (status == google.maps.GeocoderStatus.OK) {
-                        $scope.geoInfo = results;
-                    } else {
-                        $scope.geoInfo = ['error'];
-                    }
-                });
-            }, function (error) {
-                console.log(error);
-            });
+            geolocation.getAll()
+                .then(function (position) {
+                    $scope.position = position.coords;
+                    var latP = parseFloat($scope.position.latitude);
+                    var lngP = parseFloat($scope.position.longitude);
+                    var geocoder = new google.maps.Geocoder();
+                    var latlng = new google.maps.LatLng(latP, lngP);
+                    geocoder.geocode({'latLng': latlng}, function (results, status) {
+                        if (status == google.maps.GeocoderStatus.OK) {
+                            $scope.geoInfo = results;
+                        } else {
+                            $scope.geoInfo = ['error'];
+                        }
+                    });
+                }, function (error) {
+                    console.log('Eroare geolocatie: ' + JSON.stringify(error));
+                }
+            );
 
             //citeste din localStorage
-            $scope.timesLoaded = window.localStorage.getItem("hotQTimesLoaded");
+            $scope.timesLoaded = parseInt(window.localStorage.getItem("hotQTimesLoaded"));
             if ($scope.timesLoaded) {
                 $scope.timesLoaded++;   // incrementare timesLoaded
             } else {
@@ -169,7 +183,7 @@ angular.module('hotq.controllers', ['btford.modal'])
             }
 
             //scrie timesLoaded in storage
-            window.localStorage.setItem("hotQTimesLoaded", $scope.timesLoaded);
+            window.localStorage.setItem("hotQTimesLoaded", $scope.timesLoaded.toString());
 
             //la 4 incarcari de aplicatie arata demograficele
             if ($scope.timesLoaded > 3) {
@@ -206,31 +220,29 @@ angular.module('hotq.controllers', ['btford.modal'])
         };
 
         $scope.goReward = function (location) {
-            console.log(location);
             window.open(location, '_blank', 'location=yes');
         };
 
         //useful when voting :)
         $scope.getQuestionId = function () {
-            return $scope.questions[$rootScope.currScreen].id;
+            return questions.getLocal()[$rootScope.currScreen].id;
         };
 
         //pay atention to currentScreen
         $rootScope.$watch('currScreen', function () {
-            if ($scope.questions) {
-                if ($scope.questions[$rootScope.currScreen]) {
-                    $scope.yesproc = $scope.questions[$rootScope.currScreen].percentYes;
-                    $scope.noproc = $scope.questions[$rootScope.currScreen].percentNo;
-//                console.log('Screen changed: ' + $rootScope.currScreen);
+            if (questions.getLocal()) {
+                if (questions.getLocal()[$rootScope.currScreen]) {
+                    $scope.yesproc = questions.getLocal()[$rootScope.currScreen].percentYes;
+                    $scope.noproc = questions.getLocal()[$rootScope.currScreen].percentNo;
                 }
             }
         });
 
         //if answers are visible or thank you text is shown
         $scope.answersVisible = function () {
-            if ($scope.questions) {
-                if ($scope.questions[$rootScope.currScreen]) {
-                    return $scope.questions[$rootScope.currScreen].hasVote ? false : true;
+            if (questions.getLocal()) {
+                if (questions.getLocal()[$rootScope.currScreen]) {
+                    return questions.getLocal()[$rootScope.currScreen].hasVote ? false : true;
                 } else {
                     return true;
                 }
@@ -264,10 +276,11 @@ angular.module('hotq.controllers', ['btford.modal'])
         $scope.voteNow = function (questionId, voteValue) {
             $rootScope.loaderMessage = "hotQ notează răspunsul tău...";
             $rootScope.loader = true;
-            upVotes.voteNow(questionId, voteValue, $rootScope.installId, {deviceInfo: $scope.deviceInfo, position: $scope.position, address: $scope.geoInfo}, {demographics: $scope.user})
+            upVotes.voteNow(questionId, voteValue, $rootScope.installId, {position: $scope.position, address: $scope.geoInfo}, {demographics: $scope.user})
                 .success(function (data /* tipul de intrebare la care s-a votat */) {
-                    $scope.questions[data.result.success].hasVote = true;
-                    window.localStorage.setItem("hotQuestions", JSON.stringify($scope.questions));
+                    questions.setVote(data.result.success, true);
+                    $scope.questions = questions.getLocal();
+                    window.localStorage.setItem("hotQuestions", JSON.stringify(questions.getLocal()));
                     $rootScope.loader = false;
                 })
                 .error(function () {

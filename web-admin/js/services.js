@@ -174,7 +174,8 @@ angular.module('hotq.services', [])
                     text1: question.text1,
                     text2: question.text2,
                     startDate: question.startDate,
-                    link: question.url
+                    link: question.url,
+                    imageSource:question.imageSource
                 };
 
 
@@ -220,6 +221,69 @@ angular.module('hotq.services', [])
                             {
                                 method: 'PUT',
                                 url: 'https://api.parse.com/1/classes/Question/' + qId,
+                                headers: credent,
+                                withCredentials: false,
+                                cache: false,
+                                data: dataFile
+                            }
+                        )
+                    })
+            }
+        }
+
+    })
+
+
+
+
+
+    .factory('sendQuote', function ($http, userservice) {
+
+        return {
+            add: function (quote, file) {
+
+                var qId, imgLocation;
+
+                return $http(
+                    {
+                        method: 'POST',
+                        url: 'https://api.parse.com/1/functions/QuoteAdmin',
+                        headers: userservice.getCredentials(),
+                        withCredentials: false,
+                        cache: false,
+                        data: quote
+                    }
+                )
+                    .then(function (data) {
+                        qId = data.data.result.objectId;
+                        var credent = userservice.getCredentials();
+                        credent["Content-Type"] = "image/jpeg";
+                        return $http(
+                            {
+                                method: 'POST',
+                                url: 'https://api.parse.com/1/files/' + file.name,
+                                headers: credent,
+                                withCredentials: false,
+                                cache: false,
+                                data: file
+                            }
+                        )
+                    })
+                    .then(function (data) {
+                        imgLocation = data.data;
+                        var credent = userservice.getCredentials();
+                        credent["Content-Type"] = "application/json";
+                        var dataFile = {
+                            "imageFile": {
+                                "name": imgLocation.name,
+                                "__type": "File"
+                            }
+                        }
+
+                        return $http(
+                            {
+                                method: 'PUT',
+                                url: 'https://api.parse.com/1/classes/Quote/' + qId,
                                 headers: credent,
                                 withCredentials: false,
                                 cache: false,

@@ -1,5 +1,24 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="com.themobile.hotq" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Hello Cordova</name>
+    <description>
+        A sample Apache Cordova application that responds to the deviceready event.
+    </description>
+    <access origin="*" />
+    <preference name="AllowInlineMediaPlayback" value="false" />
+    <preference name="BackupWebStorage" value="cloud" />
+    <preference name="DisallowOverscroll" value="false" />
+    <preference name="EnableViewportScale" value="false" />
+    <preference name="KeyboardDisplayRequiresUserAction" value="true" />
+    <preference name="MediaPlaybackRequiresUserAction" value="false" />
+    <preference name="SuppressesIncrementalRendering" value="true" />
+    <preference name="TopActivityIndicator" value="gray" />
+    <preference name="GapBetweenPages" value="0" />
+    <preference name="PageLength" value="0" />
+    <preference name="PaginationBreakingMode" value="page" />
+    <preference name="BackupWebStorage" value="local"/>
+    <preference name="exit-on-suspend"            value="true" />
+
     <name>hotq</name>
     <description>
         Răspunde la întrebările care frământă România.
@@ -7,18 +26,6 @@
     <author email="info@themobile.ro" href="http://themobile.ro">
         themobile.ro
     </author>
-    <preference name="AllowInlineMediaPlayback" value="false" />
-    <preference name="BackupWebStorage" value="cloud" />
-    <preference name="DisallowOverscroll" value="false" />
-    <preference name="EnableViewportScale" value="false" />
-    <preference name="KeyboardDisplayRequiresUserAction" value="true" />
-    <preference name="MediaPlaybackRequiresUserAction" value="false" />
-    <preference name="SuppressesIncrementalRendering" value="false" />
-    <preference name="TopActivityIndicator" value="gray" />
-    <preference name="GapBetweenPages" value="0" />
-    <preference name="PageLength" value="0" />
-    <preference name="PaginationBreakingMode" value="page" />
-
     <preference name="PaginationMode" value="unpaginated" />
     <preference name="SplashScreen" value="splash" />
     <preference name="SplashScreenDelay" value="3000" />
@@ -54,8 +61,8 @@
         <param name="android-package" value="org.apache.cordova.networkinformation.NetworkManager" />
         <param name="ios-package" value="CDVConnection" />
     </feature>
-    <feature name="Console">
-        <param name="ios-package" value="CDVLogger"/>
+    <feature name="Logger">
+        <param name="ios-package" value="CDVLogger" />
     </feature>
     <access origin="*.pushwoosh.com" />
     <access origin="https://*.parse.com" />
