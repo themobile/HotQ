@@ -134,8 +134,8 @@ angular.module('hotq.controllers', ['btford.modal'])
                 })
                 .then(function () {
                     $scope.questions = questions.getLocal();
-                    console.log($scope.questions.questionOfDay.picture);
-                    if (window.localStorage.getItem("hotQuestions")) {
+                    var hotQLocal=window.localStorage.getItem("hotQuestions");
+                    if (hotQLocal && hotQLocal != 'undefined') {
                         var localQ = JSON.parse(window.localStorage.getItem("hotQuestions"));
                         if (localQ.date === $scope.questions.date) {
                             questions.setVote('questionOfDay', localQ.questionOfDay.hasVote);

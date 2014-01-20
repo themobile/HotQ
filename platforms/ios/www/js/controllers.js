@@ -46,7 +46,7 @@ angular.module('hotq.controllers', ['btford.modal'])
             } else {
                 $timeout(function () {
                     $scope.step += 1;
-                }, 1000);
+                }, 200);
             }
         };
         //end fereastra modala
@@ -76,8 +76,6 @@ angular.module('hotq.controllers', ['btford.modal'])
             var hotQPushSyncIdLocal = window.localStorage.getItem('hotQPooshSyncID');
             var hotQPushSyncLastDateLocal = window.localStorage.getItem('hotQPooshSyncDate');
 
-
-//            window.localStorage.setItem("hotQUserDemo", JSON.stringify($scope.user))
 
             var checkPoosh = function () {
                 var dfd = $q.defer(); //promise pe toata functia
@@ -136,8 +134,8 @@ angular.module('hotq.controllers', ['btford.modal'])
                 })
                 .then(function () {
                     $scope.questions = questions.getLocal();
-                    console.log($scope.questions.questionOfDay.picture);
-                    if (window.localStorage.getItem("hotQuestions")) {
+                    var hotQLocal=window.localStorage.getItem("hotQuestions");
+                    if (hotQLocal && hotQLocal != 'undefined') {
                         var localQ = JSON.parse(window.localStorage.getItem("hotQuestions"));
                         if (localQ.date === $scope.questions.date) {
                             questions.setVote('questionOfDay', localQ.questionOfDay.hasVote);

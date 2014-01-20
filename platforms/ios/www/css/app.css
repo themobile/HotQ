@@ -299,51 +299,6 @@ ul.menu li > a:hover {
 }
 
 
-
-.question.ng-enter, .question.ng-leave {
-    -webkit-animation-duration: 0.3s;
-
-}
-
-.question.animate-forward.ng-enter {
-    -webkit-animation-name: slideInRight;
-    animation-name:slideInRight;
-}
-.question.animate-forward.ng-enter.ng-enter-active {
-    opacity:1;
-}
-
-.question.animate-forward.ng-leave{
-    -webkit-animation-name: slideOutLeft;
-    animation-name:slideOutLeft;
-}
-
-.question.animate-forward.ng-leave.ng-leave-active {
-    opacity:0;
-}
-
-
-
-.question.ng-enter {
-    -webkit-animation-name: slideInLeft;
-    animation-name:slideInLeft;
-}
-.question.ng-enter.ng-enter-active {
-    opacity:1;
-}
-
-.question.ng-leave{
-    -webkit-animation-name: slideOutRight;
-    animation-name:slideOutRight;
-}
-
-.question.ng-leave.ng-leave-active {
-    opacity:0;
-}
-
-
-
-
 .question-image {
     flex:1;
     -webkit-flex:1;
@@ -836,15 +791,60 @@ input[type="radio"] + label:active {
 
 
 
+.animate-forward.ng-enter, .animate-forward.ng-leave {
+    -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+    transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+    /*display:block;*/
+}
+
+.animate-forward.ng-enter {
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
+}
+
+.animate-forward.ng-enter-active {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+}
+
+.animate-forward.ng-leave-active {
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
+}
+
+
+
+
+
+.animate-backward.ng-enter, .animate-backward.ng-leave {
+    -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+    transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+    /*display:block;*/
+}
+
+.animate-backward.ng-enter {
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
+}
+
+.animate-backward.ng-enter-active {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+}
+
+.animate-backward.ng-leave-active {
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
+}
 
 
 
 /* Smartphones (portrait and landscape) ----------- */
-@media only screen
-and (min-device-width : 320px)
-and (max-device-width : 480px) {
+/*@media only screen*/
+/*and (min-device-width : 320px)*/
+/*and (max-device-width : 480px) {*/
     /* STYLES GO HERE */
-}
+/*}*/
 
 /* Smartphones (landscape) ----------- */
 /*@media only screen*/
@@ -853,95 +853,95 @@ and (max-device-width : 480px) {
 /*}*/
 
 /* Smartphones (portrait) ----------- */
-@media only screen
-and (max-width : 320px) {
+/*@media only screen*/
+/*and (max-width : 320px) {*/
     /* STYLES GO HERE */
-}
+/*}*/
 
 /* iPads (portrait and landscape) ----------- */
-@media only screen
-and (min-device-width : 768px)
-and (max-device-width : 1024px) {
+/*@media only screen*/
+/*and (min-device-width : 768px)*/
+/*and (max-device-width : 1024px) {*/
     /* STYLES GO HERE */
-    .modal-html {
-        height:15%;
-        font-size:1em;
-    }
+    /*.modal-html {*/
+        /*height:15%;*/
+        /*font-size:1em;*/
+    /*}*/
 
-    .menu-button {
-        font-size:1.5em;
-    }
+    /*.menu-button {*/
+        /*font-size:1.5em;*/
+    /*}*/
 
-    .question-title {
-        font-size:4em;
-    }
+    /*.question-title {*/
+        /*font-size:4em;*/
+    /*}*/
 
-    .question-pre {
-        font-size:0.8em;
-    }
+    /*.question-pre {*/
+        /*font-size:0.8em;*/
+    /*}*/
 
-    .moreinfo {
-        font-size:0.8em;
-    }
+    /*.moreinfo {*/
+        /*font-size:0.8em;*/
+    /*}*/
 
-    .question-main {
-        font-size:1em;
-    }
+    /*.question-main {*/
+        /*font-size:1em;*/
+    /*}*/
 
-    ul.progress-bar {
-        width:10em;
-        margin-top: -0.8em;
-    }
+    /*ul.progress-bar {*/
+        /*width:10em;*/
+        /*margin-top: -0.8em;*/
+    /*}*/
 
-    ul.progress-bar li {
-        font-size: 0.8em;
-    }
-    .btn-answer {
-        font-size:2em;
-    }
+    /*ul.progress-bar li {*/
+        /*font-size: 0.8em;*/
+    /*}*/
+    /*.btn-answer {*/
+        /*font-size:2em;*/
+    /*}*/
 
-    .footer-logo {
-        background-size: 7em;
-        min-height:2.5em;
-    }
+    /*.footer-logo {*/
+        /*background-size: 7em;*/
+        /*min-height:2.5em;*/
+    /*}*/
 
-    .footer-over {
-        min-height: 2.5em;
-    }
+    /*.footer-over {*/
+        /*min-height: 2.5em;*/
+    /*}*/
 
-    ul.menu li {
-        font-size: 0.8em;
-        margin-top: 0.8em;
-        line-height: 1.5em;
-    }
+    /*ul.menu li {*/
+        /*font-size: 0.8em;*/
+        /*margin-top: 0.8em;*/
+        /*line-height: 1.5em;*/
+    /*}*/
 
-    ul.menu li > a {
-        font-size: 1.1em;
-    }
+    /*ul.menu li > a {*/
+        /*font-size: 1.1em;*/
+    /*}*/
 
-    .votes_casted {
-        margin-top: 2em;
-        font-size: 1em;
-    }
+    /*.votes_casted {*/
+        /*margin-top: 2em;*/
+        /*font-size: 1em;*/
+    /*}*/
 
-    .about {
-        margin:4em 2em;
-    }
+    /*.about {*/
+        /*margin:4em 2em;*/
+    /*}*/
 
-    .about > h1 {
-        font-size:2em;
-    }
+    /*.about > h1 {*/
+        /*font-size:2em;*/
+    /*}*/
 
-    .about > p {
-        font-size:0.8em;
-        margin:1em 0;
-    }
+    /*.about > p {*/
+        /*font-size:0.8em;*/
+        /*margin:1em 0;*/
+    /*}*/
 
-    .about-link-questions {
-        bottom:1em;
-    }
+    /*.about-link-questions {*/
+        /*bottom:1em;*/
+    /*}*/
 
-}
+/*}*/
 
 /* iPads (landscape) ----------- */
 /*@media only screen*/
@@ -952,88 +952,88 @@ and (max-device-width : 1024px) {
 /*}*/
 
 /* iPads (portrait) ----------- */
-@media only screen
-and (min-device-width : 768px)
-and (orientation : portrait) {
+/*@media only screen*/
+/*and (min-device-width : 768px)*/
+/*and (orientation : portrait) {*/
     /* STYLES GO HERE */
-    .modal-html {
-        height:15%;
-        font-size:1em;
-    }
+    /*.modal-html {*/
+        /*height:15%;*/
+        /*font-size:1em;*/
+    /*}*/
 
-    .menu-button {
-        font-size:1.5em;
-    }
+    /*.menu-button {*/
+        /*font-size:1.5em;*/
+    /*}*/
 
-    .question-title {
-        font-size:4em;
-    }
+    /*.question-title {*/
+        /*font-size:4em;*/
+    /*}*/
 
-    .question-pre {
-        font-size:0.8em;
-    }
+    /*.question-pre {*/
+        /*font-size:0.8em;*/
+    /*}*/
 
-    .moreinfo {
-        font-size:0.8em;
-    }
+    /*.moreinfo {*/
+        /*font-size:0.8em;*/
+    /*}*/
 
-    .question-main {
-        font-size:1em;
-    }
+    /*.question-main {*/
+        /*font-size:1em;*/
+    /*}*/
 
-    ul.progress-bar {
-        width:10em;
-        margin-top: -0.8em;
-    }
+    /*ul.progress-bar {*/
+        /*width:10em;*/
+        /*margin-top: -0.8em;*/
+    /*}*/
 
-    ul.progress-bar li {
-        font-size: 0.8em;
-    }
-    .btn-answer {
-        font-size:2em;
-    }
+    /*ul.progress-bar li {*/
+        /*font-size: 0.8em;*/
+    /*}*/
+    /*.btn-answer {*/
+        /*font-size:2em;*/
+    /*}*/
 
-    .footer-logo {
-        background-size: 7em;
-        min-height:2.5em;
-    }
+    /*.footer-logo {*/
+        /*background-size: 7em;*/
+        /*min-height:2.5em;*/
+    /*}*/
 
-    .footer-over {
-        min-height: 2.5em;
-    }
+    /*.footer-over {*/
+        /*min-height: 2.5em;*/
+    /*}*/
 
-    ul.menu li {
-        font-size: 0.8em;
-        margin-top: 0.8em;
-        line-height: 1.5em;
-    }
+    /*ul.menu li {*/
+        /*font-size: 0.8em;*/
+        /*margin-top: 0.8em;*/
+        /*line-height: 1.5em;*/
+    /*}*/
 
-    ul.menu li > a {
-        font-size: 1.1em;
-    }
+    /*ul.menu li > a {*/
+        /*font-size: 1.1em;*/
+    /*}*/
 
-    .votes_casted {
-        margin-top: 2em;
-        font-size: 1em;
-    }
+    /*.votes_casted {*/
+        /*margin-top: 2em;*/
+        /*font-size: 1em;*/
+    /*}*/
 
-    .about {
-        margin:4em 2em;
-    }
+    /*.about {*/
+        /*margin:4em 2em;*/
+    /*}*/
 
-    .about > h1 {
-        font-size:2em;
-    }
+    /*.about > h1 {*/
+        /*font-size:2em;*/
+    /*}*/
 
-    .about > p {
-        font-size:0.8em;
-        margin:1em 0;
-    }
+    /*.about > p {*/
+        /*font-size:0.8em;*/
+        /*margin:1em 0;*/
+    /*}*/
 
-    .about-link-questions {
-        bottom:1em;
-    }
-}
+    /*.about-link-questions {*/
+        /*bottom:1em;*/
+    /*}*/
+/*}*/
 
 /* Desktops and laptops ----------- */
 /*@media only screen*/

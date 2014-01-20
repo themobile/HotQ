@@ -7,8 +7,8 @@
 
 <div class="question-body">
     <div class="moreinfo">
-        <a  ng-show="{{questions.questionOfDay.link}}" ng-href="{{questions.questionOfDay.link}}"> <div class="info icon-info-large"></div></a>
-        <div class="credit">{{questions.questionOfDay.imageSource}}</div>
+        <div ng-show="questions.questionOfDay.link" ng-click="goReward(questions.questionOfDay.link)" class="info icon-info-large"></div>
+        <div class="credit">Foto: {{questions.questionOfDay.imageSource}}</div>
     </div>
 
     <div ng-cloack class="question-pre">{{questions.questionOfDay.text1}}</div>

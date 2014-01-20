@@ -48,11 +48,11 @@
         <li><a class="icon-heart"
                onclick="window.plugins.socialsharing.share('hotQ si adevărul pe care vrem să-l aflăm!', null, null, 'http://hotq.ro')"><strong>Share
             hotQ</strong><br/>cu prietenii tăi</a></li>
-        <li><a onclick="window.externalbrowser = window.open('https://facebook.com', '_system', 'location=yes');"
+        <li><a onclick="window.open('https://hotq.ro/#/trimite', '_system', 'location=yes');" data-transition="slide"
                data-transition="slide"
                class="icon-social-facebook"><strong>Ai sugestii?</strong><br/>hotQ pe
             Facebook</a></li>
-        <li><a onclick="window.open('http://hotq.ro/resultsphone', '_blank', 'location=yes');" data-transition="slide"
+        <li><a onclick="window.open('http://hotq.ro/#/raspunsuri', '_blank', 'location=yes');" data-transition="slide"
                class="icon-group"><strong>Răspunsurile</strong><br/>celorlalți</a>
         </li>
         <li><a ng-click="go('/about')" class="icon-info-large"><strong>Despre</strong><br/> hotQ</a>
@@ -69,17 +69,8 @@
     </div>
 
 
-
-
-
-
-    <!--<div ng-view class="question" ng-class="{'animate-forward': forward==true}"></div>-->
-    <div ng-view class="question"></div>
-
-
-
-
-
+    <div ng-view class="question" ng-class="{'animate-backward':forward!=true,'animate-forward': forward==true}"></div>
+    <!--<div ng-view class="question"></div>-->
 
 
     <div class="answers" ng-cloack>
