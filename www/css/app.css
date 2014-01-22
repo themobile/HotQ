@@ -174,7 +174,6 @@ ul.menu li > a:hover {
 }
 
 #sp-page {
-    position: absolute;
     overflow-y: hidden;
     background-color: #ffffff;
     display: -webkit-flex;
@@ -261,7 +260,7 @@ ul.menu li > a:hover {
     overflow: scroll;
     z-index: 2;
     position: absolute;
-    height: 100%;
+    height: 80%;
     background-color: #FFF;
 }
 
@@ -482,7 +481,7 @@ ul.menu li > a:hover {
 }
 
 
-ul.progress-bar {
+.progress-bar {
     width: 6em;
     padding: 0;
     position: absolute;
@@ -497,7 +496,7 @@ ul.progress-bar {
 
 }
 
-ul.progress-bar li {
+.progress-bar div {
     list-style-type: none;
     float: left;
     margin: 0 0.5em 0em 0.5em;
@@ -836,6 +835,9 @@ input[type="radio"] + label:active {
     -webkit-transform: translate3d(100%, 0, 0);
     transform: translate3d(100%, 0, 0);
 }
+
+
+
 
 
 

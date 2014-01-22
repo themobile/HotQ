@@ -2,79 +2,21 @@ angular.module("hotq", [
         "ngRoute",
         "ngAnimate",
         "ngTouch",
+        "hotq.controllers.indexpage",
+        "hotq.controllers.demos",
+        "hotq.controllers.carousel",
         "hotq.services",
-        "hotq.controllers",
-//        "hotq.directives",
+        'angular-carousel',
         "shoppinpal.mobile-menu" ])
 
 
     .config(function ($routeProvider) {
         $routeProvider
-            .when("/questionOfDay", {
-                templateUrl: "partials/today.html",
-                controller: "HotqCtl",
-                resolve: {
-                    changeScreen: function ($rootScope) {
-                        $rootScope.currScreen = 'questionOfDay';
-                        $rootScope.isQuestionScreen = true;
-                    }
-                }
-            })
-            .when("/questionOfWeek", {
-                templateUrl: "partials/week.html",
-                controller: "HotqCtl", resolve: {
-                    changeScreen: function ($rootScope) {
-                        $rootScope.currScreen = 'questionOfWeek';
-                        $rootScope.isQuestionScreen = true;
-                    }
-                }
 
-            })
-            .when("/questionOfMonth", {
-                templateUrl: "partials/month.html",
-                controller: "HotqCtl",
-                resolve: {
-                    changeScreen: function ($rootScope) {
-                        $rootScope.currScreen = 'questionOfMonth';
-                        $rootScope.isQuestionScreen = true;
-                    }
-                }
-
-            })
-            .when("/reward", {
-                templateUrl: "partials/reward.html",
-                controller: "HotqCtl",
-                resolve: {
-                    changeScreen: function ($rootScope) {
-                        $rootScope.currScreen = 'reward';
-                        $rootScope.isQuestionScreen = false;
-                    }
-                }
-
-            })
-            .when("/about", {
-                templateUrl: "partials/about.html",
-                controller: "HotqCtl",
-                resolve: {
-                    changeScreen: function ($rootScope) {
-                        $rootScope.currScreen = 'about';
-                        $rootScope.isQuestionScreen = false;
-                    }
-                }
-
-            })
-            .when("/demographics", {
-                templateUrl: "partials/demographics.html",
-                controller: "HotqCtl",
-                resolve: {
-                    changeScreen: function ($rootScope) {
-                        $rootScope.currScreen = 'demographics';
-                        $rootScope.isQuestionScreen = false;
-                    }
-                }
-
-            })
-            .otherwise({redirectTo: "/questionOfDay"})
+            .when("/about", {templateUrl: "partials/about.html"})
+            .when("/demographics", {templateUrl: "partials/demographics.html",controller:"demos"})
+            .when("/carousel", {templateUrl: "partials/carousel.html",controller:"carousel"})
+            .otherwise({redirectTo: "/carousel"})
     })
 
     .run(function ($window, $rootScope) {

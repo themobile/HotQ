@@ -8,7 +8,7 @@ angular.module('hotq.services', ["btford.modal"]).
 
     .factory('demoModal', function (btfModal) {
         return btfModal({
-            controller: 'HotqCtl',
+            controller: 'demos',
             controllerAs: 'modal',
             templateUrl: 'partials/demographics.html'
         })
@@ -50,9 +50,10 @@ angular.module('hotq.services', ["btford.modal"]).
         }
     })
 
-    .factory('questions', function (parseBAAS) {
+    .factory('questions', function (parseBAAS,$rootScope) {
 
         var allQuestions;
+        var currQuestion
         return {
             loadRemote: function (installationId) {
                 return parseBAAS.post('GetQuestions',installationId)

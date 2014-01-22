@@ -1,0 +1,41 @@
+.modal
+.modal-html
+    .modal-footer
+        .demographics-pre.animFooter(ng-hide="demoThanks")
+            span Please, please, please! Dureaza câteva secunde pentru a ne ajuta să înțelegem mai bine <strong>răspunsurile</strong> românilor . Întrebările au caracter general, ar tu ești, în continuare, <strong>anonim 100%</strong>!
+        .demo-thanks.animFooter Mulțumim pentru susținere!
+    .xbutton.icon-close(ng-click="closeModal()")
+    .formFrame(ng-switch="getCurrentStep()")
+        .animate-switch(ng-switch-when="one")
+            .lblGroupForm Care este vârsta ta?
+            input(type="radio", value="1",id="age1",name="age",ng-model="user.age",ng-change="handleNext()")
+            label(for="age1") 18-30 ani
+            input(type="radio", value="2",id="age2",name="age",ng-model="user.age",ng-change="handleNext()")
+            label(for="age2") 31-55 ani
+            input(type="radio", value="3",id="age3",name="age",ng-model="user.age",ng-change="handleNext()")
+            label(for="age3") 55+ ani
+        .animate-switch(ng-switch-when="two")
+            .lblGroupForm Sex:
+            input(type="radio", value="1",id="sex1",name="sex",ng-model="user.sex",ng-change="handleNext()")
+            label(for="sex1") Bărbat
+            input(type="radio", value="2",id="sex2",name="sex",ng-model="user.sex",ng-change="handleNext()")
+            label(for="sex2") Femeie
+        .animate-switch(ng-switch-when="three")
+            .lblGroupForm Studiile tale?
+            input(type="radio", value="1",id="education1",name="education",ng-model="user.education",ng-change="handleNext()")
+            label(for="education1") Primare
+            input(type="radio", value="2",id="education2",name="education",ng-model="user.education",ng-change="handleNext()")
+            label(for="education2") Medii
+            input(type="radio", value="3",id="education3",name="education",ng-model="user.education",ng-change="handleNext()")
+            label(for="education3") Superioare
+        .animate-switch(ng-switch-when="four")
+            .lblGroupForm Tip de ocupație:
+            input(type="radio", value="1",id="ocupation1",name="ocupation",ng-model="user.ocupation",ng-change="handleNext()")
+            label(for="ocupation1") Muncitor
+            input(type="radio", value="2",id="ocupation2",name="ocupation",ng-model="user.ocupation",ng-change="handleNext()")
+            label(for="ocupation2") Intelectual
+            input(type="radio", value="3",id="ocupation3",name="ocupation",ng-model="user.ocupation",ng-change="handleNext()")
+            label(for="ocupation3") Antreprenor
+
+
+

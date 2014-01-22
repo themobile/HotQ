@@ -1,123 +1,45 @@
+
 <div class="modal"></div>
 <div class="modal-html">
-
-    <div class="modal-footer">
-        <div ng-hide="demoThanks" class="demographics-pre animFooter">
-            <span>Please, please, please!</span>
-            Dureaza câteva secunde pentru a ne ajuta să înțelegem mai bine
-            <strong>răspunsurile</strong> românilor . Întrebările au caracter general,
-            iar tu ești, în continuare, <strong>anonim 100%</strong>!
-        </div>
-
-        <div ng-show="demoThanks" class="demo-thanks animFooter">
-            Mulțumim pentru susținere!
-        </div>
+  <div class="modal-footer">
+    <div ng-hide="demoThanks" class="demographics-pre animFooter"><span>Please, please, please! Dureaza câteva secunde pentru a ne ajuta să înțelegem mai bine <strong>răspunsurile</strong> românilor . Întrebările au caracter general, ar tu ești, în continuare, <strong>anonim 100%</strong>!</span></div>
+    <div class="demo-thanks animFooter">Mulțumim pentru susținere!</div>
+  </div>
+  <div ng-click="closeModal()" class="xbutton icon-close"></div>
+  <div ng-switch="getCurrentStep()" class="formFrame">
+    <div ng-switch-when="one" class="animate-switch">
+      <div class="lblGroupForm">Care este vârsta ta?</div>
+      <input type="radio" value="1" id="age1" name="age" ng-model="user.age" ng-change="handleNext()"/>
+      <label for="age1">18-30 ani</label>
+      <input type="radio" value="2" id="age2" name="age" ng-model="user.age" ng-change="handleNext()"/>
+      <label for="age2">31-55 ani</label>
+      <input type="radio" value="3" id="age3" name="age" ng-model="user.age" ng-change="handleNext()"/>
+      <label for="age3">55+ ani</label>
     </div>
-
-
-    <div ng-click="closeModal()" class="xbutton icon-close"></div>
-
-    <div ng-switch="getCurrentStep()" class="formFrame">
-        <div ng-switch-when="one" class="animate-switch">
-            <div class="lblGroupForm">Care este vârsta ta?</div>
-            <input type="radio"
-                   value="1"
-                   id="age1"
-                   name="age"
-                   ng-model="user.age"
-                   ng-change="handleNext()">
-            <label  for="age1">18-30 ani</label>
-            <input type="radio"
-                   value="2"
-                   id="age2"
-                   name="age"
-                   ng-model="user.age"
-                   ng-change="handleNext()">
-            <label for="age2">31-55 ani</label>
-            <input type="radio"
-                   value="3"
-                   id="age3"
-                   name="age"
-                   ng-model="user.age"
-                   ng-change="handleNext()">
-            <label for="age3">56+ ani</label>
-        </div>
-        <div ng-switch-when="two" class="animate-switch">
-            <div class="lblGroupForm">Sex:</div>
-            <input
-                    type="radio"
-                    value="1"
-                    id="sex1"
-                    name="sex"
-                    ng-model="user.sex"
-                    ng-change="handleNext()">
-            <label for="sex1">Bărbat</label>
-            <input
-                    type="radio"
-                    value="2"
-                    id="sex2"
-                    name="sex"
-                    ng-model="user.sex"
-                    ng-change="handleNext()">
-            <label for="sex2">Femeie</label>
-        </div>
-        <div ng-switch-when="three" class="animate-switch">
-            <div class="lblGroupForm">Studiile tale?</div>
-            <input
-                    type="radio"
-                    value="1"
-                    id="education1"
-                    name="education"
-                    ng-model="user.education"
-                    ng-change="handleNext()">
-            <label for="education1">Primare</label>
-            <input
-                    type="radio"
-                    value="2"
-                    id="education2"
-                    name="education"
-                    ng-model="user.education"
-                    ng-change="handleNext()">
-            <label for="education2">Medii</label>
-            <input
-                    type="radio"
-                    value="3"
-                    id="education3"
-                    name="education"
-                    ng-model="user.education"
-                    ng-change="handleNext()">
-            <label for="education3">Superioare</label>
-        </div>
-        <div ng-switch-when="four" class="animate-switch">
-            <div class="lblGroupForm">Tip de ocupație:</div>
-            <input
-                    type="radio"
-                    value="1"
-                    id="ocupation1"
-                    name="ocupation"
-                    ng-model="user.ocupation"
-                    ng-change="handleNext()">
-            <label for="ocupation1">Muncitor</label>
-            <input
-                    type="radio"
-                    value="2"
-                    id="ocupation2"
-                    name="ocupation"
-                    ng-model="user.ocupation"
-                    ng-change="handleNext()">
-            <label for="ocupation2">Intelectual</label>
-            <input
-                    type="radio"
-                    value="3"
-                    id="ocupation3"
-                    name="ocupation"
-                    ng-model="user.ocuppation"
-                    ng-change="handleNext()">
-            <label for="ocupation3">Antreprenor</label>
-        </div>
-
+    <div ng-switch-when="two" class="animate-switch">
+      <div class="lblGroupForm">Sex:</div>
+      <input type="radio" value="1" id="sex1" name="sex" ng-model="user.sex" ng-change="handleNext()"/>
+      <label for="sex1">Bărbat</label>
+      <input type="radio" value="2" id="sex2" name="sex" ng-model="user.sex" ng-change="handleNext()"/>
+      <label for="sex2">Femeie</label>
     </div>
-
-
-
+    <div ng-switch-when="three" class="animate-switch">
+      <div class="lblGroupForm">Studiile tale?</div>
+      <input type="radio" value="1" id="education1" name="education" ng-model="user.education" ng-change="handleNext()"/>
+      <label for="education1">Primare</label>
+      <input type="radio" value="2" id="education2" name="education" ng-model="user.education" ng-change="handleNext()"/>
+      <label for="education2">Medii</label>
+      <input type="radio" value="3" id="education3" name="education" ng-model="user.education" ng-change="handleNext()"/>
+      <label for="education3">Superioare</label>
+    </div>
+    <div ng-switch-when="four" class="animate-switch">
+      <div class="lblGroupForm">Tip de ocupație:</div>
+      <input type="radio" value="1" id="ocupation1" name="ocupation" ng-model="user.ocupation" ng-change="handleNext()"/>
+      <label for="ocupation1">Muncitor</label>
+      <input type="radio" value="2" id="ocupation2" name="ocupation" ng-model="user.ocupation" ng-change="handleNext()"/>
+      <label for="ocupation2">Intelectual</label>
+      <input type="radio" value="3" id="ocupation3" name="ocupation" ng-model="user.ocupation" ng-change="handleNext()"/>
+      <label for="ocupation3">Antreprenor</label>
+    </div>
+  </div>
 </div>

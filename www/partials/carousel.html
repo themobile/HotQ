@@ -1,0 +1,36 @@
+
+<ul rn-carousel="rn-carousel" rn-carousel-index="slideIndex" rn-carousel-buffered="false" class="hotqSlider ng-cloack">
+  <li ng-repeat="question in questions">
+    <div class="question-image"><img ng-src="{{question.picture.url}}" class="image-source"/>
+      <div class="question-title">astăzi</div>
+    </div>
+    <div class="question-body">
+      <div class="moreinfo">
+        <div ng-show="question.link" ng-click="goReward(question.link)" class="info icon-info-large"></div>
+        <div class="credit">Foto: {{question.imageSource}}</div>
+      </div>
+      <div class="ng-cloack question-pre">{{question.text1}}</div>
+      <div class="ng-cloack question-main">{{question.text2}}</div>
+    </div>
+  </li>
+</ul>
+<div ng-cloack="ng-cloack" class="answers">
+  <div ng-show="swipe-indicator" class="swipe_img"></div>
+  <div ng-cloack="ng-cloack" class="progress-bar">
+    <div ng-repeat="question in questions" ng-click="$parent.slideIndex=$index" ng-class="{'active':$parent.slideIndex==$index}" class="bar-today">{{$index+1}}</div>
+  </div>
+  <!--.simple-tampon(ng-if='isQuestionScreen')-->
+  <!--.simple-tampon-->
+  <div ng-show="answersVisible() &amp;&amp; slideIndex&lt;3" class="answer-buttons">
+    <button role="button" ng-click="voteNow(1)" class="btn-answer btn-yes">DA</button>
+    <button role="button" ng-click="voteNow(2)" class="btn-answer btn-no">NU</button>
+  </div>
+  <div ng-hide="answersVisible() || slideIndex&gt;2" class="votes_casted">
+    <div class="yes-progress-bar"><span ng-style="{width: getResults().yesproc +'%'}"></span>
+      <div class="chart-answer-yes"><strong>DA: </strong>{{getResults().yesproc}}%</div>
+    </div>
+    <div class="no-progress-bar"><span ng-style="{width: getResults().yesproc +'%'}"></span>
+      <div class="chart-answer-no"><strong>NU: </strong>{{getResults().noproc}}%</div>
+    </div>
+  </div>
+</div>

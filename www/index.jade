@@ -1,0 +1,73 @@
+doctype html
+html(lang='ro-RO')
+head
+    meta(charset='utf-8')
+    meta(name='format-detection',content='telephone=no')
+    meta(name="viewport",content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height")
+    link(rel="stylesheet", href="css/app.css")
+    link(rel="stylesheet", href="css/angular-carousel.css")
+    link(rel="stylesheet", href="css/ng-mobile-menu.min.css")
+    link(rel="stylesheet", href="css/font.css")
+    link(rel="stylesheet", href="css/loader.css")
+    link(rel="stylesheet", href="css/animate-custom.css")
+    title hotQ
+
+body(ng-cloack,ng-controller='indexpage',ng-init='init()')
+
+    .startup(ng-show="startup")
+        .logo
+    .loader(loader ng-hide='!loader')
+
+    #sp-nav(ng-swipe-left='$spMenu.toggle()')
+        ul.menu
+            li
+                a.icon-heart(onclick="window.plugins.socialsharing.share('hotQ si adevărul pe care vrem să-l aflăm!', null, null, 'http://hotq.ro')") <strong>Share hotQ</strong><br/>cu prietenii tăi
+            li
+                a.icon-pencil(onclick="window.open('http://hotq.ro/#/trimite', '_system', 'location=yes');", data-transition="slide") <strong>Ai sugestii?</strong><br/>hotQ pe Facebook
+            li
+                a.icon-group(onclick="window.open('http://themobile.ro', '_blank', 'location=yes');", data-transition="slide") <strong>Răspunsurile</strong><br/>celorlalți
+            li
+                a.icon-info-large(ng-click="go('/about')") <strong>Despre</strong><br/>hotQ
+        a.themobile(ng-click="window.open('http://themobile.ro', '_blank', 'location=yes')", target="_blank") themobile.ro
+
+
+    #sp-page
+        #nav
+            .menu-button.icon-th-small(ng-click="$spMenu.toggle()")
+
+        //dynamic pages & controllers
+        div(ng-view)
+
+
+
+
+
+
+        .footer-logo
+        .footer-over
+
+
+
+    script(type="text/javascript",src='cordova.js')
+
+    script(type="text/javascript",src='https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true')
+    script(type="text/javascript",src='res/js/angular.js')
+    script(type="text/javascript",src='res/js/angular-animate.min.js')
+    script(type="text/javascript",src='res/js/angular-resource.min.js')
+    script(type="text/javascript",src='res/js/angular-route.min.js')
+    script(type="text/javascript",src='res/js/angular-touch.min.js')
+    script(type="text/javascript",src='res/js/angular-carousel.min.js')
+    script(type="text/javascript",src='res/js/ng-mobile-menu.min.js')
+    script(type="text/javascript",src='res/js/requestAnimationFrame.min.js')
+    script(type="text/javascript",src='//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.4.0/ui-bootstrap-tpls.min.js')
+    script(type="text/javascript",src='js/index.js')
+    script(type="text/javascript",src='js/app.js')
+    script(type="text/javascript",src='js/controllers/demos.js')
+    script(type="text/javascript",src='js/controllers/indexpage.js')
+    script(type="text/javascript",src='js/controllers/carousel.js')
+    script(type="text/javascript",src='js/services.js')
+    script(type="text/javascript",src='js/directives.js')
+    script(type="text/javascript",src='js/modal.js')
+
+    script(type='text/javascript').
+        app.initialize();
