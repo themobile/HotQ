@@ -8,14 +8,72 @@ angular.module('hotq.services', ["btford.modal"]).
 
     .factory('demoModal', function (btfModal) {
         return btfModal({
-            controller: 'HotqCtl',
+            controller: 'demos',
             controllerAs: 'modal',
             templateUrl: 'partials/demographics.html'
         })
     })
 
+    .factory('parseBAAS', function ($http) {
+        var parseCredentials = {
+            "X-Parse-Application-Id": "oYvsd9hx0NoIlgEadXJsqCtU1PgjcPshRqy18kmP",
+            "X-Parse-REST-API-Key": "gX3SUxGPeSnAefjtFmF9MeWpbTIa9YhC8q1n7hLk",
+            "Content-Type": "application/json"
+        };
+
+        var result;
+
+        return {
+            post: function(functionName,payLoad) {
+                return $http(
+                    {
+                        method: 'POST',
+                        url: 'https://api.parse.com/1/functions/'+functionName,
+                        headers: parseCredentials,
+                        withCredentials: false,
+                        cache: false,
+                        data: payLoad
+                    }
+                )
+                    .success(function (data) {
+                        result=data.result;
+                    })
+                    .error(function (error) {
+                    });
+            },
+            getResult: function(){
+                return result;
+            },
+            getCredentials:function() {
+                return parseCredentials;
+            }
+        }
+    })
+
+    .factory('questions', function (parseBAAS,$rootScope) {
+
+        var allQuestions;
+        var currQuestion
+        return {
+            loadRemote: function (installationId) {
+                return parseBAAS.post('GetQuestions',installationId)
+                    .then(function(result){
+                        allQuestions=parseBAAS.getResult();
+                    });
+            },
+
+            getLocal: function () {
+                return allQuestions;
+            },
+
+            setVote: function(question,vote) {
+                allQuestions[question].hasVote=vote;
+            }
+        }
+    })
+
 //service for voting
-    .factory('upVotes', function ($http) {
+    .factory('upVotes', function (parseBAAS) {
         return {
             voteNow: function (questionId, answer, installationId, position, demographics) {
                 var vote = {};
@@ -24,32 +82,21 @@ angular.module('hotq.services', ["btford.modal"]).
                 vote.answer = {answer: answer};
                 vote.position = position;
                 vote.demographics = demographics;
-                return $http.post('https://api.parse.com/1/functions/VoteSubmit',
-                    vote,
-                    {
-                        headers: {
-                            "X-Parse-Application-Id": "oYvsd9hx0NoIlgEadXJsqCtU1PgjcPshRqy18kmP",
-                            "X-Parse-REST-API-Key": "gX3SUxGPeSnAefjtFmF9MeWpbTIa9YhC8q1n7hLk",
-                            "Content-Type": "application/json"
-                        },
-                        cache: false,
-                        withCredentials: false
-                    }
 
-                );
+                return parseBAAS.post('VoteSubmit',vote);
 
             }
         }
     })
 
 
-    .factory('poosh', function($q) {
+    .factory('poosh', function ($q) {
 
         return {
-            getAll: function(type) {
+            getPooshToken: function (type) {
                 var pushNotification = window.plugins.pushNotification;
-                var deferred=$q.defer();
-                var regString={};
+                var deferred = $q.defer();
+                var regString = {};
 
                 if (type == "Android") {
                     regString = { projectid: "315937580723", appid: "53BC6-33E16" };
@@ -57,57 +104,25 @@ angular.module('hotq.services', ["btford.modal"]).
                 if (type == "iPhone" || type == "iOS") {
                     regString = {alert: true, badge: true, sound: true, pw_appid: "53BC6-33E16", appname: "hotq"};
                 }
-                var pushRegister=pushNotification.registerDevice(regString,
+                pushNotification.registerDevice(regString,
                     function (token) {
                         //callback when pushwoosh is ready
                         if (token['deviceToken']) {
-                            deferred.resolve (token['deviceToken']);
+                            deferred.resolve(token['deviceToken']);
                         } else {
                             deferred.resolve(token);
                         }
                     },
-                    function (status) {
-                        deferred.reject("error");
-                    });
-                return deferred.promise;
-
-            }
-        }
-
-
-
-    })
-
-
-
-    .factory('questions', function ($http, $q) {
-        return {
-            getAll: function (installationId) {
-                var deferred = $q.defer();
-                $http(
-                    {
-                        method: 'POST',
-                        url: 'https://api.parse.com/1/functions/GetQuestions',
-                        headers: {
-                            "X-Parse-Application-Id": "oYvsd9hx0NoIlgEadXJsqCtU1PgjcPshRqy18kmP",
-                            "X-Parse-REST-API-Key": "gX3SUxGPeSnAefjtFmF9MeWpbTIa9YhC8q1n7hLk",
-                            "Content-Type": "application/json"
-                        },
-                        withCredentials: false,
-                        cache: false,
-                        data: installationId
-                    }
-                )
-                    .success(function (data, status, headers, config) {
-                        deferred.resolve(data);
-                    })
-                    .error(function (data, status, headers, config) {
-                        deferred.reject(data);
+                    function (error) {
+                        deferred.reject(error);
                     });
                 return deferred.promise;
             }
         }
+
     })
+
+
 
 
     .factory('geolocation', function ($q) {
@@ -128,11 +143,7 @@ angular.module('hotq.services', ["btford.modal"]).
 
 
     .factory('offlineswitch', function ($rootScope) {
-//        FIXME de facut load la date atunci cand devine online
-//        eventual de mutat getparseid si loadquestions in eventul de online, nu stiu...
 
-        var currentStorage;
-        var me = this;
         $rootScope.$on('onlineChanged', function (evt, isOnline) {
 
             var superScope = evt.currentScope;
@@ -146,8 +157,7 @@ angular.module('hotq.services', ["btford.modal"]).
                 angular.element(document.getElementsByTagName('body')[0]).scope().init();
                 angular.element(document.getElementsByTagName('body')[0]).scope().$apply();
 
-                //reincarcare date
-                console.log('reincarcare date');
+                console.log('isOnline event');
             }
             console.log('isOnline: ' + isOnline);
         });
@@ -155,25 +165,25 @@ angular.module('hotq.services', ["btford.modal"]).
 
 
 
+.directive('loader', function () {
+    return {
+        restrict: 'A',
+        template: '<div  class="loading">' +
+            '<div id="bowlG">' +
+            '<div id="bowl_ringG">' +
+            '<div class="ball_holderG">' +
+            '<div class="ballG">' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '<span class="loader_text"> {{loaderMessage}}' +
+            '</span>' +
+            '</div>' +
+            '</div>'
+    }
+});
 
 
-    .directive('loader', function () {
-        return {
-            restrict: 'A',
-            template: '<div  class="loading">' +
-                '<div id="bowlG">' +
-                '<div id="bowl_ringG">' +
-                '<div class="ball_holderG">' +
-                '<div class="ballG">' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '<span class="loader_text"> {{loaderMessage}}' +
-                '</span>' +
-                '</div>' +
-                '</div>'
-        }
-    })
 
 
 

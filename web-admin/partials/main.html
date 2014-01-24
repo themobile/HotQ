@@ -37,26 +37,62 @@
             </div>
             <div class="input-group input-group-sm">
               <label for="text1" class="col-xs-12">Subtitle
-                <textarea id="text1" name="text1" text="file" placeholder="text1" rows="3" ng-model="q.text1" class="col-xs-12 form-control input-lg"></textarea>
+                <textarea id="text1" name="text1" type="text" placeholder="text1" rows="3" ng-model="q.text1" class="col-xs-12 form-control input-lg"></textarea>
               </label>
               <label for="text2" class="col-xs-12">Title
                 <textarea id="text2" name="text2" type="text" placeholder="text2" rows="4" ng-model="q.text2" class="col-xs-12 form-control input-lg"></textarea>
               </label>
-              <label for="url" class="col-xs-12">URL
-                <textarea id="url" name="url" type="url" placeholder="url" rows="2" ng-model="q.url" class="col-xs-12 form-control input-lg"></textarea>
+              <label for="link" class="col-xs-12">URL
+                <textarea id="url" name="link" type="url" placeholder="link for information" rows="2" ng-model="q.link" class="col-xs-12 form-control input-lg"></textarea>
+              </label>
+              <label for="imageSource" class="col-xs-12">Link Credit Source
+                <textarea id="url" name="imageSource" type="text" placeholder="image source - credit" rows="2" ng-model="q.imageSource" class="col-xs-12 form-control input-lg"></textarea>
               </label>
               <label for="file" class="col-xs-12">Image file
                 <input id="file" type="file" name="file" ng-model="q.image" onchange="angular.element(this).scope().addFile(this.files)" class="col-xs-12 form-control input-lg"/>
               </label>
             </div>
             <button type="submit" ng-click="addQuestion()" ng-disabled="addquestion.$invalid" class="btn btn-primary pull-right col-xs-4">Add question</button>
-            <p ng-show="saveQuestionSuccess" class="p-success">   Succeeded to save the question.</p>
-            <p ng-show="saveQuestionError" class="p-error">   Error in saving the question.</p>
           </form>
+          <p ng-show="saveQuestionSuccess" class="p-success">   Succeeded to save the question.</p>
+          <p ng-show="saveQuestionError" class="p-error">   Error in saving the question.</p>
         </div>
       </div>
     </div>
     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+      <div class="panel panel-info">
+        <div class="panel-heading">
+          <h2 class="panel-title">Add Quote</h2>
+        </div>
+        <div class="panel-body">
+          <form name="addquote" role="form" enctype="multipart/form-data" method="post" ng-controller="main_addquote">
+            <div class="input-group input-group-sm">
+              <label for="body" class="col-xs-12">Body
+                <textarea id="text1" name="body" type="text" placeholder="body of quote" rows="4" ng-model="quote.body" class="col-xs-12 form-control input-lg"></textarea>
+              </label>
+              <label for="text2" class="col-xs-12">Author
+                <textarea id="text2" name="text2" type="text" placeholder="text2" rows="1" ng-model="quote.author" class="col-xs-12 form-control input-lg"></textarea>
+              </label>
+              <label for="url" class="col-xs-12">Link to more info
+                <textarea id="url" name="link" type="url" placeholder="link for information" rows="2" ng-model="quote.link" class="col-xs-12 form-control input-lg"></textarea>
+              </label>
+              <label for="imageSource" class="col-xs-12">Image credits
+                <textarea id="url" name="imageSource" type="text" placeholder="image credits" rows="2" ng-model="quote.imageSource" class="col-xs-12 form-control input-lg"></textarea>
+              </label>
+              <label for="file" class="col-xs-12">Image file
+                <input id="file" type="file" name="file" ng-model="quote.image" onchange="angular.element(this).scope().addFile(this.files)" class="col-xs-12 form-control input-lg"/>
+              </label>
+            </div>
+            <button type="submit" ng-click="addQuote()" ng-disabled="addquote.$invalid" class="btn btn-primary pull-right col-xs-4">Add quote</button>
+          </form>
+          <p ng-show="saveQuoteSuccess" class="p-success">   Succeeded to save the quote.</p>
+          <p ng-show="saveQuoteError" class="p-error">   Error in saving the quote.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
       <div ng-controller="main_userquestions" ng-init="getAll()">
         <div class="panel panel-success">
           <div class="panel-heading">

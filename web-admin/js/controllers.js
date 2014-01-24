@@ -115,6 +115,7 @@ angular.module('hotq.controllers', [])
 
     .controller('main_addquestion', function ($scope, sendQuestion, $timeout) {
 
+
         $scope.saveQuestionSuccess = false;
         $scope.saveQuestionError = false;
 
@@ -144,6 +145,40 @@ angular.module('hotq.controllers', [])
             )
         };
     })
+
+
+    .controller('main_addquote', function ($scope, sendQuote, $timeout) {
+
+        $scope.saveQuoteSuccess = false;
+        $scope.saveQuoteError = false;
+        $scope.quote={};
+
+        $scope.addFile = function (files) {
+            $scope.files = files[0];
+        }
+
+
+        $scope.addQuote = function () {
+            sendQuote.add($scope.quote, $scope.files)
+                .then(
+                function (success) {
+                    $scope.saveQuoteSuccess = true;
+                    $timeout(function () {
+                        $scope.saveQuoteSuccess = false;
+                    }, 3000);
+
+                },
+                function (error) {
+                    $scope.saveQuoteError = true;
+                    $timeout(function () {
+                        $scope.saveQuoteError = false;
+                    }, 3000);
+                }
+            )
+        };
+    })
+
+
 
 
     .controller('login', function ($scope, userservice, $location, $timeout, $log) {

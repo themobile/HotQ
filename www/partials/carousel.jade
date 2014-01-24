@@ -1,0 +1,32 @@
+ul.hotqSlider.ng-cloack(rn-carousel, rn-carousel-index="slideIndex",rn-carousel-buffered='false')
+    li(ng-repeat="question in questions")
+        div.question-image
+            img.image-source(ng-src="{{question.picture.url}}")
+            div.question-title astăzi
+        div.question-body
+            div.moreinfo
+                div.info.icon-info-large(ng-show="question.link", ng-click="goReward(question.link)")
+                div.credit Foto: {{question.imageSource}}
+            div.ng-cloack.question-pre {{question.text1}}
+            div.ng-cloack.question-main {{question.text2}}
+
+
+.answers(ng-cloack)
+    .swipe_img(ng-show='swipe-indicator')
+    .progress-bar(ng-cloack)
+        .bar-today(ng-repeat='question in questions',ng-click='$parent.slideIndex=$index',ng-class="{'active':$parent.slideIndex==$index}") {{$index+1}}
+
+
+    //.simple-tampon(ng-if='isQuestionScreen')
+    //.simple-tampon
+    .answer-buttons(ng-show='answersVisible() && slideIndex<3')
+        button.btn-answer.btn-yes(role='button',ng-click='voteNow(1)') DA
+        button.btn-answer.btn-no(role='button',ng-click='voteNow(2)') NU
+
+    .votes_casted(ng-hide='answersVisible() || slideIndex>2')
+        .yes-progress-bar
+            span(ng-style="{width: getResults().yesproc +'%'}")
+            .chart-answer-yes <strong>DA: </strong>{{getResults().yesproc}}%
+        .no-progress-bar
+            span(ng-style="{width: getResults().yesproc +'%'}")
+            .chart-answer-no <strong>NU: </strong>{{getResults().noproc}}%
