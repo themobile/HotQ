@@ -7,7 +7,16 @@
     <author email="info@themobile.ro" href="http://themobile.ro">
         themobile.ro
     </author>
-
+    <preference name="AllowInlineMediaPlayback" value="false" />
+    <preference name="BackupWebStorage" value="cloud" />
+    <preference name="EnableViewportScale" value="false" />
+    <preference name="KeyboardDisplayRequiresUserAction" value="true" />
+    <preference name="MediaPlaybackRequiresUserAction" value="false" />
+    <preference name="SuppressesIncrementalRendering" value="false" />
+    <preference name="TopActivityIndicator" value="gray" />
+    <preference name="GapBetweenPages" value="0" />
+    <preference name="PageLength" value="0" />
+    <preference name="PaginationBreakingMode" value="page" />
     <preference name="PaginationMode" value="unpaginated" />
     <preference name="SplashScreen" value="splash" />
     <preference name="SplashScreenDelay" value="3000" />
@@ -15,8 +24,8 @@
     <preference name="LoadUrlTimeoutValue" value="5000"/>
     <preference name="Fullscreen" value="true" />
     <preference name="Orientation" value="portrait" />
-    <preference name="DisallowOverscroll" value="false"/>
-    <preference name="stay-in-webview"            value="true" />
+    <preference name="DisallowOverscroll" value="true"/>
+    <preference name="stay-in-webview" value="true" />
 
     <feature name="SocialSharing">
         <param name="android-package" value="nl.xservices.plugins.SocialSharing" />
@@ -63,8 +72,11 @@
     <feature name="NetworkStatus">
         <param name="ios-package" value="CDVConnection" />
     </feature>
+    <feature name="Console">
+        <param name="ios-package" value="CDVLogger" />
+    </feature>
     <access origin="*.pushwoosh.com" />
-    <access origin="https://*.parse.com" />
+    <access origin="*.parse.com" />
     <access origin="*.googleapis.com"/>
     <access origin="*.google.com"/>
     <access origin="*.gstatic.com"/>

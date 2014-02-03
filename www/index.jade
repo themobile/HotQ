@@ -4,52 +4,54 @@ head
     meta(charset='utf-8')
     meta(name='format-detection',content='telephone=no')
     meta(name="viewport",content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height")
+    meta(name="apple-mobile-web-app-capable", content="yes")
+    link(href='http://fonts.googleapis.com/css?family=Lora:400,700&subset=latin,latin-ext', rel='stylesheet', type='text/css')
+
     link(rel="stylesheet", href="css/app.css")
     link(rel="stylesheet", href="css/angular-carousel.css")
-    link(rel="stylesheet", href="css/ng-mobile-menu.min.css")
+    link(rel="stylesheet", href="css/angular-snap.css")
     link(rel="stylesheet", href="css/font.css")
     link(rel="stylesheet", href="css/loader.css")
-    link(rel="stylesheet", href="css/animate-custom.css")
+    link(rel="stylesheet/less", href="css/app2.less")
     title hotQ
 
 body(ng-cloack,ng-controller='indexpage',ng-init='init()')
 
-    .startup(ng-show="startup")
-        .logo
-    .loader(loader ng-hide='!loader')
+    //loading indicator
+    div.loader(loader ng-show='loader')
 
-    #sp-nav(ng-swipe-left='$spMenu.toggle()')
-        ul.menu
+    //menu
+    .menu.ng-cloak(snap-drawer,ng-swipe-left='toggleMenu()')
+        ul
             li
-                a.icon-heart(onclick="window.plugins.socialsharing.share('hotQ si adevărul pe care vrem să-l aflăm!', null, null, 'http://hotq.ro')") <strong>Share hotQ</strong><br/>cu prietenii tăi
+                a(ng-click="go('/carousel')") răspunde la întrebări!
             li
-                a.icon-pencil(onclick="window.open('http://hotq.ro/#/trimite', '_system', 'location=yes');", data-transition="slide") <strong>Ai sugestii?</strong><br/>hotQ pe Facebook
+                a(ng-click="go('/sendquestion')") ai sugestii?
             li
-                a.icon-group(onclick="window.open('http://themobile.ro', '_blank', 'location=yes');", data-transition="slide") <strong>Răspunsurile</strong><br/>celorlalți
+                a(onclick="window.open('http://hotq.ro', '_system', 'location=yes');", data-transition="slide") istoria răspunsurilor
             li
-                a.icon-info-large(ng-click="go('/about')") <strong>Despre</strong><br/>hotQ
+                a(ng-click="go('/about')") despre hotQ
+            li
+                a(onclick="window.plugins.socialsharing.share('hotQ si adevărul pe care vrem să-l aflăm!', null, null, 'http://hotq.ro')") share hotQ
+
         a.themobile(ng-click="window.open('http://themobile.ro', '_blank', 'location=yes')", target="_blank") themobile.ro
 
+    //content body
+    #content.ng-cloak(snap-content,snap-options='{"touchToDrag": false }',
+        ng-class='{"isQuestionsBackground":currScreen=="questions", "isQuoteBackground":isQuote,"isAboutBackground":currScreen=="about", "isSendQuestionBackground":currScreen=="sendquestion"}')
 
-    #sp-page
-        #nav
-            .menu-button.icon-th-small(ng-click="$spMenu.toggle()")
+        //menu button
+        #nav(ng-class='{"isQuestionsBackground":currScreen=="questions","isQuoteBackground":isQuote,"isAboutBackground":currScreen=="about", "isSendQuestionBackground":currScreen=="sendquestion"}')
+            div.icon-reorder(ng-click='toggleMenu()')
 
         //dynamic pages & controllers
-        div(ng-view)
-
-
-
-
-
-
-        .footer-logo
-        .footer-over
-
+        div.page(ng-view)
 
 
     script(type="text/javascript",src='cordova.js')
-
+    script(type="text/javascript",src='res/js/snap.js')
+    script(type="text/javascript",src='res/js/less-1.6.1.min.js')
+    //script(type="text/javascript",src='res/js/chart.min.js')
     script(type="text/javascript",src='https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true')
     script(type="text/javascript",src='res/js/angular.js')
     script(type="text/javascript",src='res/js/angular-animate.min.js')
@@ -57,17 +59,18 @@ body(ng-cloack,ng-controller='indexpage',ng-init='init()')
     script(type="text/javascript",src='res/js/angular-route.min.js')
     script(type="text/javascript",src='res/js/angular-touch.min.js')
     script(type="text/javascript",src='res/js/angular-carousel.min.js')
-    script(type="text/javascript",src='res/js/ng-mobile-menu.min.js')
+    script(type="text/javascript",src='res/js/angular-snap.js')
+
     script(type="text/javascript",src='res/js/requestAnimationFrame.min.js')
-    script(type="text/javascript",src='//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.4.0/ui-bootstrap-tpls.min.js')
+
     script(type="text/javascript",src='js/index.js')
     script(type="text/javascript",src='js/app.js')
     script(type="text/javascript",src='js/controllers/demos.js')
     script(type="text/javascript",src='js/controllers/indexpage.js')
     script(type="text/javascript",src='js/controllers/carousel.js')
+    script(type="text/javascript",src='js/controllers/sendquestion.js')
     script(type="text/javascript",src='js/services.js')
     script(type="text/javascript",src='js/directives.js')
     script(type="text/javascript",src='js/modal.js')
 
-    script(type='text/javascript').
-        app.initialize();
+    script(type='text/javascript') app.initialize();

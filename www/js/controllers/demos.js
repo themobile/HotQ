@@ -1,18 +1,21 @@
-angular.module('hotq.controllers.demos', ['btford.modal'])
+angular.module('hotq.controllers.demos', [])
 
-    .value('version', '0.1')
+    .controller("demos", function ($scope, $location, $timeout) {
 
+        //allowing to change menu button color for quote slide! silly, yes!
+        $scope.$on('isQuoteSlide', function(ev,value) {
+            value ? $scope.isQuote=true : $scope.isQuote=false;
+        });
 
-    .controller("demos", function ($scope, $timeout, demoModal) {
 
         // fereastra modala cu tot ce tine de ea
         $scope.user = {};
         $scope.demoThanks = false;
-        $scope.closeModal = function () {
-            demoModal.deactivate();
-        };
+
+
         $scope.steps = ['one', 'two', 'three', 'four'];
         $scope.step = 0;
+
         $scope.isCurrentStep = function (step) {
             return $scope.step === step;
         };
@@ -39,8 +42,8 @@ angular.module('hotq.controllers.demos', ['btford.modal'])
                 $scope.demoThanks = true;
                 window.localStorage.setItem("hotQUserDemo", JSON.stringify($scope.user));
                 $timeout(function () {
-                    $scope.closeModal();
-                }, 1500);
+                    $location.path('/carousel');
+                }, 2500);
 
             } else {
                 $timeout(function () {

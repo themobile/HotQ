@@ -1,32 +1,43 @@
-ul.hotqSlider.ng-cloack(rn-carousel, rn-carousel-index="slideIndex",rn-carousel-buffered='false')
-    li(ng-repeat="question in questions")
-        div.question-image
-            img.image-source(ng-src="{{question.picture.url}}")
-            div.question-title astăzi
-        div.question-body
-            div.moreinfo
-                div.info.icon-info-large(ng-show="question.link", ng-click="goReward(question.link)")
-                div.credit Foto: {{question.imageSource}}
-            div.ng-cloack.question-pre {{question.text1}}
-            div.ng-cloack.question-main {{question.text2}}
 
+// answer vertical bar
+.answers.ng-cloak(ng-show="slideIndex!=3")
+    .answer-yes(ng-click='voteNow(1)',ng-class='{"small":questions[slideIndex].hasVote}', ng-style='{height:getPercentage("percentYes")}')
+        p DA
+            span.percentage(ng-if='questions[slideIndex].hasVote')  - {{questions[slideIndex].percentYes}}%
 
-.answers(ng-cloack)
-    .swipe_img(ng-show='swipe-indicator')
-    .progress-bar(ng-cloack)
-        .bar-today(ng-repeat='question in questions',ng-click='$parent.slideIndex=$index',ng-class="{'active':$parent.slideIndex==$index}") {{$index+1}}
+    .answer-no(ng-click='voteNow(2)',ng-class='{"small":questions[slideIndex].hasVote}', ng-style='{height:getPercentage("percentNo")}')
+        p NU
+            span.percentage(ng-if='questions[slideIndex].hasVote')  - {{questions[slideIndex].percentNo}}%
 
+//quote image
+.answers.ng-cloak(ng-show="slideIndex==3")
+    img.quote-img(ng-src='{{questions[slideIndex].picture.url}}')
 
-    //.simple-tampon(ng-if='isQuestionScreen')
-    //.simple-tampon
-    .answer-buttons(ng-show='answersVisible() && slideIndex<3')
-        button.btn-answer.btn-yes(role='button',ng-click='voteNow(1)') DA
-        button.btn-answer.btn-no(role='button',ng-click='voteNow(2)') NU
+//carousel
+ul.ng-cloak.carousel(rn-carousel, rn-carousel-index='slideIndex', ng-init='loadq()')
+    li(ng-repeat='question in questions')
 
-    .votes_casted(ng-hide='answersVisible() || slideIndex>2')
-        .yes-progress-bar
-            span(ng-style="{width: getResults().yesproc +'%'}")
-            .chart-answer-yes <strong>DA: </strong>{{getResults().yesproc}}%
-        .no-progress-bar
-            span(ng-style="{width: getResults().yesproc +'%'}")
-            .chart-answer-no <strong>NU: </strong>{{getResults().noproc}}%
+        //question type header
+        .question-tag(ng-class='{"isQuestion":slideIndex!=3,"isQuote":slideIndex==3}') {{question.type}}
+        a.info.icon-exclamation-sign(ng-click="goLink(question.link)",ng-show='question.link',ng-class='{"isQuestion":slideIndex!=3,"isQuote":slideIndex==3}')
+
+        .questionHolder
+            .question
+                // question text
+                .question-intro(ng-show='slideIndex!=3') {{question.text1}}
+                .question-body(ng-show='slideIndex!=3') {{question.text2}}
+
+                // quote text
+                .question-intro.quote-intro(ng-show='slideIndex==3') {{question.author}}
+                .question-body.quote-body(ng-show='slideIndex==3') {{question.body}}
+
+//indication showing if voted
+span.ng-cloak.messageSlide(ng-if='slideIndex!=3') {{getMessage()}}
+
+//navigation bar
+ul.ng-cloak.slideIndex(ng-class='{"isQuestion":slideIndex!=3,"isQuote":slideIndex==3}')
+    li(ng-class='{"active":slideIndex==0, "voted":questions[0].hasVote}',ng-click='slideIndex=0') 1
+    li(ng-class='{"active":slideIndex==1, "voted":questions[1].hasVote}',ng-click='slideIndex=1') 7
+    li(ng-class='{"active":slideIndex==2, "voted":questions[2].hasVote}',ng-click='slideIndex=2') 30
+    li.icon-heart-empty(ng-class='{"active":slideIndex==3}',ng-click='slideIndex=3')
+

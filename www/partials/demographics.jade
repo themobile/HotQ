@@ -1,10 +1,5 @@
-.modal
 .modal-html
-    .modal-footer
-        .demographics-pre.animFooter(ng-hide="demoThanks")
-            span Please, please, please! Dureaza câteva secunde pentru a ne ajuta să înțelegem mai bine <strong>răspunsurile</strong> românilor . Întrebările au caracter general, ar tu ești, în continuare, <strong>anonim 100%</strong>!
-        .demo-thanks.animFooter Mulțumim pentru susținere!
-    .xbutton.icon-close(ng-click="closeModal()")
+    //.backbutton.icon-arrow-back(ng-click="goLocal('/carousel')") închide
     .formFrame(ng-switch="getCurrentStep()")
         .animate-switch(ng-switch-when="one")
             .lblGroupForm Care este vârsta ta?
@@ -37,5 +32,9 @@
             input(type="radio", value="3",id="ocupation3",name="ocupation",ng-model="user.ocupation",ng-change="handleNext()")
             label(for="ocupation3") Antreprenor
 
+    .modal-footer
+        .demographics-pre.animFooter(ng-hide="demoThanks")
+            span Please, please, please! Dureaza câteva secunde pentru a ne ajuta să înțelegem mai bine <strong>răspunsurile</strong> românilor . Întrebările au caracter general, iar tu ești, în continuare, <strong>anonim 100%</strong>!
+        .demo-thanks.animFooter(ng-show="demoThanks") Mulțumim pentru susținere!
 
 

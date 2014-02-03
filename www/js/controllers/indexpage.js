@@ -1,20 +1,39 @@
+'use strict';
+
+
 angular.module('hotq.controllers.indexpage', [])
 
-    .controller("indexpage", function ($scope, $rootScope, $timeout, $location, $http, $q, upVotes, questions, poosh, geolocation, parseBAAS) {
+    .controller("indexpage", function ($scope, $rootScope, $timeout, $location, $http, $q, upVotes, offlineswitch, questions, poosh, geolocation, parseBAAS, snapRemote) {
 
-        $scope.thumbs=[1,2,3,4];
-
-
-        $scope.thumbSetQuestion=function(index){
-            questions.setCurrentQuestion(index);
+        $scope.toggleMenu = function () {
+            snapRemote.toggle('left');
         }
 
+        //allowing to change menu button color for quote slide! silly, yes!
+        $scope.$on('isQuoteSlide', function(ev,value) {
+           value ? $scope.isQuote=true : $scope.isQuote=false;
+        });
+
+
+
+
         $scope.init = function () {
-            $timeout(function () {
-                $rootScope.startup = false;
-            }, 1000);
-            $scope.swipe_indicator = false;
-            $rootScope.loader = false;
+
+
+            var timesLoaded = window.localStorage.getItem('hotQTimesLoaded');
+
+            if (timesLoaded) {
+                timesLoaded++;
+                window.localStorage.setItem('hotQTimesLoaded', timesLoaded);
+
+                if (timesLoaded >= 3 && !window.localStorage.getItem('hotQUserDemo')) {
+                    $location.path('/demographics');
+                }
+
+            } else {
+                window.localStorage.setItem('hotQTimesLoaded', 1);
+
+            }
 
 
             var tags = {
@@ -42,6 +61,7 @@ angular.module('hotq.controllers.indexpage', [])
                     dfd.resolve(
                         poosh.getPooshToken(device.platform)
                             .then(function (token) {
+
                                 var postData = {deviceCode: device.uuid, timeZone: timeOffset, tags: tags, type: device.platform, pushCode: token};
                                 var deferred = $q.defer();
 
@@ -82,24 +102,24 @@ angular.module('hotq.controllers.indexpage', [])
                 return dfd.promise;
             };
 
-
-            checkPoosh()
-                .then(function (data) {
-                    return getQuestions(data);
-                })
+//
+//            checkPoosh()
+//                .then(function (data) {
+//                    console.log(data);
+//                    return getQuestions(data);
+//                })
+            getQuestions('SUs4MpZYPFdgLOegoom3xA==')
                 .then(function () {
                     var hotQLocal = window.localStorage.getItem("hotQuestions");
                     if (hotQLocal && hotQLocal != 'undefined') {
                         var localQ = JSON.parse(window.localStorage.getItem("hotQuestions"));
                         if (localQ.date === questions.getLocal().date) {
-                            questions.setVote('questionOfDay', localQ.questionOfDay.hasVote);
-                            questions.setVote('questionOfWeek', localQ.questionOfWeek.hasVote);
-                            questions.setVote('questionOfMonth', localQ.questionOfMonth.hasVote);
+                            questions.setVote(0, localQ.content[0].hasVote);
+                            questions.setVote(1, localQ.content[1].hasVote);
+                            questions.setVote(2, localQ.content[2].hasVote);
                         }
                     }
                     $rootScope.$broadcast('questionsLoaded');
-                    $scope.yesproc = questions.getLocal().questionOfDay.percentYes;
-                    $scope.noproc = questions.getLocal().questionOfDay.percentNo;
                     //succes
                     $rootScope.loader = false;
                 }, function () {
@@ -127,82 +147,30 @@ angular.module('hotq.controllers.indexpage', [])
                 }
             );
 
-            //read timesLoaded from storage
-            $scope.timesLoaded = parseInt(window.localStorage.getItem("hotQTimesLoaded"));
-            if ($scope.timesLoaded) {
-                $scope.timesLoaded++;   // increment timesLoaded
-            } else {
-                $scope.timesLoaded = 1; // init timesLoaded
-            }
 
-            //write timesLoaded in storage
-            window.localStorage.setItem("hotQTimesLoaded", $scope.timesLoaded.toString());
+            $scope.goLink = function (location) {
+                window.open(location, '_blank', 'location=yes');
+            };
 
-            //show demographics when 3 app loadings
-            if ($scope.timesLoaded > 2) {
-                if (!window.localStorage.getItem("hotQUserDemo")) {
-                    this.showModal = demoModal.activate();  // show demos in modal
-                } else {
-                    $scope.user = JSON.parse(window.localStorage.getItem("hotQUserDemo"));
-                    if ($scope.user.sex != 1 && $scope.user.sex != 2) { // check if data in storage
-                        this.showModal = demoModal.activate();
-                    }
-                }
-            }
 
-//            first two loads show swipe indicator
-            if ($scope.timesLoaded <= 2) {
-                $scope.swipe_indicator = true;
+            //functie pentru rutare
+            $scope.go = function (location) {
                 $timeout(function () {
-                    $scope.swipe_indicator = false;
-                }, 8000);
-            }
+                    $scope.forward = true;
+                    snapRemote.toggle('left');
+                }, 100);
+                $location.path(location);
+            };
+
+            //functie pentru rutare
+            $scope.goLocal = function (location) {
+                $timeout(function () {
+                    $scope.forward = true;
+                }, 20);
+                $location.path(location);
+            };
+
         };
-
-        //routing function
-        $scope.go = function (location) {
-            $timeout(function () {
-                $scope.$spMenu.toggle();
-            }, 20);
-            $location.path(location);
-        };
-
-        $scope.goLocal = function (location) {
-            $location.path(location);
-        };
-
-        $scope.goReward = function (location) {
-            window.open(location, '_blank', 'location=yes');
-        };
-
-        //useful when voting :)
-        $scope.getQuestionId = function () {
-            return questions.getLocal()[$rootScope.currScreen].id;
-        };
-
-        //pay atention to currentScreen
-        $rootScope.$watch('currScreen', function () {
-            if (questions.getLocal()) {
-                if (questions.getLocal()[$rootScope.currScreen]) {
-                    $scope.yesproc = questions.getLocal()[$rootScope.currScreen].percentYes;
-                    $scope.noproc = questions.getLocal()[$rootScope.currScreen].percentNo;
-                }
-            }
-        });
-
-        //if answers are visible or thank you text is shown
-        $scope.answersVisible = function () {
-            if (questions.getLocal()) {
-                if (questions.getLocal()[$rootScope.currScreen]) {
-                    return questions.getLocal()[$rootScope.currScreen].hasVote ? false : true;
-                } else {
-                    return true;
-                }
-            } else {
-                return false;
-            }
-        };
-
 
     })
 

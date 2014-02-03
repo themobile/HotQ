@@ -11,24 +11,24 @@ angular.module('hotq.services', ["btford.modal"]).
             controller: 'demos',
             controllerAs: 'modal',
             templateUrl: 'partials/demographics.html'
-        })
+        });
     })
 
     .factory('parseBAAS', function ($http) {
-        var parseCredentials = {
+        var parseCredentials, result;
+        parseCredentials = {
             "X-Parse-Application-Id": "oYvsd9hx0NoIlgEadXJsqCtU1PgjcPshRqy18kmP",
             "X-Parse-REST-API-Key": "gX3SUxGPeSnAefjtFmF9MeWpbTIa9YhC8q1n7hLk",
             "Content-Type": "application/json"
         };
 
-        var result;
 
         return {
-            post: function(functionName,payLoad) {
+            post: function (functionName, payLoad) {
                 return $http(
                     {
                         method: 'POST',
-                        url: 'https://api.parse.com/1/functions/'+functionName,
+                        url: 'https://api.parse.com/1/functions/' + functionName,
                         headers: parseCredentials,
                         withCredentials: false,
                         cache: false,
@@ -36,29 +36,32 @@ angular.module('hotq.services', ["btford.modal"]).
                     }
                 )
                     .success(function (data) {
-                        result=data.result;
+                        result = data.result;
                     })
                     .error(function (error) {
                     });
             },
-            getResult: function(){
+            getResult: function () {
                 return result;
             },
-            getCredentials:function() {
+            getCredentials: function () {
                 return parseCredentials;
             }
-        }
+        };
     })
 
-    .factory('questions', function (parseBAAS,$rootScope) {
+    .factory('questions', function (parseBAAS, $rootScope) {
 
         var allQuestions;
-        var currQuestion
         return {
             loadRemote: function (installationId) {
-                return parseBAAS.post('GetQuestions',installationId)
-                    .then(function(result){
-                        allQuestions=parseBAAS.getResult();
+                return parseBAAS.post('GetQuestionsNew', installationId)
+                    .then(function (result) {
+                        allQuestions = parseBAAS.getResult();
+                        allQuestions.content[0].type='întrebarea zilei';
+                        allQuestions.content[1].type='întrebarea săptămânii';
+                        allQuestions.content[2].type='întrebarea lunii';
+                        allQuestions.content[3].type='o idee bună';
                     });
             },
 
@@ -66,10 +69,10 @@ angular.module('hotq.services', ["btford.modal"]).
                 return allQuestions;
             },
 
-            setVote: function(question,vote) {
-                allQuestions[question].hasVote=vote;
+            setVote: function (question, vote) {
+                allQuestions.content[question].hasVote = vote;
             }
-        }
+        };
     })
 
 //service for voting
@@ -83,10 +86,10 @@ angular.module('hotq.services', ["btford.modal"]).
                 vote.position = position;
                 vote.demographics = demographics;
 
-                return parseBAAS.post('VoteSubmit',vote);
+                return parseBAAS.post('VoteSubmit', vote);
 
             }
-        }
+        };
     })
 
 
@@ -94,9 +97,10 @@ angular.module('hotq.services', ["btford.modal"]).
 
         return {
             getPooshToken: function (type) {
-                var pushNotification = window.plugins.pushNotification;
-                var deferred = $q.defer();
-                var regString = {};
+                var deferred, regString, pushNotification;
+                deferred = $q.defer();
+                regString = {};
+                pushNotification = window.plugins.pushNotification;
 
                 if (type == "Android") {
                     regString = { projectid: "315937580723", appid: "53BC6-33E16" };
@@ -107,22 +111,22 @@ angular.module('hotq.services', ["btford.modal"]).
                 pushNotification.registerDevice(regString,
                     function (token) {
                         //callback when pushwoosh is ready
-                        if (token['deviceToken']) {
-                            deferred.resolve(token['deviceToken']);
+                        if (token.deviceToken) {
+                            deferred.resolve(token.deviceToken);
                         } else {
                             deferred.resolve(token);
                         }
                     },
                     function (error) {
+                        console.log('errroooor');
+                        console.log(error)
                         deferred.reject(error);
                     });
                 return deferred.promise;
             }
-        }
+        };
 
     })
-
-
 
 
     .factory('geolocation', function ($q) {
@@ -135,10 +139,11 @@ angular.module('hotq.services', ["btford.modal"]).
                     },
                     function (error) {
                         deferred.reject(error);
-                    });
+                    }
+                );
                 return deferred.promise;
             }
-        }
+        };
     })
 
 
@@ -161,27 +166,11 @@ angular.module('hotq.services', ["btford.modal"]).
             }
             console.log('isOnline: ' + isOnline);
         });
-    })
+    });
 
 
 
-.directive('loader', function () {
-    return {
-        restrict: 'A',
-        template: '<div  class="loading">' +
-            '<div id="bowlG">' +
-            '<div id="bowl_ringG">' +
-            '<div class="ball_holderG">' +
-            '<div class="ballG">' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '<span class="loader_text"> {{loaderMessage}}' +
-            '</span>' +
-            '</div>' +
-            '</div>'
-    }
-});
+
 
 
 

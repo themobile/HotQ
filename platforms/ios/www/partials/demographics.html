@@ -1,11 +1,6 @@
 
-<div class="modal"></div>
 <div class="modal-html">
-  <div class="modal-footer">
-    <div ng-hide="demoThanks" class="demographics-pre animFooter"><span>Please, please, please! Dureaza câteva secunde pentru a ne ajuta să înțelegem mai bine <strong>răspunsurile</strong> românilor . Întrebările au caracter general, ar tu ești, în continuare, <strong>anonim 100%</strong>!</span></div>
-    <div class="demo-thanks animFooter">Mulțumim pentru susținere!</div>
-  </div>
-  <div ng-click="closeModal()" class="xbutton icon-close"></div>
+  <!--.backbutton.icon-arrow-back(ng-click="goLocal('/carousel')") închide-->
   <div ng-switch="getCurrentStep()" class="formFrame">
     <div ng-switch-when="one" class="animate-switch">
       <div class="lblGroupForm">Care este vârsta ta?</div>
@@ -41,5 +36,9 @@
       <input type="radio" value="3" id="ocupation3" name="ocupation" ng-model="user.ocupation" ng-change="handleNext()"/>
       <label for="ocupation3">Antreprenor</label>
     </div>
+  </div>
+  <div class="modal-footer">
+    <div ng-hide="demoThanks" class="demographics-pre animFooter"><span>Please, please, please! Dureaza câteva secunde pentru a ne ajuta să înțelegem mai bine <strong>răspunsurile</strong> românilor . Întrebările au caracter general, iar tu ești, în continuare, <strong>anonim 100%</strong>!</span></div>
+    <div ng-show="demoThanks" class="demo-thanks animFooter">Mulțumim pentru susținere!</div>
   </div>
 </div>

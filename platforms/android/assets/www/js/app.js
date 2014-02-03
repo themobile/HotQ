@@ -1,104 +1,61 @@
-angular.module("hotq", [
-        "ngRoute",
-        "ngAnimate",
-        "ngTouch",
-        "hotq.services",
-        "hotq.controllers",
-//        "hotq.directives",
-        "shoppinpal.mobile-menu" ])
+'use strict';
+
+
+document.ontouchmove = function (event) {
+    // provent body move (ipad)
+    var sourceElement = event.target || event.srcElement;
+    if (!angular.element(sourceElement).hasClass('enable_touchmove')) {
+        event.preventDefault();
+    }
+};
+
+
+
+
+angular.module("hotq",
+        [
+            "ngRoute",
+            "ngAnimate",
+            "ngTouch",
+            'snap',
+            'angles',
+            "hotq.controllers.indexpage",
+            "hotq.controllers.carousel",
+            "hotq.controllers.demos",
+            "hotq.services",
+            "hotq.directives",
+            'angular-carousel'
+        ])
 
 
     .config(function ($routeProvider) {
         $routeProvider
-            .when("/questionOfDay", {
-                templateUrl: "partials/today.html",
-                controller: "HotqCtl",
-                resolve: {
-                    changeScreen: function ($rootScope) {
-                        $rootScope.currScreen = 'questionOfDay';
-                        $rootScope.isQuestionScreen = true;
-                    }
-                }
-            })
-            .when("/questionOfWeek", {
-                templateUrl: "partials/week.html",
-                controller: "HotqCtl", resolve: {
-                    changeScreen: function ($rootScope) {
-                        $rootScope.currScreen = 'questionOfWeek';
-                        $rootScope.isQuestionScreen = true;
-                    }
-                }
 
-            })
-            .when("/questionOfMonth", {
-                templateUrl: "partials/month.html",
-                controller: "HotqCtl",
-                resolve: {
-                    changeScreen: function ($rootScope) {
-                        $rootScope.currScreen = 'questionOfMonth';
-                        $rootScope.isQuestionScreen = true;
-                    }
-                }
-
-            })
-            .when("/reward", {
-                templateUrl: "partials/reward.html",
-                controller: "HotqCtl",
-                resolve: {
-                    changeScreen: function ($rootScope) {
-                        $rootScope.currScreen = 'reward';
-                        $rootScope.isQuestionScreen = false;
-                    }
-                }
-
-            })
-            .when("/about", {
-                templateUrl: "partials/about.html",
-                controller: "HotqCtl",
-                resolve: {
-                    changeScreen: function ($rootScope) {
-                        $rootScope.currScreen = 'about';
-                        $rootScope.isQuestionScreen = false;
-                    }
-                }
-
-            })
-            .when("/demographics", {
-                templateUrl: "partials/demographics.html",
-                controller: "HotqCtl",
-                resolve: {
-                    changeScreen: function ($rootScope) {
-                        $rootScope.currScreen = 'demographics';
-                        $rootScope.isQuestionScreen = false;
-                    }
-                }
-
-            })
-            .otherwise({redirectTo: "/questionOfDay"})
+            .when("/about", {templateUrl: "partials/about.html"})
+            .when("/demographics", {templateUrl: "partials/demographics.html", controller: "demos"})
+            .when("/carousel", {templateUrl: "partials/carousel.html", controller: "carousel"})
+            .otherwise({redirectTo: "/carousel"});
     })
 
     .run(function ($window, $rootScope) {
 
-        $rootScope.online = navigator.onLine ? 'online' : 'offline';
+        $rootScope.isOnline = navigator.onLine ? 'online' : 'offline';
         $rootScope.$apply();
 
         if (!navigator.onLine) {
             superScope.loaderMessage = "hotq este offline! Avem nevoie de internet!";
-            superScope.loader = !isOnline;
+            superScope.loader = !superScope.isOnline;
         }
 
         document.addEventListener("online", function () {
             $rootScope.$broadcast('onlineChanged', true);
-        }, true)
+        }, true);
         document.addEventListener("offline", function () {
             $rootScope.$broadcast('onlineChanged', false);
-        }, true)
+        }, true);
 
 
-
-
-    }
-);
+    });
 
 
 
