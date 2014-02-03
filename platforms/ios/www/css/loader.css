@@ -11,11 +11,11 @@
 .loader_text {
     top: 65px;
     position: absolute;
-    text-align: center;
     left: -125px;
     color: #FFF;
-    font-size: 0.7em;
+    font-size: 0.8em;
     width: 300px;
+    letter-spacing: 1px;
     overflow: visible;
     clear: both;
     text-align: center;

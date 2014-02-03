@@ -23,7 +23,7 @@ angular.module('hotq.controllers.carousel', [])
         $scope.getPercentage = function (which) {
             if (typeof $scope.questions[$scope.slideIndex] != 'undefined') {
                 if ($scope.questions[$scope.slideIndex].hasVote) {
-                    return $scope.questions[$scope.slideIndex][which] + '%';
+                    return (100-$scope.questions[$scope.slideIndex][which]) + '%';
                 } else {
                     return '50%';
                 }
@@ -34,13 +34,12 @@ angular.module('hotq.controllers.carousel', [])
 
 
         $scope.getMessage = function () {
+            var response;
+            response='';
             if (typeof $scope.questions[$scope.slideIndex] != 'undefined') {
-                if ($scope.questions[$scope.slideIndex].hasVote) {
-                    return 'ai răspuns la această întrebare';
-                } else {
-                    return 'răspunde onest și fără inhibiții';
-                }
+                $scope.questions[$scope.slideIndex].hasVote ? response='ai răspuns deja' : response='răspunde';
             }
+            return response;
         };
 
 

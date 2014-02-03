@@ -3,7 +3,7 @@
 
 angular.module('hotq.controllers.indexpage', [])
 
-    .controller("indexpage", function ($scope, $rootScope, $timeout, $location, $http, $q, upVotes, offlineswitch, questions, poosh, geolocation, parseBAAS, snapRemote) {
+    .controller("indexpage", function ($scope, $rootScope, $timeout, $location, $http, $q, upVotes, offlineswitch, questions, poosh, geolocation, parseBAAS,snapRemote) {
 
         $scope.toggleMenu = function () {
             snapRemote.toggle('left');
@@ -14,7 +14,7 @@ angular.module('hotq.controllers.indexpage', [])
            value ? $scope.isQuote=true : $scope.isQuote=false;
         });
 
-
+        $scope.showmenu=false;
 
 
         $scope.init = function () {
@@ -156,9 +156,8 @@ angular.module('hotq.controllers.indexpage', [])
             //functie pentru rutare
             $scope.go = function (location) {
                 $timeout(function () {
-                    $scope.forward = true;
-                    snapRemote.toggle('left');
-                }, 100);
+                    $scope.toggleMenu();
+                }, 0);
                 $location.path(location);
             };
 

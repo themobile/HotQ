@@ -9,10 +9,9 @@ head
 
     link(rel="stylesheet", href="css/app.css")
     link(rel="stylesheet", href="css/angular-carousel.css")
-    link(rel="stylesheet", href="css/angular-snap.css")
     link(rel="stylesheet", href="css/font.css")
     link(rel="stylesheet", href="css/loader.css")
-    link(rel="stylesheet/less", href="css/app2.less")
+    link(rel="stylesheet", href="css/angular-snap.css")
     title hotQ
 
 body(ng-cloack,ng-controller='indexpage',ng-init='init()')
@@ -21,7 +20,7 @@ body(ng-cloack,ng-controller='indexpage',ng-init='init()')
     div.loader(loader ng-show='loader')
 
     //menu
-    .menu.ng-cloak(snap-drawer,ng-swipe-left='toggleMenu()')
+    #menu.ng-cloak(snap-drawer, ng-swipe-left="toggleMenu()")
         ul
             li
                 a(ng-click="go('/carousel')") răspunde la întrebări!
@@ -34,24 +33,22 @@ body(ng-cloack,ng-controller='indexpage',ng-init='init()')
             li
                 a(onclick="window.plugins.socialsharing.share('hotQ si adevărul pe care vrem să-l aflăm!', null, null, 'http://hotq.ro')") share hotQ
 
-        a.themobile(ng-click="window.open('http://themobile.ro', '_blank', 'location=yes')", target="_blank") themobile.ro
 
     //content body
-    #content.ng-cloak(snap-content,snap-options='{"touchToDrag": false }',
-        ng-class='{"isQuestionsBackground":currScreen=="questions", "isQuoteBackground":isQuote,"isAboutBackground":currScreen=="about", "isSendQuestionBackground":currScreen=="sendquestion"}')
-
+    #content.ng-cloak(snap-content,ng-swipe-right="toggleMenu()",snap-options='{"touchToDrag": false }')
         //menu button
-        #nav(ng-class='{"isQuestionsBackground":currScreen=="questions","isQuoteBackground":isQuote,"isAboutBackground":currScreen=="about", "isSendQuestionBackground":currScreen=="sendquestion"}')
-            div.icon-reorder(ng-click='toggleMenu()')
+        #nav(snap-toggle="left")
+            div
+                span swipe > menu
 
         //dynamic pages & controllers
         div.page(ng-view)
 
+        .bottom-shade
 
     script(type="text/javascript",src='cordova.js')
-    script(type="text/javascript",src='res/js/snap.js')
-    script(type="text/javascript",src='res/js/less-1.6.1.min.js')
-    //script(type="text/javascript",src='res/js/chart.min.js')
+
+    script(type="text/javascript",src='res/js/snap.min.js')
     script(type="text/javascript",src='https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true')
     script(type="text/javascript",src='res/js/angular.js')
     script(type="text/javascript",src='res/js/angular-animate.min.js')
@@ -60,7 +57,6 @@ body(ng-cloack,ng-controller='indexpage',ng-init='init()')
     script(type="text/javascript",src='res/js/angular-touch.min.js')
     script(type="text/javascript",src='res/js/angular-carousel.min.js')
     script(type="text/javascript",src='res/js/angular-snap.js')
-
     script(type="text/javascript",src='res/js/requestAnimationFrame.min.js')
 
     script(type="text/javascript",src='js/index.js')
@@ -71,6 +67,5 @@ body(ng-cloack,ng-controller='indexpage',ng-init='init()')
     script(type="text/javascript",src='js/controllers/sendquestion.js')
     script(type="text/javascript",src='js/services.js')
     script(type="text/javascript",src='js/directives.js')
-    script(type="text/javascript",src='js/modal.js')
 
     script(type='text/javascript') app.initialize();

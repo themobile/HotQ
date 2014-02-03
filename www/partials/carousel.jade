@@ -1,17 +1,22 @@
 
+.top-shade
+
 // answer vertical bar
 .answers.ng-cloak(ng-show="slideIndex!=3")
-    .answer-yes(ng-click='voteNow(1)',ng-class='{"small":questions[slideIndex].hasVote}', ng-style='{height:getPercentage("percentYes")}')
-        p DA
+    .answer-yes(ng-click='voteNow(1)',ng-class='{"small":questions[slideIndex].hasVote}')
+        p(ng-style='{top:getPercentage("percentYes")}') DA
             span.percentage(ng-if='questions[slideIndex].hasVote')  - {{questions[slideIndex].percentYes}}%
 
-    .answer-no(ng-click='voteNow(2)',ng-class='{"small":questions[slideIndex].hasVote}', ng-style='{height:getPercentage("percentNo")}')
-        p NU
+    .answer-no(ng-click='voteNow(2)',ng-class='{"small":questions[slideIndex].hasVote}')
+        p(ng-style='{top:getPercentage("percentNo")}') NU
             span.percentage(ng-if='questions[slideIndex].hasVote')  - {{questions[slideIndex].percentNo}}%
 
-//quote image
-.answers.ng-cloak(ng-show="slideIndex==3")
-    img.quote-img(ng-src='{{questions[slideIndex].picture.url}}')
+
+//indication showing if voted
+span.ng-cloak.messageSlide(ng-show='slideIndex<3') {{getMessage()}}
+
+a.info.icon-exclamation-sign(ng-click="goLink(questions[slideIndex].link)",ng-show='questions[slideIndex].link')
+
 
 //carousel
 ul.ng-cloak.carousel(rn-carousel, rn-carousel-index='slideIndex', ng-init='loadq()')
@@ -19,25 +24,15 @@ ul.ng-cloak.carousel(rn-carousel, rn-carousel-index='slideIndex', ng-init='loadq
 
         //question type header
         .question-tag(ng-class='{"isQuestion":slideIndex!=3,"isQuote":slideIndex==3}') {{question.type}}
-        a.info.icon-exclamation-sign(ng-click="goLink(question.link)",ng-show='question.link',ng-class='{"isQuestion":slideIndex!=3,"isQuote":slideIndex==3}')
 
-        .questionHolder
-            .question
-                // question text
-                .question-intro(ng-show='slideIndex!=3') {{question.text1}}
-                .question-body(ng-show='slideIndex!=3') {{question.text2}}
+        .question(ng-show='slideIndex!=3')
+            // question text
+            .question-intro {{question.text1}}
+            .question-body {{question.text2}}
+        .question(ng-show='slideIndex==3')
+            // quote text
+            .question-intro.quote-intro {{question.author}}
+            .question-body.quote-body {{question.body}}
 
-                // quote text
-                .question-intro.quote-intro(ng-show='slideIndex==3') {{question.author}}
-                .question-body.quote-body(ng-show='slideIndex==3') {{question.body}}
 
-//indication showing if voted
-span.ng-cloak.messageSlide(ng-if='slideIndex!=3') {{getMessage()}}
-
-//navigation bar
-ul.ng-cloak.slideIndex(ng-class='{"isQuestion":slideIndex!=3,"isQuote":slideIndex==3}')
-    li(ng-class='{"active":slideIndex==0, "voted":questions[0].hasVote}',ng-click='slideIndex=0') 1
-    li(ng-class='{"active":slideIndex==1, "voted":questions[1].hasVote}',ng-click='slideIndex=1') 7
-    li(ng-class='{"active":slideIndex==2, "voted":questions[2].hasVote}',ng-click='slideIndex=2') 30
-    li.icon-heart-empty(ng-class='{"active":slideIndex==3}',ng-click='slideIndex=3')
 

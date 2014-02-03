@@ -2,17 +2,10 @@
 
 /* Services */
 
-angular.module('hotq.services', ["btford.modal"]).
+angular.module('hotq.services', []).
     value('version', '0.1')
 
 
-    .factory('demoModal', function (btfModal) {
-        return btfModal({
-            controller: 'demos',
-            controllerAs: 'modal',
-            templateUrl: 'partials/demographics.html'
-        });
-    })
 
     .factory('parseBAAS', function ($http) {
         var parseCredentials, result;
@@ -58,10 +51,6 @@ angular.module('hotq.services', ["btford.modal"]).
                 return parseBAAS.post('GetQuestionsNew', installationId)
                     .then(function (result) {
                         allQuestions = parseBAAS.getResult();
-                        allQuestions.content[0].type='întrebarea zilei';
-                        allQuestions.content[1].type='întrebarea săptămânii';
-                        allQuestions.content[2].type='întrebarea lunii';
-                        allQuestions.content[3].type='o idee bună';
                     });
             },
 
@@ -166,6 +155,28 @@ angular.module('hotq.services', ["btford.modal"]).
             }
             console.log('isOnline: ' + isOnline);
         });
+    })
+
+
+    .factory('sendQuestion', function ($http) {
+        return {
+            now: function (qSend) {
+
+                return $http.post('https://api.parse.com/1/functions/UserQuestionSubmit',
+                    qSend,
+                    {
+                        headers: {
+                            "X-Parse-Application-Id": "oYvsd9hx0NoIlgEadXJsqCtU1PgjcPshRqy18kmP",
+                            "X-Parse-REST-API-Key": "gX3SUxGPeSnAefjtFmF9MeWpbTIa9YhC8q1n7hLk",
+                            "Content-Type": "application/json"
+                        },
+                        cache: false,
+                        withCredentials: false
+                    }
+                );
+
+            }
+        }
     });
 
 

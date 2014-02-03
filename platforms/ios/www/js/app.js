@@ -24,13 +24,14 @@ angular.module("hotq",
             "ngAnimate",
             "ngTouch",
             'snap',
-//            'angles',
             "hotq.controllers.indexpage",
             "hotq.controllers.carousel",
             "hotq.controllers.demos",
+            "hotq.controllers.sendquestion",
             "hotq.services",
             "hotq.directives",
             'angular-carousel'
+
         ])
 
 
@@ -62,6 +63,17 @@ angular.module("hotq",
                     }
                 }
             })
+
+            .when("/sendquestion",{
+                templateUrl:"partials/sendquestion.html",
+                controller:"sendquestion",
+                resolve: {
+                    changeScreen: function($rootScope){
+                        $rootScope.currScreen='sendquestion';
+                    }
+                }
+            })
+
             .otherwise({redirectTo: "/carousel"});
     })
 
