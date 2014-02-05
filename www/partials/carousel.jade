@@ -1,8 +1,7 @@
 
 .top-shade
 
-// answer vertical bar
-.answers.ng-cloak(ng-show="slideIndex!=3")
+.answers.ng-cloak(ng-show="slideIndex<3 && errorQuestions==false", ng-class='{"answers-animate3":slideIndex==3}')
     .answer-yes(ng-click='voteNow(1)',ng-class='{"small":questions[slideIndex].hasVote}')
         p(ng-style='{top:getPercentage("percentYes")}') DA
             span.percentage(ng-if='questions[slideIndex].hasVote')  - {{questions[slideIndex].percentYes}}%
@@ -11,12 +10,22 @@
         p(ng-style='{top:getPercentage("percentNo")}') NU
             span.percentage(ng-if='questions[slideIndex].hasVote')  - {{questions[slideIndex].percentNo}}%
 
+.question.topindex(ng-show='errorQuestions')
+    // question text
+    .question-intro Este cu adevărat incredibil!
+    .question-body Avem o eroare pe undeva. Cel mai probabil, serverul de date hotQ întâmpină dificultăți. Te rog să revii în aplicația hotQ un pic mai târziu!
+
+    .sendquestioncontainer(ng-show='errorQuestions')
+        button.sendRetryButton(ng-disabled="!errorQuestions",ng-click="init()") Reîncearcă
+
 
 //indication showing if voted
-span.ng-cloak.messageSlide(ng-show='slideIndex<3') {{getMessage()}}
+span.ng-cloak.messageSlide(ng-show='slideIndex<3',ng-class='{"answers-animate3":slideIndex==3}') {{getMessage()}}
 
-a.info.icon-exclamation-sign(ng-click="goLink(questions[slideIndex].link)",ng-show='questions[slideIndex].link')
+a.info.icon-question-sign(ng-click="goLink(questions[slideIndex].link)",ng-show='questions[slideIndex].link')
 
+.arrow-left.icon-angle-left(ng-click='prevSlide()',ng-disabled='slideIndex==0',ng-show='!errorQuestions')
+.arrow-right.icon-angle-right(ng-click='nextSlide()',ng-disabled='slideIndex==3',ng-show='!errorQuestions')
 
 //carousel
 ul.ng-cloak.carousel(rn-carousel, rn-carousel-index='slideIndex', ng-init='loadq()')
@@ -24,6 +33,7 @@ ul.ng-cloak.carousel(rn-carousel, rn-carousel-index='slideIndex', ng-init='loadq
 
         //question type header
         .question-tag(ng-class='{"isQuestion":slideIndex!=3,"isQuote":slideIndex==3}') {{question.type}}
+
 
         .question(ng-show='slideIndex!=3')
             // question text

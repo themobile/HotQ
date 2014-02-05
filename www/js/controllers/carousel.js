@@ -20,10 +20,20 @@ angular.module('hotq.controllers.carousel', [])
         })
 
 
+
+        $scope.prevSlide= function() {
+            $scope.slideIndex>0 ? $scope.slideIndex-- : $scope.slideIndex;
+
+        }
+
+        $scope.nextSlide= function() {
+            $scope.slideIndex<3 ? $scope.slideIndex++ : $scope.slideIndex;
+        }
+
         $scope.getPercentage = function (which) {
             if (typeof $scope.questions[$scope.slideIndex] != 'undefined') {
                 if ($scope.questions[$scope.slideIndex].hasVote) {
-                    return (100-$scope.questions[$scope.slideIndex][which]) + '%';
+                    return (90-$scope.questions[$scope.slideIndex][which]) + '%';
                 } else {
                     return '50%';
                 }

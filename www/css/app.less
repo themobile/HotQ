@@ -1,7 +1,7 @@
 /** {*/
 /*-webkit-tap-highlight-color: rgba(255, 255, 255, 0) !important;*/
 /*-webkit-focus-ring-color: rgba(255, 255, 255, 0) !important;*/
-/*outline: none !important;asas asdaadas*/
+/*outline: none !important;  */
 /*}*/
 
 @darkblue:#1C2230;
@@ -96,7 +96,10 @@ a:focus {
     text-align: center;
     font-size: 0.6em;
   }
+}
 
+#nav:hover, #nav:active, #nav:focus {
+  color:@darkblue;
 }
 
 .halfblue {
@@ -109,15 +112,14 @@ a:focus {
 }
 
 #menu {
-  background-color: @orange;
+  background-color: @lightgreen;
   position:relative;
-  color: @darkblue;
+  color: @white;
   max-width: 70%;
 
   ul {
     list-style: none;
     margin:0;
-    padding:0;
     padding: 5%;
     height: 80%;
 
@@ -186,7 +188,19 @@ a:focus {
   opacity:0;
 }
 
+.answers-animate3 {
+  -webkit-transition:opacity ease-in-out 0.00s;
+  transition:opacity ease-in-out 0.00s;
+}
 
+.answers-animate3.ng-hide-add, .answers-animate3.ng-hide-remove {
+  display:block!important;
+  opacity:0;
+}
+
+.answers-animate3.ng-hide {
+  opacity:0;
+}
 
 .answer-yes.small p {
   border-top:1px solid @lightgreen;
@@ -217,7 +231,33 @@ a:focus {
 }
 
 
+.arrow-left,.arrow-right {
+  position: absolute;
+  bottom: 2%;
+  width:50%;
+  height: 2em;
+  text-align: center;
+  font-size: 1em;
+  color: @lightgreen;
+  z-index:10;
+}
 
+.arrow-left {
+  left: 0%;
+
+}
+
+.arrow-left[disabled] {
+  color:@darkwhite;
+}
+
+.arrow-right{
+  right:0%;
+}
+
+.arrow-right[disabled] {
+  color:@darkwhite;
+}
 
 .question , .quote {
   position: absolute;
@@ -243,7 +283,6 @@ a:focus {
 .question.ng-hide {
   opacity:0;
 }
-
 
 
 .quote {
@@ -485,7 +524,7 @@ ul.isQuote {
   right: 0;
   margin: 0 auto;
   text-align: center;
-  top: 30%;
+  top: 29%;
   font-size: 1em;
   -webkit-transition:opacity ease-in-out 0.2s;
   transition:opacity ease-in-out 0.2s;
@@ -560,7 +599,7 @@ ul.isQuote {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(63, 76, 119, 0.8);
+  background-color: fade(@darkblue,90%);
   position: absolute;
   z-index: 99;
 }
@@ -823,6 +862,8 @@ input {
   border:1px solid @darkgreen;
 }
 
+
+
 .sendQButton:disabled {
   background:@darkgreen;
   color:fade(@white,20%);
@@ -839,6 +880,19 @@ input {
 .sendQButton:active, .sendQButton:focus, .sendQButton:hover {
   color:@white;
   background-color: @lightgreen;
+}
+
+.sendRetryButton {
+  min-width:8em;
+  margin:1em auto;
+  font-size:1.5em;
+  display: block;
+  color: @darkwhite;
+  background: @darkgreen;
+  text-align: center;
+  line-height: 2em;
+  border-radius: 5px;
+  border:1px solid @darkgreen;
 }
 
 
@@ -867,4 +921,169 @@ input {
 
 .top-shade.short {
   height:3em;
+}
+
+
+
+//loader
+
+#bowlG {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  top: 50%;
+  left: 50%;
+  margin-top: -50px;
+  margin-left: -25px;
+}
+
+.loader_text {
+  top: 65px;
+  position: absolute;
+  left: -125px;
+  color: @white;
+  font-size: 0.8em;
+  width: 300px;
+  letter-spacing: 1px;
+  overflow: visible;
+  clear: both;
+  text-align: center;
+}
+
+#bowl_ringG {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  border: 4px solid @white;
+  -moz-border-radius: 50px;
+  -webkit-border-radius: 50px;
+  -ms-border-radius: 50px;
+  -o-border-radius: 50px;
+  border-radius: 50px;
+}
+
+.ball_holderG {
+  position: absolute;
+  width: 13px;
+  height: 50px;
+  left: 18px;
+  top: 0px;
+  -moz-animation-name: ball_moveG;
+  -moz-animation-duration: 1.3s;
+  -moz-animation-iteration-count: infinite;
+  -moz-animation-timing-function: linear;
+  -webkit-animation-name: ball_moveG;
+  -webkit-animation-duration: 1.3s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+  -ms-animation-name: ball_moveG;
+  -ms-animation-duration: 1.3s;
+  -ms-animation-iteration-count: infinite;
+  -ms-animation-timing-function: linear;
+  -o-animation-name: ball_moveG;
+  -o-animation-duration: 1.3s;
+  -o-animation-iteration-count: infinite;
+  -o-animation-timing-function: linear;
+  animation-name: ball_moveG;
+  animation-duration: 1.3s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+.ballG {
+  position: absolute;
+  left: 0px;
+  top: -12px;
+  width: 20px;
+  height: 20px;
+  background: @lightgreen;
+  -moz-border-radius: 17px;
+  -webkit-border-radius: 17px;
+  -ms-border-radius: 17px;
+  -o-border-radius: 17px;
+  border-radius: 17px;
+}
+
+@-moz-keyframes ball_moveG {
+  0% {
+    -moz-transform: rotate(0deg)
+  }
+
+  100% {
+    -moz-transform: rotate(360deg)
+  }
+
+}
+
+@-webkit-keyframes ball_moveG {
+  0% {
+    -webkit-transform: rotate(0deg)
+  }
+
+  100% {
+    -webkit-transform: rotate(360deg)
+  }
+
+}
+
+@-ms-keyframes ball_moveG {
+  0% {
+    -ms-transform: rotate(0deg)
+  }
+
+  100% {
+    -ms-transform: rotate(360deg)
+  }
+
+}
+
+@-o-keyframes ball_moveG {
+  0% {
+    -o-transform: rotate(0deg)
+  }
+
+  100% {
+    -o-transform: rotate(360deg)
+  }
+
+}
+
+@keyframes ball_moveG {
+  0% {
+    transform: rotate(0deg)
+  }
+
+  100% {
+    transform: rotate(360deg)
+  }
+
+}
+
+
+
+
+//view animation
+
+
+.view-animate.ng-enter, .view-animate.ng-leave {
+  -webkit-transition:opacity ease-in-out 0.3s;
+  transition:opacity ease-in-out 0.3s;
+
+//  display:block;
+  opacity:1;
+}
+
+.view-animate.ng-enter {
+  opacity:0
+}
+.view-animate.ng-enter.ng-enter-active {
+  opacity:1;
+}
+.view-animate.ng-leave.ng-leave-active {
+  opacity:0;
+}
+
+
+.topindex {
+  z-index:12;
 }

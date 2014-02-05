@@ -95,7 +95,7 @@ angular.module('hotq.services', []).
                     regString = { projectid: "315937580723", appid: "53BC6-33E16" };
                 }
                 if (type == "iPhone" || type == "iOS") {
-                    regString = {alert: true, badge: true, sound: true, pw_appid: "53BC6-33E16", appname: "hotq"};
+                    regString = {alert: true, badge: true, sound: true, pw_appid: "BDCE2-01BB7", appname: "hotq"};
                 }
                 pushNotification.registerDevice(regString,
                     function (token) {
@@ -108,7 +108,7 @@ angular.module('hotq.services', []).
                     },
                     function (error) {
                         console.log('errroooor');
-                        console.log(error)
+                        console.log(JSON.stringify(error));
                         deferred.reject(error);
                     });
                 return deferred.promise;

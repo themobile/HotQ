@@ -5,6 +5,11 @@ angular.module('hotq.controllers.indexpage', [])
 
     .controller("indexpage", function ($scope, $rootScope, $timeout, $location, $http, $q, upVotes, offlineswitch, questions, poosh, geolocation, parseBAAS,snapRemote) {
 
+
+        //hide splashscreen
+        setTimeout(function() {
+            navigator.splashscreen.hide();
+        }, 1000);
         $scope.toggleMenu = function () {
             snapRemote.toggle('left');
         }
@@ -14,7 +19,7 @@ angular.module('hotq.controllers.indexpage', [])
            value ? $scope.isQuote=true : $scope.isQuote=false;
         });
 
-        $scope.showmenu=false;
+        $rootScope.errorQuestions=false;
 
 
         $scope.init = function () {
@@ -103,12 +108,12 @@ angular.module('hotq.controllers.indexpage', [])
             };
 
 //
-//            checkPoosh()
-//                .then(function (data) {
-//                    console.log(data);
-//                    return getQuestions(data);
-//                })
-            getQuestions('SUs4MpZYPFdgLOegoom3xA==')
+            checkPoosh()
+                .then(function (data) {
+                    console.log(data);
+                    return getQuestions(data);
+                })
+//            getQuestions('SUs4MpZYPFdgLOegoom3xA==')
                 .then(function () {
                     var hotQLocal = window.localStorage.getItem("hotQuestions");
                     if (hotQLocal && hotQLocal != 'undefined') {
@@ -119,11 +124,13 @@ angular.module('hotq.controllers.indexpage', [])
                             questions.setVote(2, localQ.content[2].hasVote);
                         }
                     }
+//                    navigator.splashscreen.hide();
                     $rootScope.$broadcast('questionsLoaded');
-                    //succes
+                    $rootScope.errorQuestions=false;
                     $rootScope.loader = false;
                 }, function () {
-                    //eroare
+//                    navigator.splashscreen.hide();
+                    $rootScope.errorQuestions=true;
                     $rootScope.loader = false;
                 });
 

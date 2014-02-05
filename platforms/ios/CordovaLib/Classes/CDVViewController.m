@@ -548,7 +548,7 @@
 - (void)createGapView
 {
     CGRect webViewBounds = self.view.bounds;
-
+    self.webView.alpha=0;
     webViewBounds.origin = self.view.bounds.origin;
 
     if (!self.webView) {

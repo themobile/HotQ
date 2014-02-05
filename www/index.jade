@@ -10,7 +10,6 @@ head
     link(rel="stylesheet", href="css/app.css")
     link(rel="stylesheet", href="css/angular-carousel.css")
     link(rel="stylesheet", href="css/font.css")
-    link(rel="stylesheet", href="css/loader.css")
     link(rel="stylesheet", href="css/angular-snap.css")
     title hotQ
 
@@ -22,27 +21,24 @@ body(ng-cloack,ng-controller='indexpage',ng-init='init()')
     //menu
     #menu.ng-cloak(snap-drawer, ng-swipe-left="toggleMenu()")
         ul
-            li
-                a(ng-click="go('/carousel')") răspunde la întrebări!
-            li
-                a(ng-click="go('/sendquestion')") ai sugestii?
-            li
-                a(onclick="window.open('http://hotq.ro', '_system', 'location=yes');", data-transition="slide") istoria răspunsurilor
-            li
-                a(ng-click="go('/about')") despre hotQ
-            li
-                a(onclick="window.plugins.socialsharing.share('hotQ si adevărul pe care vrem să-l aflăm!', null, null, 'http://hotq.ro')") share hotQ
+            li(ng-click="go('/carousel')") răspunde la întrebări!
+            li(ng-click="go('/sendquestion')") ai sugestii?
+            li(onclick="window.open('http://hotq.ro', '_system', 'location=yes');", data-transition="slide") istoria răspunsurilor
+            li(ng-click="go('/about')") despre hotQ
+            li(onclick="window.plugins.socialsharing.share('hotQ si adevărul pe care vrem să-l aflăm!', null, null, 'http://hotq.ro')") share hotQ
 
 
     //content body
-    #content.ng-cloak(snap-content,ng-swipe-right="toggleMenu()",snap-options='{"touchToDrag": false }')
+    #content.ng-cloak(snap-content,,ng-swipe-right="toggleMenu()",snap-options='{"touchToDrag": false }')
         //menu button
         #nav(snap-toggle="left")
-            div
-                span swipe > menu
+            div.icon-reorder
+                span menu
 
         //dynamic pages & controllers
-        div.page(ng-view)
+        div.page.view-animate(ng-view)
+
+
 
         .bottom-shade
 

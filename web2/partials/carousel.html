@@ -1,0 +1,26 @@
+
+<div class="top-shade"></div>
+<!-- answer vertical bar-->
+<div ng-show="slideIndex!=3 &amp;&amp; errorQuestions==false" class="answers ng-cloak">
+  <div ng-click="voteNow(1)" ng-class="{&quot;small&quot;:questions[slideIndex].hasVote}" class="answer-yes">
+    <p ng-style="{top:getPercentage(&quot;percentYes&quot;)}">DA<span ng-if="questions[slideIndex].hasVote" class="percentage"> - {{questions[slideIndex].percentYes}}%</span></p>
+  </div>
+  <div ng-click="voteNow(2)" ng-class="{&quot;small&quot;:questions[slideIndex].hasVote}" class="answer-no">
+    <p ng-style="{top:getPercentage(&quot;percentNo&quot;)}">NU<span ng-if="questions[slideIndex].hasVote" class="percentage"> - {{questions[slideIndex].percentNo}}%</span></p>
+  </div>
+</div>
+<!--a.info.icon-question-sign(ng-click="goLink(questions[slideIndex].link)",ng-show='questions[slideIndex].link')-->
+<div ng-click="prevSlide()" ng-disabled="slideIndex==0" class="arrow-left icon-angle-left"></div>
+<div ng-click="nextSlide()" ng-disabled="slideIndex==3" class="arrow-right icon-angle-right"></div>
+<!--carousel-->
+<ul rn-carousel="rn-carousel" rn-carousel-index="slideIndex" ng-init="loadq()" class="ng-cloak carousel">
+  <li ng-repeat="question in questions">
+    <!--question type header-->
+    <div ng-class="{&quot;isQuestion&quot;:slideIndex!=3,&quot;isQuote&quot;:slideIndex==3}" class="question-tag">{{question.type}}</div>
+    <div class="question">
+      <!-- question text-->
+      <div class="question-intro">{{question.text1}}</div>
+      <div class="question-body">{{question.text2}}</div>
+    </div>
+  </li>
+</ul>

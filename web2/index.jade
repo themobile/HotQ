@@ -1,0 +1,72 @@
+doctype html
+html(lang='ro-RO')
+head
+    meta(charset='utf-8')
+    meta(name='format-detection',content='telephone=no')
+    meta(name="viewport",content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height")
+    meta(name="apple-mobile-web-app-capable", content="yes")
+    link(href='http://fonts.googleapis.com/css?family=Lora:400,700&subset=latin,latin-ext', rel='stylesheet', type='text/css')
+
+    link(rel="stylesheet", href="css/app.css")
+    link(rel="stylesheet", href="css/angular-carousel.css")
+    link(rel="stylesheet", href="css/font.css")
+    link(rel="stylesheet", href="css/angular-snap.css")
+    title hotQ
+
+body(ng-cloack,ng-controller='indexpage',ng-init='init()')
+
+    //loading indicator
+    div.loader(loader ng-show='loader')
+
+    //menu
+    #menu.ng-cloak(snap-drawer, ng-swipe-left="toggleMenu()")
+        ul
+            li(ng-click="go('/carousel')") răspunde la întrebări!
+            li(ng-click="go('/sendquestion')") ai sugestii?
+            li(onclick="window.open('http://hotq.ro', '_system', 'location=yes');", data-transition="slide") istoria răspunsurilor
+            li(ng-click="go('/about')") despre hotQ
+            li(onclick="window.plugins.socialsharing.share('hotQ si adevărul pe care vrem să-l aflăm!', null, null, 'http://hotq.ro')") share hotQ
+
+
+    //content body
+    #content.ng-cloak(snap-content,,ng-swipe-right="toggleMenu()",snap-options='{"touchToDrag": false }')
+        //menu button
+        #nav(snap-toggle="left")
+            div.icon-reorder
+                span menu
+
+        //dynamic pages & controllers
+        div.page.view-animate(ng-view)
+
+
+        .question(ng-show='errorQuestions')
+            // question text
+            .question-intro Este cu adevărat incredibil!
+            .question-body Avem o eroare pe undeva. Cel mai probabil, serverul de date hotQ întâmpină dificultăți. Te rog să revii în aplicația hotQ un pic mai târziu!
+
+            .sendquestioncontainer(ng-show='errorQuestions')
+                button.sendRetryButton(ng-disabled="!errorQuestions",ng-click="init()") Reîncearcă
+
+        .bottom-shade
+
+
+    script(type="text/javascript",src='res/js/snap.min.js')
+    script(type="text/javascript",src='res/js/angular.js')
+    script(type="text/javascript",src='res/js/angular-animate.min.js')
+    script(type="text/javascript",src='res/js/angular-resource.min.js')
+    script(type="text/javascript",src='res/js/angular-route.min.js')
+    script(type="text/javascript",src='res/js/angular-touch.min.js')
+    script(type="text/javascript",src='res/js/angular-carousel.min.js')
+    script(type="text/javascript",src='res/js/angular-snap.js')
+    script(type="text/javascript",src='res/js/requestAnimationFrame.min.js')
+
+    script(type="text/javascript",src='js/index.js')
+    script(type="text/javascript",src='js/app.js')
+    script(type="text/javascript",src='js/controllers/demos.js')
+    script(type="text/javascript",src='js/controllers/indexpage.js')
+    script(type="text/javascript",src='js/controllers/carousel.js')
+    script(type="text/javascript",src='js/controllers/sendquestion.js')
+    script(type="text/javascript",src='js/services.js')
+    script(type="text/javascript",src='js/directives.js')
+
+    script(type='text/javascript') app.initialize();

@@ -1,0 +1,33 @@
+
+.top-shade
+
+// answer vertical bar
+.answers.ng-cloak(ng-show="slideIndex!=3 && errorQuestions==false")
+    .answer-yes(ng-click='voteNow(1)',ng-class='{"small":questions[slideIndex].hasVote}')
+        p(ng-style='{top:getPercentage("percentYes")}') DA
+            span.percentage(ng-if='questions[slideIndex].hasVote')  - {{questions[slideIndex].percentYes}}%
+
+    .answer-no(ng-click='voteNow(2)',ng-class='{"small":questions[slideIndex].hasVote}')
+        p(ng-style='{top:getPercentage("percentNo")}') NU
+            span.percentage(ng-if='questions[slideIndex].hasVote')  - {{questions[slideIndex].percentNo}}%
+
+
+
+//a.info.icon-question-sign(ng-click="goLink(questions[slideIndex].link)",ng-show='questions[slideIndex].link')
+
+.arrow-left.icon-angle-left(ng-click='prevSlide()',ng-disabled='slideIndex==0')
+.arrow-right.icon-angle-right(ng-click='nextSlide()',ng-disabled='slideIndex==3')
+
+//carousel
+ul.ng-cloak.carousel(rn-carousel, rn-carousel-index='slideIndex', ng-init='loadq()')
+    li(ng-repeat='question in questions')
+
+        //question type header
+        .question-tag(ng-class='{"isQuestion":slideIndex!=3,"isQuote":slideIndex==3}') {{question.type}}
+
+
+        .question
+            // question text
+            .question-intro {{question.text1}}
+            .question-body {{question.text2}}
+
