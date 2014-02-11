@@ -22,14 +22,15 @@
     <preference name="SplashScreenDelay" value="3000" />
     <preference name="AutoHideSplashScreen" value="false" />
     <preference name="FadeSplashScreen" value="true" />
-    <preference name="fade-splash-screen-duration" value="5" />
-    <preference name="KeepRunning" value="true"/>
+    <preference name="fade-splash-screen-duration" value="1" />
+    <preference name="KeepRunning" value="true" />
     <preference name="exit-on-suspend" value="false" />
-    <preference name="LoadUrlTimeoutValue" value="5000"/>
+    <preference name="LoadUrlTimeoutValue" value="5000" />
     <preference name="Fullscreen" value="true" />
     <preference name="Orientation" value="portrait" />
-    <preference name="DisallowOverscroll" value="true"/>
+    <preference name="DisallowOverscroll" value="true" />
     <preference name="stay-in-webview" value="true" />
+
 
     <feature name="SocialSharing">
         <param name="android-package" value="nl.xservices.plugins.SocialSharing" />

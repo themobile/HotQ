@@ -1,11 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="com.themobile.hotq" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>Hello Cordova</name>
-    <description>
-        A sample Apache Cordova application that responds to the deviceready event.
-    </description>
-    <access origin="*" />
-    <preference name="DisallowOverscroll" value="false" />
     <name>hotq</name>
     <description>
         Răspunde la întrebările care frământă România.
@@ -28,7 +22,7 @@
     <preference name="SplashScreenDelay" value="3000" />
     <preference name="AutoHideSplashScreen" value="false" />
     <preference name="FadeSplashScreen" value="true" />
-    <preference name="fade-splash-screen-duration" value="5" />
+    <preference name="fade-splash-screen-duration" value="1" />
     <preference name="KeepRunning" value="true" />
     <preference name="exit-on-suspend" value="false" />
     <preference name="LoadUrlTimeoutValue" value="5000" />

@@ -9,7 +9,7 @@ angular.module('hotq.controllers.indexpage', [])
         //hide splashscreen
         setTimeout(function() {
             navigator.splashscreen.hide();
-        }, 1000);
+        }, 500);
         $scope.toggleMenu = function () {
             snapRemote.toggle('left');
         }
