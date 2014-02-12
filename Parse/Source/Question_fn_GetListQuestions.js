@@ -34,13 +34,13 @@ Parse.Cloud.define("GetListQuestions", function (request, response) {
             objToAdd.resultPercentNo = 100 - objToAdd.resultPercentYes;
             objToAdd.period = "unknown";
             if (objToAdd.type == "day") {
-                objToAdd.period = moment(startDate).format("D MMM YYYY");
+                objToAdd.period = moment(startDate).format("D MMMM YYYY");
             } else {
                 if (objToAdd.type == "week") {
                     objToAdd.period = moment(startDate).format("D") +
-                        iif(moment(startDate).format("M") == moment(endDate).format("M"), "", moment(startDate).format(" MMM")) +
+                        iif(moment(startDate).format("M") == moment(endDate).format("M"), "", moment(startDate).format(" MMMM")) +
                         iif(moment(startDate).format("YY") == moment(endDate).format("YY"), "", moment(startDate).format(" YYYY")) +
-                        " - " + moment(endDate).format("D MMM YYYY");
+                        " - " + moment(endDate).format("D MMMM YYYY");
                 } else {
                     objToAdd.period = moment(startDate).format("MMMM YYYY");
                 }
