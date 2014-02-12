@@ -93,6 +93,7 @@
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
+    
 }
 
 - (BOOL)prefersStatusBarHidden
@@ -121,7 +122,6 @@
 - (void)webViewDidFinishLoad:(UIWebView*)theWebView
 {
     // Black base color for background matches the native apps
-    theWebView.backgroundColor = [UIColor blackColor];
 
     return [super webViewDidFinishLoad:theWebView];
 }

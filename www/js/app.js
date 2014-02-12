@@ -1,46 +1,83 @@
-angular.module("hotq", [
-        "ngRoute",
-        "ngAnimate",
-        "ngTouch",
-        "hotq.controllers.indexpage",
-        "hotq.controllers.demos",
-        "hotq.controllers.carousel",
-        "hotq.services",
-        'angular-carousel',
-        "shoppinpal.mobile-menu" ])
+'use strict';
+
+angular.module("hotq",
+        [
+            "ngRoute",
+            "ngAnimate",
+            "ngTouch",
+            'snap',
+            "hotq.controllers.indexpage",
+            "hotq.controllers.carousel",
+            "hotq.controllers.demos",
+            "hotq.controllers.sendquestion",
+            "hotq.services",
+            "hotq.directives",
+            'angular-carousel'
+
+        ])
 
 
     .config(function ($routeProvider) {
         $routeProvider
+            .when("/about", {
+                templateUrl: "partials/about.html",
+                resolve: {
+                    changeScreen: function ($rootScope) {
+                        $rootScope.currScreen = 'about';
+                    }
+                }
+            })
+            .when("/demographics", {
+                templateUrl: "partials/demographics.html",
+                controller: "demos",
+                resolve: {
+                    changeScreen: function ($rootScope) {
+                        $rootScope.currScreen = 'demographics';
+                    }
+                }
+            })
+            .when("/carousel", {
+                templateUrl: "partials/carousel.html",
+                controller: "carousel",
+                resolve: {
+                    changeScreen: function ($rootScope) {
+                        $rootScope.currScreen = 'questions';
+                    }
+                }
+            })
 
-            .when("/about", {templateUrl: "partials/about.html"})
-            .when("/demographics", {templateUrl: "partials/demographics.html",controller:"demos"})
-            .when("/carousel", {templateUrl: "partials/carousel.html",controller:"carousel"})
-            .otherwise({redirectTo: "/carousel"})
+            .when("/sendquestion",{
+                templateUrl:"partials/sendquestion.html",
+                controller:"sendquestion",
+                resolve: {
+                    changeScreen: function($rootScope){
+                        $rootScope.currScreen='sendquestion';
+                    }
+                }
+            })
+
+            .otherwise({redirectTo: "/carousel"});
     })
 
     .run(function ($window, $rootScope) {
 
-        $rootScope.online = navigator.onLine ? 'online' : 'offline';
+        $rootScope.isOnline = navigator.onLine ? 'online' : 'offline';
         $rootScope.$apply();
 
         if (!navigator.onLine) {
             superScope.loaderMessage = "hotq este offline! Avem nevoie de internet!";
-            superScope.loader = !isOnline;
+            superScope.loader = !superScope.isOnline;
         }
 
         document.addEventListener("online", function () {
             $rootScope.$broadcast('onlineChanged', true);
-        }, true)
+        }, true);
         document.addEventListener("offline", function () {
             $rootScope.$broadcast('onlineChanged', false);
-        }, true)
+        }, true);
 
 
-
-
-    }
-);
+    });
 
 
 

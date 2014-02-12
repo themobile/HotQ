@@ -1,10 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="com.themobile.hotq" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>Hello Cordova</name>
+    <name>hotq</name>
     <description>
-        A sample Apache Cordova application that responds to the deviceready event.
+        Răspunde la întrebările care frământă România.
     </description>
-    <access origin="*" />
+    <author email="info@themobile.ro" href="http://themobile.ro">
+        themobile.ro
+    </author>
     <preference name="AllowInlineMediaPlayback" value="false" />
     <preference name="BackupWebStorage" value="cloud" />
     <preference name="EnableViewportScale" value="false" />
@@ -15,21 +17,18 @@
     <preference name="GapBetweenPages" value="0" />
     <preference name="PageLength" value="0" />
     <preference name="PaginationBreakingMode" value="page" />
-    <name>hotq</name>
-    <description>
-        Răspunde la întrebările care frământă România.
-    </description>
-    <author email="info@themobile.ro" href="http://themobile.ro">
-        themobile.ro
-    </author>
     <preference name="PaginationMode" value="unpaginated" />
     <preference name="SplashScreen" value="splash" />
     <preference name="SplashScreenDelay" value="3000" />
-    <preference name="KeepRunning" value="false" />
+    <preference name="AutoHideSplashScreen" value="false" />
+    <preference name="FadeSplashScreen" value="true" />
+    <preference name="fade-splash-screen-duration" value="1" />
+    <preference name="KeepRunning" value="true" />
+    <preference name="exit-on-suspend" value="false" />
     <preference name="LoadUrlTimeoutValue" value="5000" />
     <preference name="Fullscreen" value="true" />
     <preference name="Orientation" value="portrait" />
-    <preference name="DisallowOverscroll" value="false" />
+    <preference name="DisallowOverscroll" value="true" />
     <preference name="stay-in-webview" value="true" />
     <feature name="LocalStorage">
         <param name="ios-package" value="CDVLocalStorage" />
@@ -52,6 +51,7 @@
     <feature name="SplashScreen">
         <param name="android-package" value="org.apache.cordova.splashscreen.SplashScreen" />
         <param name="ios-package" value="CDVSplashScreen" />
+        <param name="onload" value="true" />
     </feature>
     <feature name="InAppBrowser">
         <param name="android-package" value="org.apache.cordova.inappbrowser.InAppBrowser" />
@@ -61,8 +61,11 @@
         <param name="android-package" value="org.apache.cordova.networkinformation.NetworkManager" />
         <param name="ios-package" value="CDVConnection" />
     </feature>
+    <feature name="Console">
+        <param name="ios-package" value="CDVLogger" />
+    </feature>
     <access origin="*.pushwoosh.com" />
-    <access origin="https://*.parse.com" />
+    <access origin="*.parse.com" />
     <access origin="*.googleapis.com" />
     <access origin="*.google.com" />
     <access origin="*.gstatic.com" />
