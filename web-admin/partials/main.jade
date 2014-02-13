@@ -34,10 +34,10 @@
                                 textarea#text2.col-xs-12.form-control.input-lg(name='text2',type="text",placeholder='text2', rows='4', ng-model='q.text2')
                             label.col-xs-12(for='link') URL
                                 textarea#url.col-xs-12.form-control.input-lg(name='link',type="url",placeholder='link for information', rows='2', ng-model='q.link')
-                            label.col-xs-12(for='imageSource') Link Credit Source
-                                textarea#url.col-xs-12.form-control.input-lg(name='imageSource',type="text",placeholder='image source - credit', rows='2', ng-model='q.imageSource')
-                            label.col-xs-12(for='file') Image file
-                                input#file.col-xs-12.form-control.input-lg(type="file", name="file", ng-model="q.image",onchange="angular.element(this).scope().addFile(this.files)")
+                            //label.col-xs-12(for='imageSource') Link Credit Source
+                            //    textarea#url.col-xs-12.form-control.input-lg(name='imageSource',type="text",placeholder='image source - credit', rows='2', ng-model='q.imageSource')
+                            //label.col-xs-12(for='file') Image file
+                            //    input#file.col-xs-12.form-control.input-lg(type="file", name="file", ng-model="q.image",onchange="angular.element(this).scope().addFile(this.files)")
 
                         button.btn.btn-primary.pull-right.col-xs-4(type='submit',ng-click='addQuestion()',ng-disabled='addquestion.$invalid') Add question
                     p.p-success(ng-show="saveQuestionSuccess")    Succeeded to save the question.

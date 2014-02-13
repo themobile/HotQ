@@ -45,12 +45,10 @@
               <label for="link" class="col-xs-12">URL
                 <textarea id="url" name="link" type="url" placeholder="link for information" rows="2" ng-model="q.link" class="col-xs-12 form-control input-lg"></textarea>
               </label>
-              <label for="imageSource" class="col-xs-12">Link Credit Source
-                <textarea id="url" name="imageSource" type="text" placeholder="image source - credit" rows="2" ng-model="q.imageSource" class="col-xs-12 form-control input-lg"></textarea>
-              </label>
-              <label for="file" class="col-xs-12">Image file
-                <input id="file" type="file" name="file" ng-model="q.image" onchange="angular.element(this).scope().addFile(this.files)" class="col-xs-12 form-control input-lg"/>
-              </label>
+              <!--label.col-xs-12(for='imageSource') Link Credit Source-->
+              <!--    textarea#url.col-xs-12.form-control.input-lg(name='imageSource',type="text",placeholder='image source - credit', rows='2', ng-model='q.imageSource')-->
+              <!--label.col-xs-12(for='file') Image file-->
+              <!--    input#file.col-xs-12.form-control.input-lg(type="file", name="file", ng-model="q.image",onchange="angular.element(this).scope().addFile(this.files)")-->
             </div>
             <button type="submit" ng-click="addQuestion()" ng-disabled="addquestion.$invalid" class="btn btn-primary pull-right col-xs-4">Add question</button>
           </form>
