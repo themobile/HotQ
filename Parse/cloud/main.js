@@ -15,7 +15,7 @@ var theBillSecretKey = 'v0]w?I)2~T~S[6n0(z0*';
 var crypto = require('crypto');
 var Buffer = require('buffer').Buffer;
 var isProduction = Parse.applicationId == "MqJG79VqkwRoUZIFJrOJ348AYdXqAnifz603oSMM";
-var HotQVersion = '0.2.224';
+var HotQVersion = '0.2.230';
 var StringBuffer = function () {
     this.buffer = [];
 };
@@ -2243,13 +2243,13 @@ Parse.Cloud.define("GetListQuestions", function (request, response) {
             objToAdd.resultPercentNo = 100 - objToAdd.resultPercentYes;
             objToAdd.period = "unknown";
             if (objToAdd.type == "day") {
-                objToAdd.period = moment(startDate).format("D MMM YYYY");
+                objToAdd.period = moment(startDate).format("D MMMM YYYY");
             } else {
                 if (objToAdd.type == "week") {
                     objToAdd.period = moment(startDate).format("D") +
-                        iif(moment(startDate).format("M") == moment(endDate).format("M"), "", moment(startDate).format(" MMM")) +
+                        iif(moment(startDate).format("M") == moment(endDate).format("M"), "", moment(startDate).format(" MMMM")) +
                         iif(moment(startDate).format("YY") == moment(endDate).format("YY"), "", moment(startDate).format(" YYYY")) +
-                        " - " + moment(endDate).format("D MMM YYYY");
+                        " - " + moment(endDate).format("D MMMM YYYY");
                 } else {
                     objToAdd.period = moment(startDate).format("MMMM YYYY");
                 }
