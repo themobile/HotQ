@@ -2,7 +2,7 @@
     //h1 Main interface
     //    h5 hotQ admin system
 
-.content
+.content(ng-controller='main_addquestion')
 
 
     .row
@@ -11,7 +11,7 @@
                 .panel-heading
                     h2.panel-title Add hotQuestion
                 .panel-body
-                    form(name='addquestion',role='form', enctype="multipart/form-data", method="post", ng-controller='main_addquestion')
+                    form(name='addquestion',role='form', enctype="multipart/form-data", method="post")
                         .input-group.input-group-sm.col-xs-12
                             label.qType.col-xs-4(for='day') Day
                                 input#day.form-control(name='questiontype', ng-model='q.type',type='radio',value='day')

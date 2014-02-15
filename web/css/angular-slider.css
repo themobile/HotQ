@@ -2,8 +2,8 @@ slider {
     display: block;
     position: relative;
     height: 4px;
-    width: 80%;
-    margin:1em 10% 3em 10%;
+    width: 100%;
+    margin:1em 0 3em 0;
     vertical-align: middle;
     box-sizing: border-box;
 }

@@ -131,6 +131,7 @@ angular.module('hotq.controllers', [])
                 .then(
                 function (success) {
                     $scope.saveQuestionSuccess = true;
+                    $scope.q={};
                     $timeout(function () {
                         $scope.saveQuestionSuccess = false;
                     }, 3000);
@@ -163,6 +164,7 @@ angular.module('hotq.controllers', [])
                 .then(
                 function (success) {
                     $scope.saveQuoteSuccess = true;
+                    $scope.quote={};
                     $timeout(function () {
                         $scope.saveQuoteSuccess = false;
                     }, 3000);
