@@ -1,8 +1,8 @@
-(function(global) {
+(function (global) {
 
     /* smoothie.js */
     var Extender = {
-        extend: function() {
+        extend: function () {
             arguments[0] = arguments[0] || {};
             for (var i = 1; i < arguments.length; i++) {
                 for (var key in arguments[i]) {
@@ -24,7 +24,7 @@
     };
 
     // Rotator Control
-    var tgpAbsInd = function(options) {
+    var tgpAbsInd = function (options) {
 
         // Private vars
         var self, center;
@@ -125,7 +125,7 @@
             ]
         };
 
-        TgpAbsInd.prototype.paintTo = function(selector) {
+        TgpAbsInd.prototype.paintTo = function (selector) {
 
             var degsToRads = d3.scale.linear().domain([0, 360]).range([0, 2 * Math.PI]);
             d3.select("svg")
@@ -138,7 +138,7 @@
                 .append("svg")
                 .attr("width", this.options.width)
                 .attr("height", this.options.height)
-                .attr("class","animated pulse");
+                .attr("class", "animated pulse");
 
             center = {
                 x: this.options.width / 2,
@@ -195,7 +195,7 @@
                 .style("fill", "rgba(164,192,53,0)")
                 .attr("transform", "translate(" + center.x + "," + center.y + ")" +
                     "rotate(" + (180 - self.options.innerArea.arcsAngularGap / 2) + ")")
-                .attr("d", function(d, i) {
+                .attr("d", function (d, i) {
 
                     var _innerRadius = self.options.innerArea.circleRadius + self.options.innerArea.arcsPadding,
                         startAngle = degsToRads(arcAngularSize * i + self.options.innerArea.arcsAngularGap * (i + 1)),
@@ -216,14 +216,14 @@
                 .data(this.options.outerArcs)
                 .enter()
                 .append("path")
-                .attr("id", function(d) {
+                .attr("id", function (d) {
                     return d.id;
                 })
-                .style("fill", function(d) {
+                .style("fill", function (d) {
                     return d.fill;
                 })
                 .attr("transform", "translate(" + center.x + "," + center.y + ")")
-                .attr("d", function(d) {
+                .attr("d", function (d) {
 
                     var _startAngle = degsToRads(d.startAngle),
                         _angularSize = degsToRads(d.angularSize),
@@ -238,19 +238,23 @@
 
 
             innerArea.append("text")
-                .attr("dy",function(d){return -5})
-                .style("fill",'#F6AD40')
-                .style("font-size","16px")
-                .style("text-anchor","middle")
-                .text('DA: '+this.options.outerArcs[0].percentage+'%')
+                .attr("dy", function (d) {
+                    return -5
+                })
+                .style("fill", '#F6AD40')
+                .style("font-size", "16px")
+                .style("text-anchor", "middle")
+                .text('DA: ' + this.options.outerArcs[0].percentage + '%')
                 .attr("transform", "translate(" + center.x + "," + center.y + ")")
             ;
             innerArea.append("text")
-                .attr("dy",function(d){return 15})
-                .style("fill","rgba(246, 249, 228, 0.3)")
-                .style("font-size","16px")
-                .style("text-anchor","middle")
-                .text('NU: '+this.options.outerArcs[1].percentage+'%')
+                .attr("dy", function (d) {
+                    return 15
+                })
+                .style("fill", "rgba(246, 249, 228, 0.3)")
+                .style("font-size", "16px")
+                .style("text-anchor", "middle")
+                .text('NU: ' + this.options.outerArcs[1].percentage + '%')
                 .attr("transform", "translate(" + center.x + "," + center.y + ")")
             ;
 
@@ -258,26 +262,25 @@
             var t0 = Date.now();
 
 
+            if (!(/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent))) {
+
+                var step = function () {
+                    innerArea.attr("transform", function () {
+                        return "rotate(" + delta * self.options.innerArea.areaSpeed + "," + center.x + "," + center.y + ")";
+                    });
 
 
-            var step=function() {
-                innerArea.attr("transform", function() {
-                    return "rotate(" + delta * self.options.innerArea.areaSpeed + "," + center.x + "," + center.y + ")";
-                });
+                    var delta = (Date.now() - t0);
+                    outerArcs.attr("transform", function (d) {
+                        return "translate(" + center.x + "," + center.y + ") rotate(" + delta * d.speed + ")";
+                    });
 
+                    if (delta > 5000) return true;
 
-                var delta = (Date.now() - t0);
-                outerArcs.attr("transform", function(d) {
-                    return "translate(" + center.x + "," + center.y + ") rotate(" + delta * d.speed + ")";
-                });
+                };
 
-                if (delta>5000) return true;
-
-            };
-
-
-            var timer=d3.timer(step,00);
-
+                var timer = d3.timer(step, 00);
+            }
 
             return this;
         };

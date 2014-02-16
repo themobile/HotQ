@@ -4,7 +4,7 @@
 //    h5 hotQ admin system
 
 -->
-<div class="content">
+<div ng-controller="main_addquestion" class="content">
   <div class="row">
     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
       <div class="panel panel-info">
@@ -12,7 +12,7 @@
           <h2 class="panel-title">Add hotQuestion</h2>
         </div>
         <div class="panel-body">
-          <form name="addquestion" role="form" enctype="multipart/form-data" method="post" ng-controller="main_addquestion">
+          <form name="addquestion" role="form" enctype="multipart/form-data" method="post">
             <div class="input-group input-group-sm col-xs-12">
               <label for="day" class="qType col-xs-4">Day
                 <input id="day" name="questiontype" ng-model="q.type" type="radio" value="day" class="form-control"/>
