@@ -16,6 +16,7 @@ Parse.Cloud.define("GetQuestionsNew", function (request, response) {
     }
     var qInst = new Parse.Query("Device");
     qInst.equalTo("installationId", request.params.installationId);
+    qInst.notEqualTo("isDeleted",true);
     qInst.first().then(function (device) {
         if (device) {
             deviceId = device.id;

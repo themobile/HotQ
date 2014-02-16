@@ -15,7 +15,7 @@ var theBillSecretKey = 'v0]w?I)2~T~S[6n0(z0*';
 var crypto = require('crypto');
 var Buffer = require('buffer').Buffer;
 var isProduction = Parse.applicationId == "MqJG79VqkwRoUZIFJrOJ348AYdXqAnifz603oSMM";
-var HotQVersion = '0.2.230';
+var HotQVersion = '0.2.232';
 var StringBuffer = function () {
     this.buffer = [];
 };
@@ -2213,7 +2213,7 @@ Parse.Cloud.define("GetListQuestions", function (request, response) {
         , startDate
         , endDate
         ;
-    endDate = moment().format('YYYY-MM-DD') + 'T00:00:00.000Z';
+    endDate = moment().subtract('days', 1).format('YYYY-MM-DD') + 'T00:00:00.000Z';
     startDate = moment(endDate).subtract('days', 31).format('YYYY-MM-DD') + 'T00:00:00.000Z';
 
     var qQuestion = new Parse.Query("Question");
@@ -2273,6 +2273,7 @@ Parse.Cloud.define("GetListQuestions", function (request, response) {
     }
     var qInst = new Parse.Query("Device");
     qInst.equalTo("installationId", request.params.installationId);
+    qInst.notEqualTo("isDeleted",true);
     qInst.first().then(function (device) {
         if (device) {
             deviceId = device.id;
@@ -2467,6 +2468,7 @@ Parse.Cloud.define("GetQuestionsNew", function (request, response) {
     }
     var qInst = new Parse.Query("Device");
     qInst.equalTo("installationId", request.params.installationId);
+    qInst.notEqualTo("isDeleted",true);
     qInst.first().then(function (device) {
         if (device) {
             deviceId = device.id;

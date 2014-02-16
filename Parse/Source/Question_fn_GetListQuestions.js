@@ -4,7 +4,7 @@ Parse.Cloud.define("GetListQuestions", function (request, response) {
         , startDate
         , endDate
         ;
-    endDate = moment().format('YYYY-MM-DD') + 'T00:00:00.000Z';
+    endDate = moment().subtract('days', 1).format('YYYY-MM-DD') + 'T00:00:00.000Z';
     startDate = moment(endDate).subtract('days', 31).format('YYYY-MM-DD') + 'T00:00:00.000Z';
 
     var qQuestion = new Parse.Query("Question");

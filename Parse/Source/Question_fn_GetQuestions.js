@@ -1,3 +1,8 @@
+/**
+ *  Atentie!!!!!
+ *  Aplicatia mobila lanseaza GetQuestionsNew
+ *
+ * */
 Parse.Cloud.define("GetQuestions", function (request, response) {
     var theDate
         , deviceId
@@ -11,6 +16,7 @@ Parse.Cloud.define("GetQuestions", function (request, response) {
     }
     var qInst = new Parse.Query("Device");
     qInst.equalTo("installationId", request.params.installationId);
+    qInst.notEqualTo("isDeleted",true);
     qInst.first().then(function (device) {
         if (device) {
             deviceId = device.id;
