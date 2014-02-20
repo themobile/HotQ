@@ -110,7 +110,7 @@ angular.module('hotq.controllers', [])
 
     })
 
-    .controller('main_addquestion', function ($scope, sendQuestion, $timeout) {
+    .controller('main_addquestion', function ($scope, sendQuestion, $timeout, userQuestions) {
 
 
         $scope.saveQuestionSuccess = false;
@@ -122,12 +122,12 @@ angular.module('hotq.controllers', [])
             $scope.files = files[0];
         };
 
-        $scope.getCategory = function() {
+        $scope.getCategory = function () {
             userQuestions.getCategory().then(
-                function(data) {
+                function (data) {
                     $scope.qCategory = data;
                 },
-                function(error){
+                function (error) {
                     $scope.saveQuestionError = true;
                     $timeout(function () {
                         $scope.saveQuestionError = false;

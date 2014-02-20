@@ -27,8 +27,9 @@ angular.module('hotq.services', [])
                         url: 'https://api.parse.com/1/classes/QuestionCategory',
                         headers: credent1,
                         withCredentials: false,
-                        cache: false,
-                        params: {"where": "{\"isDeleted\":{\"$ne\":true}}"}
+                        cache: false
+//                        ,
+//                        params: {"where": "{\"isDeleted\":{\"$ne\":true}}"}
                     }
                 )
                     .success(function (data) {

@@ -2,8 +2,7 @@
     //h1 Main interface
     //    h5 hotQ admin system
 
-.content(ng-controller='main_addquestion')
-
+.content(ng-controller='main_addquestion', ng-init='getCategory()')
 
     .row
         .col-lg-6.col-md-6.col-sm-6.col-xs-12
@@ -21,7 +20,7 @@
                                 input#month.form-control(name='questiontype', type='radio', ng-model='q.type',value='month')
                         .input-group.input-group-sm
                             label.col-xs-12.qCategory(for='category') Category
-                                select#category.form-control(ng-model='qCategory')
+                                select#category.form-control(ng-model='qCategory.name')
                             label.col-xs-12.qCategory(for='startdate') Start Date
                                 input#startdate.form-control(type='date',name='startdate', ng-model='q.startDate')
 
