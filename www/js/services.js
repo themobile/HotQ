@@ -10,8 +10,8 @@ angular.module('hotq.services', []).
     .factory('parseBAAS', function ($http) {
         var parseCredentials, result;
         parseCredentials = {
-            "X-Parse-Application-Id": "oYvsd9hx0NoIlgEadXJsqCtU1PgjcPshRqy18kmP",
-            "X-Parse-REST-API-Key": "gX3SUxGPeSnAefjtFmF9MeWpbTIa9YhC8q1n7hLk",
+            "X-Parse-Application-Id": "MqJG79VqkwRoUZIFJrOJ348AYdXqAnifz603oSMM",
+            "X-Parse-REST-API-Key": "gzDPTv9R1WG5iYCAuqXTLOj50VAqN5joOH6ogWpM",
             "Content-Type": "application/json"
         };
 

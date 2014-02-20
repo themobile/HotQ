@@ -107,13 +107,13 @@ angular.module('hotq.controllers.indexpage', [])
                 return dfd.promise;
             };
 
-//
-            checkPoosh()
-                .then(function (data) {
-                    console.log(data);
-                    return getQuestions(data);
-                })
-//            getQuestions('SUs4MpZYPFdgLOegoom3xA==')
+////
+//            checkPoosh()
+//                .then(function (data) {
+//                    console.log(data);
+//                    return getQuestions(data);
+//                })
+            getQuestions('SUs4MpZYPFdgLOegoom3xA==')
                 .then(function () {
                     var hotQLocal = window.localStorage.getItem("hotQuestions");
                     if (hotQLocal && hotQLocal != 'undefined') {

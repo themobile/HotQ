@@ -26,7 +26,9 @@
             </div>
             <div class="input-group input-group-sm">
               <label for="category" class="col-xs-12 qCategory">Category
-                <select id="category" ng-model="qCategory.name" class="form-control"></select>
+                <select id="category" ng-model="qCategorySelected" class="form-control">
+                  <option ng-repeat="categ in qCategory" value="{{categ.name}}">{{categ.name}}</option>
+                </select>
               </label>
               <label for="startdate" class="col-xs-12 qCategory">Start Date
                 <input id="startdate" type="date" name="startdate" ng-model="q.startDate" class="form-control"/>

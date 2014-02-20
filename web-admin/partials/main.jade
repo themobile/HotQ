@@ -20,7 +20,8 @@
                                 input#month.form-control(name='questiontype', type='radio', ng-model='q.type',value='month')
                         .input-group.input-group-sm
                             label.col-xs-12.qCategory(for='category') Category
-                                select#category.form-control(ng-model='qCategory.name')
+                                select#category.form-control(ng-model='qCategorySelected')
+                                    option(ng-repeat="categ in qCategory" value="{{categ.name}}") {{categ.name}}
                             label.col-xs-12.qCategory(for='startdate') Start Date
                                 input#startdate.form-control(type='date',name='startdate', ng-model='q.startDate')
 

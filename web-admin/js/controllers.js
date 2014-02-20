@@ -116,6 +116,7 @@ angular.module('hotq.controllers', [])
         $scope.saveQuestionSuccess = false;
         $scope.saveQuestionError = false;
         $scope.qCategory = [];
+        $scope.qCategorySelected=null;
 
 
         $scope.addFile = function (files) {
@@ -125,7 +126,7 @@ angular.module('hotq.controllers', [])
         $scope.getCategory = function () {
             userQuestions.getCategory().then(
                 function (data) {
-                    $scope.qCategory = data;
+                    $scope.qCategory = data.data.results;
                 },
                 function (error) {
                     $scope.saveQuestionError = true;
