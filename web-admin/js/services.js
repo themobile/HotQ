@@ -9,15 +9,36 @@ angular.module('hotq.services', [])
     .value('version', '0.1')
 
 
-    .factory('userQuestions', function ($http,userservice) {
+    .factory('userQuestions', function ($http, userservice) {
 
 
-        var userQ = [];
-        var credent1=userservice.getCredentials();
-        var credent2=credent1;
-        credent1['Content-Type']= 'application/x-www-form-urlencoded'
-        credent2['Content-Type']= 'application/json'
+        var userQ = []
+            , qCategory = []
+            ;
+        var credent1 = userservice.getCredentials();
+        var credent2 = credent1;
+        credent1['Content-Type'] = 'application/x-www-form-urlencoded'
+        credent2['Content-Type'] = 'application/json'
         return {
+            getCategory: function () {
+                return $http(
+                    {
+                        method: 'GET',
+                        url: 'https://api.parse.com/1/classes/QuestionCategory',
+                        headers: credent1,
+                        withCredentials: false,
+                        cache: false,
+                        params: {"where": "{\"isDeleted\":{\"$ne\":true}}"}
+                    }
+                )
+                    .success(function (data) {
+                        qCategory = data.results;
+                    })
+                    .error(function (error) {
+
+                    })
+            },
+
             getAll: function () {
                 return $http(
                     {
@@ -26,7 +47,7 @@ angular.module('hotq.services', [])
                         headers: credent1,
                         withCredentials: false,
                         cache: false,
-                        params:{"where":"{\"isDeleted\":{\"$ne\":true}}"}
+                        params: {"where": "{\"isDeleted\":{\"$ne\":true}}"}
                     }
                 )
                     .success(function (data) {
@@ -37,7 +58,7 @@ angular.module('hotq.services', [])
                     })
             },
 
-            deleteQuestion: function(id) {
+            deleteQuestion: function (id) {
                 return $http(
                     {
                         method: 'PUT',
@@ -45,18 +66,18 @@ angular.module('hotq.services', [])
                         headers: credent2,
                         withCredentials: false,
                         cache: false,
-                        data: {"isDeleted":true}
+                        data: {"isDeleted": true}
                     }
                 )
                     .success(function (data) {
-                        userQ.splice(id,1);
+                        userQ.splice(id, 1);
                     })
                     .error(function (error) {
 
                     })
             },
 
-            markQuestion: function(newMark,index) {
+            markQuestion: function (newMark, index) {
 
                 return $http(
                     {
@@ -65,11 +86,11 @@ angular.module('hotq.services', [])
                         headers: credent2,
                         withCredentials: false,
                         cache: false,
-                        data: {"isRead":newMark}
+                        data: {"isRead": newMark}
                     }
                 )
                     .success(function (data) {
-                        userQ[index].isRead=newMark;
+                        userQ[index].isRead = newMark;
                     })
                     .error(function (error) {
 
@@ -81,12 +102,11 @@ angular.module('hotq.services', [])
         }
     })
 
-
     .factory('userservice', function ($http, $q, $cookieStore) {
 
         var parseCredentials = {
-            "X-Parse-Application-Id": "oYvsd9hx0NoIlgEadXJsqCtU1PgjcPshRqy18kmP",
-            "X-Parse-REST-API-Key": "gX3SUxGPeSnAefjtFmF9MeWpbTIa9YhC8q1n7hLk",
+            "X-Parse-Application-Id": "MqJG79VqkwRoUZIFJrOJ348AYdXqAnifz603oSMM",
+            "X-Parse-REST-API-Key": "gzDPTv9R1WG5iYCAuqXTLOj50VAqN5joOH6ogWpM",
             "X-Parse-Session-Token": '',
             "Content-Type": "application/json"
         };
@@ -107,7 +127,7 @@ angular.module('hotq.services', [])
                 )
                     .success(function (data) {
                         userData = data;
-                        parseCredentials['X-Parse-Session-Token']=userData.sessionToken;
+                        parseCredentials['X-Parse-Session-Token'] = userData.sessionToken;
                         if (user.remember == 1) {
                             $cookieStore.put('hotQAdminUser', userData);
                         } else {
@@ -175,7 +195,7 @@ angular.module('hotq.services', [])
                     text2: question.text2,
                     startDate: question.startDate,
                     link: question.url,
-                    imageSource:question.imageSource
+                    imageSource: question.imageSource
                 };
 
 
@@ -232,9 +252,6 @@ angular.module('hotq.services', [])
         }
 
     })
-
-
-
 
 
     .factory('sendQuote', function ($http, userservice) {

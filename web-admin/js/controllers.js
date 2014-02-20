@@ -4,37 +4,34 @@
 
 angular.module('hotq.controllers', [])
 
-    .controller('main', function ($scope,questions) {
+    .controller('main', function ($scope, questions) {
 
 
     })
 
 
-    .controller('main_userquestions', function ($scope, userQuestions,userservice,$timeout) {
+    .controller('main_userquestions', function ($scope, userQuestions, userservice, $timeout) {
 
-        $scope.operationError=false;
-        $scope.user=userservice.getUser();
-        $scope.questions=[];
+        $scope.operationError = false;
+        $scope.user = userservice.getUser();
+        $scope.questions = [];
 
-        $scope.currentPage=0;
-        $scope.pageSize=10;
-
-
+        $scope.currentPage = 0;
+        $scope.pageSize = 10;
 
 
-        $scope.numberOfPages=function() {
-            return Math.ceil($scope.questions.length/$scope.pageSize);
-        }
+        $scope.numberOfPages = function () {
+            return Math.ceil($scope.questions.length / $scope.pageSize);
+        };
 
-
-        $scope.getAll=function() {
+        $scope.getAll = function () {
             userQuestions.getAll().then(
-                function(data){
-                    $scope.questions=data.data.results;
+                function (data) {
+                    $scope.questions = data.data.results;
 
                 },
-                function(error){
-                    $scope.questions='Error retrieving user questions!';
+                function (error) {
+                    $scope.questions = 'Error retrieving user questions!';
                     $scope.operationError = true;
                     $timeout(function () {
                         $scope.operationError = false;
@@ -44,13 +41,13 @@ angular.module('hotq.controllers', [])
             );
         };
 
-        $scope.deleteQuestion=function(index) {
+        $scope.deleteQuestion = function (index) {
             userQuestions.deleteQuestion(index).then(
-                function(success) {
+                function (success) {
 //                    $scope.questions.splice(index,1);
 
                 },
-                function(error){
+                function (error) {
                     console.log('nu am putut sterge');
                     $scope.operationError = true;
                     $timeout(function () {
@@ -58,50 +55,50 @@ angular.module('hotq.controllers', [])
                     }, 3000);
                 }
             )
-        }
+        };
 
 
-        $scope.isRead=function(index) {
-            var res=$scope.questions[index].isRead;
-            var username=userservice.getUser().username;
+        $scope.isRead = function (index) {
+            var res = $scope.questions[index].isRead;
+            var username = userservice.getUser().username;
             if (res) {
-                return (res.indexOf(username)>=0) ? true : false;
+                return (res.indexOf(username) >= 0) ? true : false;
             } else {
                 return false;
             }
-        }
+        };
 
 
-        $scope.markQuestion=function(index) {
+        $scope.markQuestion = function (index) {
 
-            var username= userservice.getUser().username;
-            var unmark,res,newMark=[];
-            if ($scope.questions[index].isRead){
-                res=$scope.questions[index].isRead.indexOf(username);
+            var username = userservice.getUser().username;
+            var unmark, res, newMark = [];
+            if ($scope.questions[index].isRead) {
+                res = $scope.questions[index].isRead.indexOf(username);
             } else {
-                $scope.questions[index].isRead=[];
-                res=-1;
+                $scope.questions[index].isRead = [];
+                res = -1;
             }
 
 
-            if (res==-1) {
-                unmark=false;
+            if (res == -1) {
+                unmark = false;
                 $scope.questions[index].isRead.push(username);
-                newMark=$scope.questions[index].isRead;
+                newMark = $scope.questions[index].isRead;
             } else {
-                unmark=true;
-                $scope.questions[index].isRead.splice(res,1);
-                newMark=$scope.questions[index].isRead;
+                unmark = true;
+                $scope.questions[index].isRead.splice(res, 1);
+                newMark = $scope.questions[index].isRead;
 
             }
 
 
-            userQuestions.markQuestion(newMark,index).then(
-                function(success) {
-                    $scope.questions[index].isRead=newMark;
+            userQuestions.markQuestion(newMark, index).then(
+                function (success) {
+                    $scope.questions[index].isRead = newMark;
 
                 },
-                function(error){
+                function (error) {
                     console.log('nu am putut marca');
                     $scope.operationError = true;
                     $timeout(function () {
@@ -118,12 +115,26 @@ angular.module('hotq.controllers', [])
 
         $scope.saveQuestionSuccess = false;
         $scope.saveQuestionError = false;
+        $scope.qCategory = [];
 
 
         $scope.addFile = function (files) {
             $scope.files = files[0];
-        }
+        };
 
+        $scope.getCategory = function() {
+            userQuestions.getCategory().then(
+                function(data) {
+                    $scope.qCategory = data;
+                },
+                function(error){
+                    $scope.saveQuestionError = true;
+                    $timeout(function () {
+                        $scope.saveQuestionError = false;
+                    }, 3000);
+                }
+            )
+        };
 
         $scope.addQuestion = function () {
 
@@ -131,7 +142,7 @@ angular.module('hotq.controllers', [])
                 .then(
                 function (success) {
                     $scope.saveQuestionSuccess = true;
-                    $scope.q={};
+                    $scope.q = {};
                     $timeout(function () {
                         $scope.saveQuestionSuccess = false;
                     }, 3000);
@@ -152,11 +163,11 @@ angular.module('hotq.controllers', [])
 
         $scope.saveQuoteSuccess = false;
         $scope.saveQuoteError = false;
-        $scope.quote={};
+        $scope.quote = {};
 
         $scope.addFile = function (files) {
             $scope.files = files[0];
-        }
+        };
 
 
         $scope.addQuote = function () {
@@ -164,7 +175,7 @@ angular.module('hotq.controllers', [])
                 .then(
                 function (success) {
                     $scope.saveQuoteSuccess = true;
-                    $scope.quote={};
+                    $scope.quote = {};
                     $timeout(function () {
                         $scope.saveQuoteSuccess = false;
                     }, 3000);
@@ -181,8 +192,6 @@ angular.module('hotq.controllers', [])
     })
 
 
-
-
     .controller('login', function ($scope, userservice, $location, $timeout, $log) {
         $scope.error = false;
         $scope.success = false;
@@ -195,7 +204,7 @@ angular.module('hotq.controllers', [])
         $scope.logout = function () {
             userservice.logout();
             $scope.reset();
-        }
+        };
 
         $scope.user = userservice.getUser();
 
@@ -239,4 +248,4 @@ angular.module('hotq.controllers', [])
         }
 
 
-    })
+    });
