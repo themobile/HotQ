@@ -3,7 +3,6 @@ Parse.Cloud.job("SetQuestion", function (request, status) {
         , jobParam = request.params
         , jobRunId
         , theDate = _parseDate(moment().format("YYYY-MM-DD") + "T00:00:00.000Z")
-        , dayId, weekId, monthId, quoteId
         ;
 
     Parse.Cloud.useMasterKey();
@@ -12,45 +11,8 @@ Parse.Cloud.job("SetQuestion", function (request, status) {
         parameters: jobParam
     }).then(function (jobRun) {
             jobRunId = jobRun;
-
-            return _GetCurrentQs(theDate, "day");
-        }).then(function (retD) {
-            if (retD) {
-                dayId = _parsePointer("Question", retD.id);
-            }
-            return _GetCurrentQs(theDate, "week");
-        }).then(function (retW) {
-            if (retW) {
-                weekId = _parsePointer("Question", retW.id);
-            }
-            return _GetCurrentQs(theDate, "month");
-        }).then(function (retM) {
-            if (retM) {
-                monthId = _parsePointer("Question", retM.id);
-            }
-            return _GetRandomQuote();
-        }).then(function (retQuote) {
-            if (retQuote) {
-                quoteId = _parsePointer("Quote", retQuote.id);
-            }
-            var qS = new Parse.Query("QuestionSelect");
-            qS.equalTo("date", theDate);
-            qS.notEqualTo("isDeleted", true);
-            return qS.first();
-        }).then(function (activeQuestion) {
-            if (!(activeQuestion)) {
-                var QT = Parse.Object.extend("QuestionSelect");
-                activeQuestion = new QT();
-                activeQuestion.set("date", theDate);
-                activeQuestion.setACL(_getAdminACL());
-            }
-            activeQuestion.increment("updates");
-            activeQuestion.set("questionOfDay", dayId);
-            activeQuestion.set("questionOfWeek", weekId);
-            activeQuestion.set("questionOfMonth", monthId);
-            activeQuestion.set("quoteId", quoteId);
-            return activeQuestion.save();
-        }).then(function (qTSaved) {
+            return _AddDate(theDate);
+        }).then(function () {
             return AddJobRunHistory({
                 name: jobName,
                 jobId: _parsePointer("AppJob", jobRunId.jobId),
@@ -80,6 +42,57 @@ Parse.Cloud.job("SetQuestion", function (request, status) {
                 });
         });
 });
+
+
+_AddDate = function (date) {
+    var promise = new Parse.Promise()
+        , dayId, weekId, monthId, quoteId
+        ;
+    _GetCurrentQs(date, "day").then(function (retD) {
+        if (retD) {
+            dayId = _parsePointer("Question", retD.id);
+        }
+        return _GetCurrentQs(date, "week");
+    }).then(function (retW) {
+            if (retW) {
+                weekId = _parsePointer("Question", retW.id);
+            }
+            return _GetCurrentQs(date, "month");
+        }).then(function (retM) {
+            if (retM) {
+                monthId = _parsePointer("Question", retM.id);
+            }
+            return _GetRandomQuote();
+        }).then(function (retQuote) {
+            if (retQuote) {
+                quoteId = _parsePointer("Quote", retQuote.id);
+            }
+            var qS = new Parse.Query("QuestionSelect");
+            qS.equalTo("date", date);
+            qS.notEqualTo("isDeleted", true);
+            return qS.first();
+        }).then(function (activeQuestion) {
+            if (!(activeQuestion)) {
+                var QT = Parse.Object.extend("QuestionSelect");
+                activeQuestion = new QT();
+                activeQuestion.set("date", date);
+                activeQuestion.setACL(_getAdminACL());
+            }
+            activeQuestion.increment("updates");
+            activeQuestion.set("questionOfDay", dayId);
+            activeQuestion.set("questionOfWeek", weekId);
+            activeQuestion.set("questionOfMonth", monthId);
+            activeQuestion.set("quoteId", quoteId);
+            return activeQuestion.save();
+        }
+    ).then(function (questionSelectUpdated) {
+            promise.resolve(questionSelectUpdated);
+        }, function (error) {
+            promise.reject(error);
+        });
+    return promise;
+};
+
 
 _GetCurrentQs = function (date, type) {
     var promise = new Parse.Promise()

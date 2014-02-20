@@ -556,7 +556,6 @@ Parse.Cloud.define("JobHistory", function (request, response) {
     if (!(pageNo) || (pageNo < 1)) {
         pageNo = 1;
     }
-
     qJob.equalTo("name", request.params.name);
     qJob.first().then(function (job) {
         if (job) {
@@ -564,7 +563,7 @@ Parse.Cloud.define("JobHistory", function (request, response) {
                 jobId: job.id
             }
         } else {
-            return Parse.Promise.error("There is no such job.");
+            return Parse.Promise.error("There is no such job or you aren't authenticated!");
         }
     }).then(function (objJob) {
             if (objJob.jobId) {
@@ -1589,6 +1588,124 @@ _DeviceAnalysis = function (device) {
     return promise;
 };
 
+Parse.Cloud.job("QuoteChange", function (request, status) {
+    var jobName = "QuoteChange"
+        , jobParam = request.params
+        , jobRunId
+        , quoteId
+        ;
+
+    Parse.Cloud.useMasterKey();
+    AddJobRunCounter({
+        name: jobName,
+        parameters: jobParam
+    }).then(function (jobRun) {
+            jobRunId = jobRun;
+            return _GetRandomQuote();
+        }).then(function (objQuote) {
+            if (objQuote) {
+                quoteId = _parsePointer("Quote", objQuote.id);
+
+                var qS = new Parse.Query("QuestionSelect");
+                qS.notEqualTo("isDeleted", true);
+                qS.descending("date");
+                return qS.first();
+            } else {
+                return Parse.Promise.as();
+            }
+        }).then(function (activeQuestion) {
+            if (activeQuestion) {
+                activeQuestion.set("quoteId", quoteId);
+                return activeQuestion.save();
+            }
+        }).then(function () {
+            return AddJobRunHistory({
+                name: jobName,
+                jobId: _parsePointer("AppJob", jobRunId.jobId),
+                jobIdText: jobRunId.jobId,
+                runCounter: jobRunId.jobRunCounter,
+                parameters: jobParam,
+                status: "success",
+                statusObject: {result: "ok"}
+            }).then(function () {
+                    status.success("ok");
+                }, function (error) {
+                    status.error(JSON.stringify(error));
+                });
+        }, function (error) {
+            return AddJobRunHistory({
+                name: jobName,
+                jobId: _parsePointer("AppJob", jobRunId.jobId),
+                jobIdText: jobRunId.jobId,
+                runCounter: jobRunId.jobRunCounter,
+                parameters: jobParam,
+                status: "error",
+                statusObject: error
+            }).then(function () {
+                    status.error(JSON.stringify(error));
+                }, function (error) {
+                    status.error(JSON.stringify(error));
+                });
+        });
+});Parse.Cloud.job("ReSetQuestion", function (request, status) {
+    var jobName = "ReSetQuestion"
+        , jobParam = request.params
+        , jobRunId
+        , theDate = _parseDate(moment().format("YYYY-MM-DD") + "T00:00:00.000Z")
+//        , qsExisted = false
+        , jobResultText = "Existed"
+        ;
+
+    Parse.Cloud.useMasterKey();
+    AddJobRunCounter({
+        name: jobName,
+        parameters: jobParam
+    }).then(function (jobRun) {
+            jobRunId = jobRun;
+
+            var qS = new Parse.Query("QuestionSelect");
+            qS.equalTo("date", theDate);
+            qS.notEqualTo("isDeleted", true);
+            return qS.first();
+
+        }).then(function (qsFounded) {
+            if (qsFounded) {
+//                qsExisted = true;
+                return Parse.Promise.as();
+            } else {
+                jobResultText = "NOT Existed";
+                return _AddDate(theDate);
+            }
+        }).then(function () {
+            return AddJobRunHistory({
+                name: jobName,
+                jobId: _parsePointer("AppJob", jobRunId.jobId),
+                jobIdText: jobRunId.jobId,
+                runCounter: jobRunId.jobRunCounter,
+                parameters: jobParam,
+                status: "success",
+                statusObject: {result: jobResultText}
+            }).then(function () {
+                    status.success("ok");
+                }, function (error) {
+                    status.error(JSON.stringify(error));
+                });
+        }, function (error) {
+            return AddJobRunHistory({
+                name: jobName,
+                jobId: _parsePointer("AppJob", jobRunId.jobId),
+                jobIdText: jobRunId.jobId,
+                runCounter: jobRunId.jobRunCounter,
+                parameters: jobParam,
+                status: "error",
+                statusObject: error
+            }).then(function () {
+                    status.error(JSON.stringify(error));
+                }, function (error) {
+                    status.error(JSON.stringify(error));
+                });
+        });
+});
 Parse.Cloud.job("ResultProcess", function (request, status) {
     var jobName = "ResultProcess"
         , jobParam = request.params
@@ -1728,7 +1845,6 @@ Parse.Cloud.job("SetQuestion", function (request, status) {
         , jobParam = request.params
         , jobRunId
         , theDate = _parseDate(moment().format("YYYY-MM-DD") + "T00:00:00.000Z")
-        , dayId, weekId, monthId, quoteId
         ;
 
     Parse.Cloud.useMasterKey();
@@ -1737,45 +1853,8 @@ Parse.Cloud.job("SetQuestion", function (request, status) {
         parameters: jobParam
     }).then(function (jobRun) {
             jobRunId = jobRun;
-
-            return _GetCurrentQs(theDate, "day");
-        }).then(function (retD) {
-            if (retD) {
-                dayId = _parsePointer("Question", retD.id);
-            }
-            return _GetCurrentQs(theDate, "week");
-        }).then(function (retW) {
-            if (retW) {
-                weekId = _parsePointer("Question", retW.id);
-            }
-            return _GetCurrentQs(theDate, "month");
-        }).then(function (retM) {
-            if (retM) {
-                monthId = _parsePointer("Question", retM.id);
-            }
-            return _GetRandomQuote();
-        }).then(function (retQuote) {
-            if (retQuote) {
-                quoteId = _parsePointer("Quote", retQuote.id);
-            }
-            var qS = new Parse.Query("QuestionSelect");
-            qS.equalTo("date", theDate);
-            qS.notEqualTo("isDeleted", true);
-            return qS.first();
-        }).then(function (activeQuestion) {
-            if (!(activeQuestion)) {
-                var QT = Parse.Object.extend("QuestionSelect");
-                activeQuestion = new QT();
-                activeQuestion.set("date", theDate);
-                activeQuestion.setACL(_getAdminACL());
-            }
-            activeQuestion.increment("updates");
-            activeQuestion.set("questionOfDay", dayId);
-            activeQuestion.set("questionOfWeek", weekId);
-            activeQuestion.set("questionOfMonth", monthId);
-            activeQuestion.set("quoteId", quoteId);
-            return activeQuestion.save();
-        }).then(function (qTSaved) {
+            return _AddDate(theDate);
+        }).then(function () {
             return AddJobRunHistory({
                 name: jobName,
                 jobId: _parsePointer("AppJob", jobRunId.jobId),
@@ -1805,6 +1884,57 @@ Parse.Cloud.job("SetQuestion", function (request, status) {
                 });
         });
 });
+
+
+_AddDate = function (date) {
+    var promise = new Parse.Promise()
+        , dayId, weekId, monthId, quoteId
+        ;
+    _GetCurrentQs(date, "day").then(function (retD) {
+        if (retD) {
+            dayId = _parsePointer("Question", retD.id);
+        }
+        return _GetCurrentQs(date, "week");
+    }).then(function (retW) {
+            if (retW) {
+                weekId = _parsePointer("Question", retW.id);
+            }
+            return _GetCurrentQs(date, "month");
+        }).then(function (retM) {
+            if (retM) {
+                monthId = _parsePointer("Question", retM.id);
+            }
+            return _GetRandomQuote();
+        }).then(function (retQuote) {
+            if (retQuote) {
+                quoteId = _parsePointer("Quote", retQuote.id);
+            }
+            var qS = new Parse.Query("QuestionSelect");
+            qS.equalTo("date", date);
+            qS.notEqualTo("isDeleted", true);
+            return qS.first();
+        }).then(function (activeQuestion) {
+            if (!(activeQuestion)) {
+                var QT = Parse.Object.extend("QuestionSelect");
+                activeQuestion = new QT();
+                activeQuestion.set("date", date);
+                activeQuestion.setACL(_getAdminACL());
+            }
+            activeQuestion.increment("updates");
+            activeQuestion.set("questionOfDay", dayId);
+            activeQuestion.set("questionOfWeek", weekId);
+            activeQuestion.set("questionOfMonth", monthId);
+            activeQuestion.set("quoteId", quoteId);
+            return activeQuestion.save();
+        }
+    ).then(function (questionSelectUpdated) {
+            promise.resolve(questionSelectUpdated);
+        }, function (error) {
+            promise.reject(error);
+        });
+    return promise;
+};
+
 
 _GetCurrentQs = function (date, type) {
     var promise = new Parse.Promise()
@@ -2260,7 +2390,12 @@ Parse.Cloud.define("GetListQuestions", function (request, response) {
     }, function (error) {
         response.error(error);
     });
-});Parse.Cloud.define("GetQuestions", function (request, response) {
+});/**
+ *  Atentie!!!!!
+ *  Aplicatia mobila lanseaza GetQuestionsNew
+ *
+ * */
+Parse.Cloud.define("GetQuestions", function (request, response) {
     var theDate
         , deviceId
         , result = {}

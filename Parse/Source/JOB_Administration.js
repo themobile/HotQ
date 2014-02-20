@@ -19,7 +19,6 @@ Parse.Cloud.define("JobHistory", function (request, response) {
     if (!(pageNo) || (pageNo < 1)) {
         pageNo = 1;
     }
-
     qJob.equalTo("name", request.params.name);
     qJob.first().then(function (job) {
         if (job) {
@@ -27,7 +26,7 @@ Parse.Cloud.define("JobHistory", function (request, response) {
                 jobId: job.id
             }
         } else {
-            return Parse.Promise.error("There is no such job.");
+            return Parse.Promise.error("There is no such job or you aren't authenticated!");
         }
     }).then(function (objJob) {
             if (objJob.jobId) {
