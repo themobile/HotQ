@@ -144,8 +144,8 @@ _AddDateCateg = function (date) {
             }
             activeQuestion.set("quoteId", quoteId);
             return activeQuestion.save();
-        }).then(function (questionSelectUpdated) {
-            promise.resolve(questionSelectUpdated);
+        }).then(function (questionOnLineUpdated) {
+            promise.resolve(questionOnLineUpdated);
         }, function (error) {
             promise.reject(error);
         });

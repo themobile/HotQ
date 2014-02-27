@@ -15,7 +15,7 @@ var theBillSecretKey = 'v0]w?I)2~T~S[6n0(z0*';
 var crypto = require('crypto');
 var Buffer = require('buffer').Buffer;
 var isProduction = (Parse.applicationId == "oYvsd9hx0NoIlgEadXJsqCtU1PgjcPshRqy18kmP");
-var HotQVersion = '1.1.247';
+var HotQVersion = '1.1.249';
 var StringBuffer = function () {
     this.buffer = [];
 };

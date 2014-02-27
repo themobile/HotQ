@@ -15,7 +15,7 @@ var theBillSecretKey = 'v0]w?I)2~T~S[6n0(z0*';
 var crypto = require('crypto');
 var Buffer = require('buffer').Buffer;
 var isProduction = (Parse.applicationId == "oYvsd9hx0NoIlgEadXJsqCtU1PgjcPshRqy18kmP");
-var HotQVersion = '1.1.247';
+var HotQVersion = '1.1.249';
 var StringBuffer = function () {
     this.buffer = [];
 };
@@ -1197,6 +1197,7 @@ var HotQSchema = {
             ]
         },
         {
+        // eliminat incepand cu 1.1
             name: "QuestionSelect",
             columns: [
                 {
@@ -1730,7 +1731,7 @@ Parse.Cloud.job("QuoteChange", function (request, status) {
             if (objQuote) {
                 quoteId = _parsePointer("Quote", objQuote.id);
 
-                var qS = new Parse.Query("QuestionSelect");
+                var qS = new Parse.Query("QuestionOnLine");
                 qS.notEqualTo("isDeleted", true);
                 qS.descending("date");
                 return qS.first();
@@ -2315,8 +2316,8 @@ _AddDateCateg = function (date) {
             }
             activeQuestion.set("quoteId", quoteId);
             return activeQuestion.save();
-        }).then(function (questionSelectUpdated) {
-            promise.resolve(questionSelectUpdated);
+        }).then(function (questionOnLineUpdated) {
+            promise.resolve(questionOnLineUpdated);
         }, function (error) {
             promise.reject(error);
         });
@@ -2964,6 +2965,11 @@ Parse.Cloud.define("GetQuestions4Site", function (request, response) {
         });
 })
 ;
+/**
+ *
+ *   Eliminat incepand cu 1.1
+ *
+ */
 Parse.Cloud.define("GetQuestionsNew", function (request, response) {
     const DAY = 0
         , WEEK = 1

@@ -1,3 +1,8 @@
+/**
+ *
+ *   Eliminat incepand cu 1.1
+ *
+ */
 Parse.Cloud.define("GetQuestionsNew", function (request, response) {
     const DAY = 0
         , WEEK = 1

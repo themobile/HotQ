@@ -16,7 +16,7 @@ Parse.Cloud.job("QuoteChange", function (request, status) {
             if (objQuote) {
                 quoteId = _parsePointer("Quote", objQuote.id);
 
-                var qS = new Parse.Query("QuestionSelect");
+                var qS = new Parse.Query("QuestionOnLine");
                 qS.notEqualTo("isDeleted", true);
                 qS.descending("date");
                 return qS.first();

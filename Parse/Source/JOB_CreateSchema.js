@@ -160,6 +160,7 @@ var HotQSchema = {
             ]
         },
         {
+        // eliminat incepand cu 1.1
             name: "QuestionSelect",
             columns: [
                 {
