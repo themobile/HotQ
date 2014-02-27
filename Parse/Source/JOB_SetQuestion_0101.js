@@ -1,4 +1,65 @@
 Parse.Cloud.job("SetQuestion_0101", function (request, status) {
+    var jobName = "ReSetQuestion_0101"
+        , jobParam = request.params
+        , jobRunId
+        , theDate = _parseDate(moment().format("YYYY-MM-DD") + "T00:00:00.000Z")
+//        , qsExisted = false
+        , jobResultText = "Existed"
+        ;
+
+    Parse.Cloud.useMasterKey();
+    AddJobRunCounter({
+        name: jobName,
+        parameters: jobParam
+    }).then(function (jobRun) {
+            jobRunId = jobRun;
+
+            var qS = new Parse.Query("QuestionOnLine");
+            qS.equalTo("date", theDate);
+            qS.notEqualTo("isDeleted", true);
+            return qS.first();
+
+        }).then(function (qsFounded) {
+            if (qsFounded) {
+//                qsExisted = true;
+                return Parse.Promise.as();
+            } else {
+                jobResultText = "NOT Existed";
+                return _AddDateCateg(theDate);
+            }
+        }).then(function () {
+            return AddJobRunHistory({
+                name: jobName,
+                jobId: _parsePointer("AppJob", jobRunId.jobId),
+                jobIdText: jobRunId.jobId,
+                runCounter: jobRunId.jobRunCounter,
+                parameters: jobParam,
+                status: "success",
+                statusObject: {result: jobResultText}
+            }).then(function () {
+                    status.success("ok");
+                }, function (error) {
+                    status.error(JSON.stringify(error));
+                });
+        }, function (error) {
+            return AddJobRunHistory({
+                name: jobName,
+                jobId: _parsePointer("AppJob", jobRunId.jobId),
+                jobIdText: jobRunId.jobId,
+                runCounter: jobRunId.jobRunCounter,
+                parameters: jobParam,
+                status: "error",
+                statusObject: error
+            }).then(function () {
+                    status.error(JSON.stringify(error));
+                }, function (error) {
+                    status.error(JSON.stringify(error));
+                });
+        });
+});
+
+/*
+Parse.Cloud.job("SetQuestion_0101", function (request, status) {
     var jobName = "SetQuestion"
         , jobParam = request.params
         , jobRunId
@@ -42,7 +103,7 @@ Parse.Cloud.job("SetQuestion_0101", function (request, status) {
                 });
         });
 });
-
+*/
 
 _AddDateCateg = function (date) {
     var promise = new Parse.Promise()
