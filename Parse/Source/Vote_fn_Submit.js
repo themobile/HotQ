@@ -4,6 +4,9 @@ Parse.Cloud.define("VoteSubmit", function (request, response) {
         , answer = request.params.answer
         , position = request.params.position
         , demographics = request.params.demographics
+        , tags = request.params.tags
+        , version = request.params.version
+        , timeZone = request.params.timeZone
         , type
         ;
     Parse.Cloud.useMasterKey();
@@ -20,6 +23,9 @@ Parse.Cloud.define("VoteSubmit", function (request, response) {
             VoteLog.set("answer", answer);
             VoteLog.set("position", position);
             VoteLog.set("demographics", demographics);
+            VoteLog.set("tags", tags);
+            VoteLog.set("version", version);
+            VoteLog.set("timeZone", timeZone);
             VoteLog.setACL(_getAdminACL());
             return VoteLog.save()
         } else {

@@ -14,8 +14,8 @@ moment.lang('ro', {
 var theBillSecretKey = 'v0]w?I)2~T~S[6n0(z0*';
 var crypto = require('crypto');
 var Buffer = require('buffer').Buffer;
-var isProduction = Parse.applicationId == "MqJG79VqkwRoUZIFJrOJ348AYdXqAnifz603oSMM";
-var HotQVersion = '0.2.232';
+var isProduction = (Parse.applicationId == "oYvsd9hx0NoIlgEadXJsqCtU1PgjcPshRqy18kmP");
+var HotQVersion = '1.1.247';
 var StringBuffer = function () {
     this.buffer = [];
 };

@@ -14,8 +14,8 @@ moment.lang('ro', {
 var theBillSecretKey = 'v0]w?I)2~T~S[6n0(z0*';
 var crypto = require('crypto');
 var Buffer = require('buffer').Buffer;
-var isProduction = Parse.applicationId == "MqJG79VqkwRoUZIFJrOJ348AYdXqAnifz603oSMM";
-var HotQVersion = '0.2.232';
+var isProduction = (Parse.applicationId == "oYvsd9hx0NoIlgEadXJsqCtU1PgjcPshRqy18kmP");
+var HotQVersion = '1.1.247';
 var StringBuffer = function () {
     this.buffer = [];
 };
@@ -1049,79 +1049,14 @@ Parse.Cloud.job("CreateApplication", function (request, status) {
         }).then(function () {
             return _createQuestionType();
         }).then(function () {
+            return _createQuestionCategory();
+        }).then(function () {
             status.success("OK");
         }, function (error) {
             _Log(error);
             status.error(JSON.stringify(error));
         });
 });
-
-_createSchema = function () {
-    var promise = new Parse.Promise()
-        , prm = Parse.Promise.as()
-        ;
-
-    _.each(HotQSchema.tables, function (table) {
-        prm = prm.then(function () {
-            return _createSchemaTable(table);
-        })
-    });
-
-    prm = prm.then(function () {
-        promise.resolve({});
-    }, function (error) {
-        promise.reject(error);
-    });
-
-    return promise;
-};
-
-_createQuestionType = function () {
-    var promise = new Parse.Promise()
-        , prm = Parse.Promise.as()
-        , qtArray = ["day", "week", "month"]
-        ;
-    _.each(qtArray, function (qt) {
-        prm = prm.then(function () {
-            var qtObject = Parse.Object.extend("QuestionType");
-            qtObject = new qtObject();
-            qtObject.set("name", qt);
-            qtObject.set("nameLocale", "type.q-" + qt);
-            qtObject.setACL(_getAdminACL());
-            return qtObject.save();
-        });
-    });
-
-    prm = prm.then(function () {
-        promise.resolve({});
-    }, function (error) {
-        promise.reject(error);
-    });
-
-    return promise;
-};
-
-_createSchemaTable = function (table) {
-    var promise = new Parse.Promise()
-        ;
-    var newObject = Parse.Object.extend(table.name);
-    newObject = new newObject();
-    _.each(table.columns, function (column) {
-        newObject.set(column.name, iif(column.default, column.default, HotQSchema.columnTypeDefaults[column.type]));
-    });
-    newObject.save().then(function (objSaved) {
-        if (objSaved) {
-            return objSaved.destroy();
-        } else {
-            return Parse.Promise.error("Object was not created! (" + table.name + ")");
-        }
-    }).then(function () {
-            promise.resolve({});
-        }, function (error) {
-            promise.reject(error);
-        });
-    return promise;
-};
 
 var HotQSchema = {
     columnTypeDefaults: {
@@ -1288,6 +1223,53 @@ var HotQSchema = {
             ]
         },
         {
+            name: "QuestionOnLine",
+            columns: [
+                {
+                    name: "date", type: "date"
+                },
+                {
+                    name: "questionC1Id", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "questionC2Id", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "questionC3Id", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "questionC4Id", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "questionC5Id", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "questionC6Id", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "questionC7Id", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "questionC8Id", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "questionC9Id", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "questionC10Id", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "quoteId", type: "pointer", default: {__type: "Pointer", className: "Quote", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "updates", type: "integer"
+                },
+                {
+                    name: "isDeleted", type: "boolean"
+                }
+            ]
+        },
+        {
             name: "QuestionType",
             columns: [
                 {
@@ -1388,6 +1370,15 @@ var HotQSchema = {
                     name: "demographics", type: "object"
                 },
                 {
+                    name: "timeZone", type: "string"
+                },
+                {
+                    name: "tags", type: "object"
+                },
+                {
+                    name: "version", type: "string"
+                },
+                {
                     name: "isSuccess", type: "boolean"
                 },
                 {
@@ -1407,6 +1398,140 @@ var adminUsers = [
     {"username": "florian.cechi@gmail.com", "password": "anec27", "firstName": "Florian", "lastName": "Cechi"
     }
 ];
+
+var HotQCategory = [
+    {
+        name: "politică",
+        nameLocale: "category.politics"
+    },
+    {
+        name: "business",
+        nameLocale: "category.business"
+    },
+    {
+        name: "actualitate",
+        nameLocale: "category.actual"
+    },
+    {
+        name: "monden",
+        nameLocale: "category.lifestyle"
+    },
+    {
+        name: "sport",
+        nameLocale: "category.sport"
+    }
+];
+
+_createSchema = function () {
+    var promise = new Parse.Promise()
+        , prm = Parse.Promise.as()
+        ;
+
+    _.each(HotQSchema.tables, function (table) {
+        prm = prm.then(function () {
+            return _createSchemaTable(table);
+        })
+    });
+
+    prm = prm.then(function () {
+        promise.resolve({});
+    }, function (error) {
+        promise.reject(error);
+    });
+
+    return promise;
+};
+
+_createQuestionCategoryAdd = function (category) {
+    var promise = new Parse.Promise()
+        ;
+    var qc = new Parse.Query("QuestionCategory");
+    qc.equalTo("nameLocale", category.nameLocale);
+    qc.notEqualTo("isDeleted", true);
+    qc.first().then(function (qcObject) {
+        if (qcObject) {
+            qcObject.set("name", category.name);
+        } else {
+            var QcObj = Parse.Object.extend("QuestionCategory");
+            qcObject = new QcObj();
+            qcObject.set("nameLocale", category.nameLocale);
+            qcObject.set("name", category.name);
+        }
+        qcObject.setACL(_getAdminACL());
+        return qcObject.save();
+    }).then(function () {
+            promise.resolve({});
+        }, function (error) {
+            promise.reject(error);
+        });
+    return promise;
+};
+
+_createQuestionCategory = function () {
+    var promise = new Parse.Promise()
+        , prm = Parse.Promise.as()
+        ;
+    _.each(HotQCategory, function (category) {
+        prm = prm.then(function () {
+            return _createQuestionCategoryAdd(category);
+        });
+    });
+
+    prm = prm.then(function () {
+        promise.resolve({});
+    }, function (error) {
+        promise.reject(error);
+    });
+
+    return promise;
+};
+
+_createQuestionType = function () {
+    var promise = new Parse.Promise()
+        , prm = Parse.Promise.as()
+        , qtArray = ["day", "week", "month"]
+        ;
+    _.each(qtArray, function (qt) {
+        prm = prm.then(function () {
+            var qtObject = Parse.Object.extend("QuestionType");
+            qtObject = new qtObject();
+            qtObject.set("name", qt);
+            qtObject.set("nameLocale", "type.q-" + qt);
+            qtObject.setACL(_getAdminACL());
+            return qtObject.save();
+        });
+    });
+
+    prm = prm.then(function () {
+        promise.resolve({});
+    }, function (error) {
+        promise.reject(error);
+    });
+
+    return promise;
+};
+
+_createSchemaTable = function (table) {
+    var promise = new Parse.Promise()
+        ;
+    var newObject = Parse.Object.extend(table.name);
+    newObject = new newObject();
+    _.each(table.columns, function (column) {
+        newObject.set(column.name, iif(column.default, column.default, HotQSchema.columnTypeDefaults[column.type]));
+    });
+    newObject.save().then(function (objSaved) {
+        if (objSaved) {
+            return objSaved.destroy();
+        } else {
+            return Parse.Promise.error("Object was not created! (" + table.name + ")");
+        }
+    }).then(function () {
+            promise.resolve({});
+        }, function (error) {
+            promise.reject(error);
+        });
+    return promise;
+};
 
 _createRoles = function () {
     var promise = new Parse.Promise();
@@ -1468,7 +1593,6 @@ _createAdminUsers = function () {
     });
     return promise;
 };
-
 
 _createUserIfNotExists = function (user) {
     var promise = new Parse.Promise()
@@ -2045,6 +2169,183 @@ _GetRandomQuote = function () {
 };
 
 
+Parse.Cloud.job("SetQuestion_0101", function (request, status) {
+    var jobName = "SetQuestion"
+        , jobParam = request.params
+        , jobRunId
+        , theDate = _parseDate(moment().format("YYYY-MM-DD") + "T00:00:00.000Z")
+        ;
+
+    Parse.Cloud.useMasterKey();
+    AddJobRunCounter({
+        name: jobName,
+        parameters: jobParam
+    }).then(function (jobRun) {
+            jobRunId = jobRun;
+            return _AddDateCateg(theDate);
+        }).then(function () {
+            return AddJobRunHistory({
+                name: jobName,
+                jobId: _parsePointer("AppJob", jobRunId.jobId),
+                jobIdText: jobRunId.jobId,
+                runCounter: jobRunId.jobRunCounter,
+                parameters: jobParam,
+                status: "success",
+                statusObject: {result: "ok"}
+            }).then(function () {
+                    status.success("ok");
+                }, function (error) {
+                    status.error(JSON.stringify(error));
+                });
+        }, function (error) {
+            return AddJobRunHistory({
+                name: jobName,
+                jobId: _parsePointer("AppJob", jobRunId.jobId),
+                jobIdText: jobRunId.jobId,
+                runCounter: jobRunId.jobRunCounter,
+                parameters: jobParam,
+                status: "error",
+                statusObject: error
+            }).then(function () {
+                    status.error(JSON.stringify(error));
+                }, function (error) {
+                    status.error(JSON.stringify(error));
+                });
+        });
+});
+
+
+_AddDateCateg = function (date) {
+    var promise = new Parse.Promise()
+        , prm = Parse.Promise.as()
+        , qs = []
+        , quoteId
+        ;
+    _.each(HotQCategory, function (category) {
+        prm = prm.then(function () {
+            return _GetCurrentQCat(date, category.nameLocale, "type.q-day")
+        }).then(function (question) {
+                qs.push(question);
+            });
+    });
+    prm = prm.then(function () {
+        return _GetRandomQuote();
+    }).then(function (retQuote) {
+            if (retQuote) {
+                quoteId = _parsePointer("Quote", retQuote.id);
+            }
+            var qS = new Parse.Query("QuestionOnLine");
+            qS.equalTo("date", date);
+            qS.notEqualTo("isDeleted", true);
+            return qS.first();
+        }).then(function (activeQuestion) {
+            if (!(activeQuestion)) {
+                var QT = Parse.Object.extend("QuestionOnLine");
+                activeQuestion = new QT();
+                activeQuestion.set("date", date);
+                activeQuestion.setACL(_getAdminACL());
+            }
+            activeQuestion.increment("updates");
+            for (var i = 0; i < 10; i++) {
+                var column = "questionC" + (i + 1).toString() + "Id";
+                if (qs[i]) {
+                    activeQuestion.set(column, qs[i]);
+                }
+            }
+            activeQuestion.set("quoteId", quoteId);
+            return activeQuestion.save();
+        }).then(function (questionSelectUpdated) {
+            promise.resolve(questionSelectUpdated);
+        }, function (error) {
+            promise.reject(error);
+        });
+    return promise;
+
+};
+
+
+_GetCurrentQCat = function (date, category, type) {
+    var promise = new Parse.Promise()
+        ;
+    var qCat = new Parse.Query("QuestionCategory");
+    qCat.notEqualTo("isDeleted", true);
+    qCat.equalTo("nameLocale", category);
+    var qType = new Parse.Query("QuestionType");
+    qType.notEqualTo("isDeleted", true);
+    qType.equalTo("nameLocale", type);
+    var qQuestion = new Parse.Query("Question");
+    qQuestion.lessThanOrEqualTo("startDate", date);
+    qQuestion.greaterThanOrEqualTo("endDate", date);
+    qQuestion.notEqualTo("isDeleted", true);
+    qQuestion.matchesQuery("typeId", qType);
+    qQuestion.matchesQuery("categoryId", qCat);
+    qQuestion.descending("startDate");
+    qQuestion.descending("updatedAt");
+    qQuestion.first().then(function (question) {
+        if (question) {
+            return question;
+        } else {
+            return _DuplLastQuestion(date, category, type);
+        }
+    }).then(function (question) {
+            if (question) {
+                promise.resolve(question);
+            } else {
+                promise.reject({
+                    date: date,
+                    type: type
+                });
+            }
+        },
+        function (error) {
+            promise.reject({
+                error: error,
+                date: date,
+                type: type
+            })
+        }
+    );
+    return promise;
+};
+
+_DuplLastQuestion = function (date, category, type) {
+    var promise = new Parse.Promise()
+        ;
+    var question
+        ;
+    var qType = new Parse.Query("QuestionType");
+    qType.notEqualTo("isDeleted", true);
+    qType.equalTo("nameLocale", type);
+    var qCat = new Parse.Query("QuestionCategory");
+    qCat.notEqualTo("isDeleted", true);
+    qCat.equalTo("nameLocale", category);
+    var qQuestion = new Parse.Query("Question");
+    qQuestion.lessThanOrEqualTo("endDate", date);
+    qQuestion.notEqualTo("isDeleted", true);
+    qQuestion.matchesQuery("typeId", qType);
+    qQuestion.matchesQuery("categoryId", qCat);
+    qQuestion.descending("startDate");
+    qQuestion.descending("updatedAt");
+    qQuestion.include("typeId");
+    qQuestion.first().then(function (qFound) {
+        if (qFound) {
+            question = qFound;
+            return _ValidateDate(question.get("typeId").get("name"), moment().format("YYYY-MM-DD"));
+        } else {
+            return Parse.Promise.error("error.question-not-found");
+        }
+    }).then(function (objDates) {
+            return _AdminQuestion(null, null, question.get("categoryId"), question.get("typeId"), question.get("subject"), question.get("body"), question.get("link"), objDates.startDate, objDates.endDate);
+        }).then(function (questionSaved) {
+            questionSaved.set("questionId", question);
+            return questionSaved.save();
+        }).then(function (newQuestion) {
+            promise.resolve(newQuestion);
+        }, function (error) {
+            promise.reject(error);
+        });
+    return promise;
+};
 Parse.Cloud.job("VoteProcess", function (request, status) {
     var jobName = "VoteProcess"
         , jobParam = request.params
@@ -2394,7 +2695,10 @@ Parse.Cloud.define("GetListQuestions", function (request, response) {
  *  Atentie!!!!!
  *  Aplicatia mobila lanseaza GetQuestionsNew
  *
- * */
+
+
+
+
 Parse.Cloud.define("GetQuestions", function (request, response) {
     var theDate
         , deviceId
@@ -2514,6 +2818,20 @@ _GetVote = function (deviceId, questionId) {
     });
     return promise;
 };
+
+
+ *
+ *
+ *
+ * *//**
+ *
+ * * * * * * * * * * * * * * * *
+ *                             *
+ *    N E U T I L I Z A T A    *
+ *                             *
+ * * * * * * * * * * * * * * * *
+ *
+ * */
 Parse.Cloud.define("GetQuestions4Site", function (request, response) {
     var theDate
         , result = {}
@@ -2718,6 +3036,116 @@ _GetVote = function (deviceId, questionId) {
     });
     return promise;
 };
+Parse.Cloud.define("GetQuestions_0101", function (request, response) {
+    var theDate
+        , deviceId
+        , votes = []
+        , result = {}
+        ;
+    Parse.Cloud.useMasterKey();
+    if (request.params.date) {
+        theDate = moment(request.params.date).format("YYYY-MM-DD") + "T00:00:00.000Z";
+    } else {
+        theDate = moment().format("YYYY-MM-DD") + "T00:00:00.000Z";
+    }
+    var qInst = new Parse.Query("Device");
+    qInst.equalTo("installationId", request.params.installationId);
+    qInst.notEqualTo("isDeleted", true);
+    qInst.first().then(function (device) {
+        if (device) {
+            deviceId = device.id;
+            return _GetDeviceLastVotes(deviceId);
+        } else {
+            return Parse.Promise.error("error.device-not-found");
+        }
+    }).then(function (votesResult) {
+            var include = "quoteId"
+                ;
+            votes = votesResult;
+
+            var qQ = new Parse.Query("QuestionOnLine");
+            qQ.equalTo("date", _parseDate(theDate));
+            qQ.notEqualTo("isDeleted", true);
+            for (var i = 0; i < 10; i++) {
+                include += ",questionC" + (i + 1).toString() + "Id.categoryId" + ",questionC" + (i + 1).toString() + "Id.typeId";
+            }
+            qQ.include(include);
+            qQ.descending("createdAt");
+            return  qQ.first();
+        }).then(function (qT) {
+            var column, i
+                ;
+            result.date = moment(theDate).format("YYYY-MM-DD");
+            result.content = [];
+            for (i = 0; i < 10; i++) {
+                column = "questionC" + (i + 1).toString() + "Id";
+                if (qT.get(column)) {
+                    result.content.push({
+                        type: qT.get(column).get("typeId").get("name"),
+                        typeLocale: qT.get(column).get("typeId").get("nameLocale"),
+                        id: qT.get(column).id,
+                        category: qT.get(column).get("categoryId").get("name"),
+                        categoryLocale: qT.get(column).get("categoryId").get("nameLocale"),
+                        text1: qT.get(column).get("subject"),
+                        text2: qT.get(column).get("body"),
+                        link: qT.get(column).get("link"),
+                        picture: qT.get(column).get("imageFile"),
+                        imageSource: qT.get(column).get("imageSource"),
+                        percentYes: qT.get(column).get("results") ? qT.get(column).get("results").percentYes ? qT.get(column).get("results").percentYes : 50 : 50
+                    });
+                }
+            }
+            for (i = 0; i < result.content.length; i++) {
+                result.content[i].percentNo = 100 - result.content[i].percentYes;
+                for (var j = 0; j < votes.length; j++) {
+                    if (result.content[i].id == votes[j].questionId) {
+                        result.content[i].hasVote = true;
+                        result.content[i].dateVote = votes[j].date;
+                        votes.splice(j, 1);
+                        break;
+                    }
+                }
+            }
+
+            result.content.push({
+                type: "o idee",
+                typeLocale: "type.quote",
+                id: qT.get("quoteId").id,
+                category: "o idee",
+                author: qT.get("quoteId").get("author"),
+                body: qT.get("quoteId").get("body"),
+                link: qT.get("quoteId").get("link"),
+                picture: qT.get("quoteId").get("imageFile"),
+                imageSource: qT.get("quoteId").get("imageSource")
+            });
+
+            response.success(result);
+        }, function (error) {
+            response.error(error);
+        });
+});
+
+_GetDeviceLastVotes = function (deviceId) {
+    var promise = new Parse.Promise()
+        , result = []
+        ;
+    var qVote = new Parse.Query("Vote");
+    qVote.equalTo("deviceId", _parsePointer("Device", deviceId));
+    qVote.limit(7);
+    qVote.descending("createdAt");
+    qVote.find().then(function (votes) {
+        _.each(votes, function (vote) {
+            result.push({
+                date: moment(vote.get("voteDate")).format("YYYY-MM-DDTHH:mm:ss"),
+                questionId: vote.get("questionId").id
+            });
+        });
+        promise.resolve(result);
+    }, function (error) {
+        promise.reject(error);
+    });
+    return promise;
+};
 Parse.Cloud.define("QuoteAdmin", function (request, response) {
     var thisUser = request.user
         , quote = request.params
@@ -2801,6 +3229,9 @@ Parse.Cloud.define("VoteSubmit", function (request, response) {
         , answer = request.params.answer
         , position = request.params.position
         , demographics = request.params.demographics
+        , tags = request.params.tags
+        , version = request.params.version
+        , timeZone = request.params.timeZone
         , type
         ;
     Parse.Cloud.useMasterKey();
@@ -2817,6 +3248,9 @@ Parse.Cloud.define("VoteSubmit", function (request, response) {
             VoteLog.set("answer", answer);
             VoteLog.set("position", position);
             VoteLog.set("demographics", demographics);
+            VoteLog.set("tags", tags);
+            VoteLog.set("version", version);
+            VoteLog.set("timeZone", timeZone);
             VoteLog.setACL(_getAdminACL());
             return VoteLog.save()
         } else {

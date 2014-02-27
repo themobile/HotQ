@@ -2,7 +2,10 @@
  *  Atentie!!!!!
  *  Aplicatia mobila lanseaza GetQuestionsNew
  *
- * */
+
+
+
+
 Parse.Cloud.define("GetQuestions", function (request, response) {
     var theDate
         , deviceId
@@ -122,3 +125,9 @@ _GetVote = function (deviceId, questionId) {
     });
     return promise;
 };
+
+
+ *
+ *
+ *
+ * */

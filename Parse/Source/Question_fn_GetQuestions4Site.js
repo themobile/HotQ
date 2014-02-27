@@ -1,3 +1,12 @@
+/**
+ *
+ * * * * * * * * * * * * * * * *
+ *                             *
+ *    N E U T I L I Z A T A    *
+ *                             *
+ * * * * * * * * * * * * * * * *
+ *
+ * */
 Parse.Cloud.define("GetQuestions4Site", function (request, response) {
     var theDate
         , result = {}

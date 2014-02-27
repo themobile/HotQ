@@ -12,79 +12,14 @@ Parse.Cloud.job("CreateApplication", function (request, status) {
         }).then(function () {
             return _createQuestionType();
         }).then(function () {
+            return _createQuestionCategory();
+        }).then(function () {
             status.success("OK");
         }, function (error) {
             _Log(error);
             status.error(JSON.stringify(error));
         });
 });
-
-_createSchema = function () {
-    var promise = new Parse.Promise()
-        , prm = Parse.Promise.as()
-        ;
-
-    _.each(HotQSchema.tables, function (table) {
-        prm = prm.then(function () {
-            return _createSchemaTable(table);
-        })
-    });
-
-    prm = prm.then(function () {
-        promise.resolve({});
-    }, function (error) {
-        promise.reject(error);
-    });
-
-    return promise;
-};
-
-_createQuestionType = function () {
-    var promise = new Parse.Promise()
-        , prm = Parse.Promise.as()
-        , qtArray = ["day", "week", "month"]
-        ;
-    _.each(qtArray, function (qt) {
-        prm = prm.then(function () {
-            var qtObject = Parse.Object.extend("QuestionType");
-            qtObject = new qtObject();
-            qtObject.set("name", qt);
-            qtObject.set("nameLocale", "type.q-" + qt);
-            qtObject.setACL(_getAdminACL());
-            return qtObject.save();
-        });
-    });
-
-    prm = prm.then(function () {
-        promise.resolve({});
-    }, function (error) {
-        promise.reject(error);
-    });
-
-    return promise;
-};
-
-_createSchemaTable = function (table) {
-    var promise = new Parse.Promise()
-        ;
-    var newObject = Parse.Object.extend(table.name);
-    newObject = new newObject();
-    _.each(table.columns, function (column) {
-        newObject.set(column.name, iif(column.default, column.default, HotQSchema.columnTypeDefaults[column.type]));
-    });
-    newObject.save().then(function (objSaved) {
-        if (objSaved) {
-            return objSaved.destroy();
-        } else {
-            return Parse.Promise.error("Object was not created! (" + table.name + ")");
-        }
-    }).then(function () {
-            promise.resolve({});
-        }, function (error) {
-            promise.reject(error);
-        });
-    return promise;
-};
 
 var HotQSchema = {
     columnTypeDefaults: {
@@ -251,6 +186,53 @@ var HotQSchema = {
             ]
         },
         {
+            name: "QuestionOnLine",
+            columns: [
+                {
+                    name: "date", type: "date"
+                },
+                {
+                    name: "questionC1Id", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "questionC2Id", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "questionC3Id", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "questionC4Id", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "questionC5Id", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "questionC6Id", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "questionC7Id", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "questionC8Id", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "questionC9Id", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "questionC10Id", type: "pointer", default: {__type: "Pointer", className: "Question", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "quoteId", type: "pointer", default: {__type: "Pointer", className: "Quote", objectId: "Q2AktMb7uA"}
+                },
+                {
+                    name: "updates", type: "integer"
+                },
+                {
+                    name: "isDeleted", type: "boolean"
+                }
+            ]
+        },
+        {
             name: "QuestionType",
             columns: [
                 {
@@ -351,6 +333,15 @@ var HotQSchema = {
                     name: "demographics", type: "object"
                 },
                 {
+                    name: "timeZone", type: "string"
+                },
+                {
+                    name: "tags", type: "object"
+                },
+                {
+                    name: "version", type: "string"
+                },
+                {
                     name: "isSuccess", type: "boolean"
                 },
                 {
@@ -370,6 +361,140 @@ var adminUsers = [
     {"username": "florian.cechi@gmail.com", "password": "anec27", "firstName": "Florian", "lastName": "Cechi"
     }
 ];
+
+var HotQCategory = [
+    {
+        name: "politică",
+        nameLocale: "category.politics"
+    },
+    {
+        name: "business",
+        nameLocale: "category.business"
+    },
+    {
+        name: "actualitate",
+        nameLocale: "category.actual"
+    },
+    {
+        name: "monden",
+        nameLocale: "category.lifestyle"
+    },
+    {
+        name: "sport",
+        nameLocale: "category.sport"
+    }
+];
+
+_createSchema = function () {
+    var promise = new Parse.Promise()
+        , prm = Parse.Promise.as()
+        ;
+
+    _.each(HotQSchema.tables, function (table) {
+        prm = prm.then(function () {
+            return _createSchemaTable(table);
+        })
+    });
+
+    prm = prm.then(function () {
+        promise.resolve({});
+    }, function (error) {
+        promise.reject(error);
+    });
+
+    return promise;
+};
+
+_createQuestionCategoryAdd = function (category) {
+    var promise = new Parse.Promise()
+        ;
+    var qc = new Parse.Query("QuestionCategory");
+    qc.equalTo("nameLocale", category.nameLocale);
+    qc.notEqualTo("isDeleted", true);
+    qc.first().then(function (qcObject) {
+        if (qcObject) {
+            qcObject.set("name", category.name);
+        } else {
+            var QcObj = Parse.Object.extend("QuestionCategory");
+            qcObject = new QcObj();
+            qcObject.set("nameLocale", category.nameLocale);
+            qcObject.set("name", category.name);
+        }
+        qcObject.setACL(_getAdminACL());
+        return qcObject.save();
+    }).then(function () {
+            promise.resolve({});
+        }, function (error) {
+            promise.reject(error);
+        });
+    return promise;
+};
+
+_createQuestionCategory = function () {
+    var promise = new Parse.Promise()
+        , prm = Parse.Promise.as()
+        ;
+    _.each(HotQCategory, function (category) {
+        prm = prm.then(function () {
+            return _createQuestionCategoryAdd(category);
+        });
+    });
+
+    prm = prm.then(function () {
+        promise.resolve({});
+    }, function (error) {
+        promise.reject(error);
+    });
+
+    return promise;
+};
+
+_createQuestionType = function () {
+    var promise = new Parse.Promise()
+        , prm = Parse.Promise.as()
+        , qtArray = ["day", "week", "month"]
+        ;
+    _.each(qtArray, function (qt) {
+        prm = prm.then(function () {
+            var qtObject = Parse.Object.extend("QuestionType");
+            qtObject = new qtObject();
+            qtObject.set("name", qt);
+            qtObject.set("nameLocale", "type.q-" + qt);
+            qtObject.setACL(_getAdminACL());
+            return qtObject.save();
+        });
+    });
+
+    prm = prm.then(function () {
+        promise.resolve({});
+    }, function (error) {
+        promise.reject(error);
+    });
+
+    return promise;
+};
+
+_createSchemaTable = function (table) {
+    var promise = new Parse.Promise()
+        ;
+    var newObject = Parse.Object.extend(table.name);
+    newObject = new newObject();
+    _.each(table.columns, function (column) {
+        newObject.set(column.name, iif(column.default, column.default, HotQSchema.columnTypeDefaults[column.type]));
+    });
+    newObject.save().then(function (objSaved) {
+        if (objSaved) {
+            return objSaved.destroy();
+        } else {
+            return Parse.Promise.error("Object was not created! (" + table.name + ")");
+        }
+    }).then(function () {
+            promise.resolve({});
+        }, function (error) {
+            promise.reject(error);
+        });
+    return promise;
+};
 
 _createRoles = function () {
     var promise = new Parse.Promise();
@@ -431,7 +556,6 @@ _createAdminUsers = function () {
     });
     return promise;
 };
-
 
 _createUserIfNotExists = function (user) {
     var promise = new Parse.Promise()

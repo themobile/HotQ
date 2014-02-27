@@ -1,24 +1,24 @@
 {
     "applications": {
         "_default": {
-            "link": "hotqDevelopment"
+            "link": "HotQDev"
         },
         "production": {
-            "link": "hotqProduction"
+            "link": "HotQPro"
         },
         "development": {
-            "link": "hotqDevelopment"
+            "link": "HotQDev"
         },
-        "hotqDevelopment": {
-            "applicationId": "oYvsd9hx0NoIlgEadXJsqCtU1PgjcPshRqy18kmP", 
-            "masterKey": "RlVVTkb0bQq4WUNdXtI7msDwSCyUGJrvCutpe3d9"
-        },
-        "hotqProduction": {
+        "HotQDev": {
             "applicationId": "MqJG79VqkwRoUZIFJrOJ348AYdXqAnifz603oSMM",
             "masterKey": "eBgT6SM8q5LoqPKuRmWUY4OMNoHOvMDhc4ZDZ38D"
+        },
+        "HotQPro": {
+            "applicationId": "oYvsd9hx0NoIlgEadXJsqCtU1PgjcPshRqy18kmP",
+            "masterKey": "RlVVTkb0bQq4WUNdXtI7msDwSCyUGJrvCutpe3d9"
         }
     },
     "global": {
-        "parseVersion": "1.2.13"
+        "parseVersion": "1.2.16"
     }
 }
