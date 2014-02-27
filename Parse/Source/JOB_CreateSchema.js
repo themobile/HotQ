@@ -160,7 +160,7 @@ var HotQSchema = {
             ]
         },
         {
-        // eliminat incepand cu 1.1
+            // eliminat incepand cu 1.1
             name: "QuestionSelect",
             columns: [
                 {
@@ -457,21 +457,38 @@ _createQuestionType = function () {
         ;
     _.each(qtArray, function (qt) {
         prm = prm.then(function () {
-            var qtObject = Parse.Object.extend("QuestionType");
-            qtObject = new qtObject();
-            qtObject.set("name", qt);
-            qtObject.set("nameLocale", "type.q-" + qt);
-            qtObject.setACL(_getAdminACL());
-            return qtObject.save();
+            return _createOrModifyQuestionType(qt);
         });
     });
-
     prm = prm.then(function () {
         promise.resolve({});
     }, function (error) {
         promise.reject(error);
     });
 
+    return promise;
+};
+
+_createOrModifyQuestionType = function (type) {
+    var promise = new Parse.Promise()
+        ;
+    var qType = new Parse.Query("QuestionType");
+    qType.equalTo("name", type);
+    qType.notEqualTo("isDeleted", true);
+    qType.first().then(function (qtObject) {
+        if (!(qtObject)) {
+            var QtObject = Parse.Object.extend("QuestionType");
+            qtObject = new QtObject();
+            qtObject.set("name", type);
+        }
+        qtObject.set("nameLocale", "type.q-" + type);
+        qtObject.setACL(_getAdminACL());
+        return qtObject.save();
+    }).then(function (saved) {
+            promise.resolve(saved);
+        }, function (error) {
+            promise.reject(error);
+        });
     return promise;
 };
 
